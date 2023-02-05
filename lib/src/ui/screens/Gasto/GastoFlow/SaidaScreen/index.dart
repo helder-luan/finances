@@ -1,43 +1,47 @@
-import 'package:finances/src/controllers/spending_controller.dart';
+import 'package:finances/src/controllers/cartao_controller.dart';
+import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/tipo_cartao_controller.dart';
+import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/mock/mockDataUser.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Form/Checkbox/index.dart';
 import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Spending/index.dart';
+import 'package:finances/src/ui/screens/Gasto/index.dart';
 import 'package:flutter/material.dart';
 import 'package:mask/mask/mask.dart';
 import 'package:motion_toast/motion_toast.dart';
 
-class OutScreen extends StatefulWidget {
-  const OutScreen({super.key});
+class SaidaScreen extends StatefulWidget {
+  const SaidaScreen({super.key});
 
   @override
-  State<OutScreen> createState() => _OutScreenState();
+  State<SaidaScreen> createState() => _SaidaScreenState();
 }
 
-class _OutScreenState extends State<OutScreen> {
-  var _formKey;
-  final _controller = SpendingController();
+class _SaidaScreenState extends State<SaidaScreen> {
+  final GastoController _gastoController = GastoController();
+  final CartaoController _cartaoController = CartaoController();
+  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
+  final TipoCartaoController _tipoCartaoController = TipoCartaoController();
 
-  List<Map<dynamic, String>> formPayment = [
+  List<Map<dynamic, String>> formaDePagamento = [
     {'value': '0', 'label': 'Selecione uma forma de pagamento'},
     {'value': 'M', 'label': 'Dinheiro'},
     {'value': 'C', 'label': 'Cartão de crédito'},
     {'value': 'D', 'label': 'Cartão de débito'},
   ];
 
-  List<Map<dynamic, String>> myDebitCards = [
+  List<Map<dynamic, String>> cartoesDeDebito = [
     {
       'value': '0',
       'label': 'Selecione um cartão',
     }
   ];
 
-  List<Map<dynamic, String>> myCreditCards = [
+  List<Map<dynamic, String>> cartoesDeCredito = [
     {
       'value': '0',
       'label': 'Selecione um cartão',
@@ -47,26 +51,51 @@ class _OutScreenState extends State<OutScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.movimentType.text = 'out';
-    _controller.refound.text = 'false';
-    _controller.paymentInstallments.text = 'false';
-    _controller.monthlyExpense.text = 'false';
+    _gastoController.reembolso.text = 'false';
+    _gastoController.parcelado.text = 'false';
+    _gastoController.gastoMensal.text = 'false';
 
-    cards.map((card) {
-      if (card.type == "credit") {
-        myCreditCards.add({
-          'value': card.id.toString(),
-          'label': card.name.toString(),
+    loadTipoOperacao();
+    loadTiposCartao();
+    loadCartoes();
+  }
+
+  void loadTipoOperacao() async {
+    await _tipoOperacaoController.getTiposOperacao();
+
+    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.last.id.toString();
+  }
+
+  void loadTiposCartao() async {
+    await _tipoCartaoController.getTiposCartao();
+  }
+
+  void loadCartoes() async {
+    await _cartaoController.atualizarDados();
+
+    for (var cartao in _cartaoController.dataSourceCartao) {
+      // se cartao.idTipoCartao for igual ao id do tipo de cartao 'Crédito'
+      if (
+        cartao.idTipoCartao.toString() == _tipoCartaoController.dataSourceTipoCartao.first.id &&
+        _tipoCartaoController.dataSourceTipoCartao.first.descricao == 'Crédito'
+      ) {
+        cartoesDeCredito.add({
+          'value': cartao.id.toString(),
+          'label': cartao.nome.toString(),
         });
       }
 
-      if (card.type == "debit") {
-        myDebitCards.add({
-          'value': card.id.toString(),
-          'label': card.name.toString(),
+      // se cartao.idTipoCartao for igual ao id do tipo de cartao 'Débito'
+      if (
+        cartao.idTipoCartao.toString() == _tipoCartaoController.dataSourceTipoCartao.first.id &&
+        _tipoCartaoController.dataSourceTipoCartao.first.descricao == 'Débito'
+      ) {
+        cartoesDeDebito.add({
+          'value': cartao.id.toString(),
+          'label': cartao.nome.toString(),
         });
       }
-    }).toList();
+    }
   }
   
   @override
@@ -103,107 +132,106 @@ class _OutScreenState extends State<OutScreen> {
                         ),
                       ),
                       Form(
-                        key: _formKey,
                         child: Column(
                           children: [
                             FormDropdownComponent(
                               label: 'Forma de pagamento',
-                              items: formPayment,
+                              items: formaDePagamento,
                               startValue: '0',
                               onChanged: (value) {
                                 setState(() {
-                                  _controller.formPayment.text = value;
-                                  _controller.paymentInstallments.text = "false";
+                                  _gastoController.formaDePagamento.text = value;
+                                  _gastoController.parcelado.text = "false";
                                 });
                               },
                             ),
                             // conditional rendering
                             Visibility(
-                              visible: _controller.formPayment.text == 'M',
+                              visible: _gastoController.formaDePagamento.text == 'M',
                               child: Column(
                                 children: [
                                   FormInputComponent(
                                     label: 'Descrição',
-                                    controller: _controller.description,
+                                    controller: _gastoController.descricao,
                                   ),
                                   FormInputComponent(
                                     label: 'Valor',
                                     keyboardType: TextInputType.number,
                                     formatters: [Mask.money()],
-                                    controller: _controller.value,
+                                    controller: _gastoController.valor,
                                   ),
                                   FormInputComponent(
                                     label: 'Detalhes',
-                                    controller: _controller.details,
+                                    controller: _gastoController.detalhes,
                                   ),
                                 ]
                               ),
                             ),
                             Visibility(
-                              visible: _controller.formPayment.text != 'M',
+                              visible: _gastoController.formaDePagamento.text != 'M',
                               child: Column(
                                 children: [
                                   FormDropdownComponent(
                                     label: 'Cartão Usado',
-                                    items: _controller.formPayment.text == 'D' ? myDebitCards : myCreditCards,
+                                    items: _gastoController.formaDePagamento.text == 'D' ? cartoesDeDebito : cartoesDeCredito,
                                     startValue: '0',
                                     onChanged: (value) {
                                       setState(() {
-                                        _controller.cardId.text = value;
+                                        _gastoController.idCartao.text = value;
                                       });
                                     },
                                   ),
                                   FormInputComponent(
                                     label: 'Descrição',
-                                    controller: _controller.description,
+                                    controller: _gastoController.descricao,
                                   ),
                                   FormInputComponent(
                                     label: 'Valor',
                                     keyboardType: TextInputType.number,
                                     formatters: [Mask.money()],
-                                    controller: _controller.value,
+                                    controller: _gastoController.valor,
                                   ),
                                   FormInputComponent(
                                     label: 'Detalhes',
-                                    controller: _controller.details,
+                                    controller: _gastoController.detalhes,
                                   ),
                                   Visibility(
-                                    visible: _controller.formPayment.text == 'C' && _controller.paymentInstallments.text == 'false',
+                                    visible: _gastoController.formaDePagamento.text == 'C' && _gastoController.parcelado.text == 'false',
                                     child: FormCheckboxComponent(
                                       label: 'Cobrança recorrente',
-                                      checkVariable: _controller.monthlyExpense.text == 'true' ? true : false,
+                                      checkVariable: _gastoController.gastoMensal.text == 'true' ? true : false,
                                       onChanged: (value) {
                                         setState(() {
-                                          _controller.monthlyExpense.text = value.toString();
+                                          _gastoController.gastoMensal.text = value.toString();
                                         });
                                       },
                                     )
                                   ),
                                   Visibility(
-                                    visible: _controller.formPayment.text == 'C' && _controller.monthlyExpense.text == 'false',
+                                    visible: _gastoController.formaDePagamento.text == 'C' && _gastoController.gastoMensal.text == 'false',
                                     child: FormCheckboxComponent(
                                       label: 'Parcelado',
-                                      checkVariable: _controller.paymentInstallments.text == 'true' ? true : false,
+                                      checkVariable: _gastoController.parcelado.text == 'true' ? true : false,
                                       onChanged: (value) {
                                         setState(() {
-                                          _controller.paymentInstallments.text = value.toString();
+                                          _gastoController.parcelado.text = value.toString();
                                         });
                                       },
                                     )
                                   ),
                                   Visibility(
-                                    visible: _controller.paymentInstallments.text == 'true',
+                                    visible: _gastoController.parcelado.text == 'true',
                                     child: Column(
                                       children: [
                                         FormInputComponent(
                                           label: 'Quantidade de Parcelas',
                                           keyboardType: TextInputType.number,
-                                          controller: _controller.totalInstallments,
+                                          controller: _gastoController.totalParcelas,
                                         ),
                                         FormInputComponent(
                                           label: 'Parcela Atual',
                                           keyboardType: TextInputType.number,
-                                          controller: _controller.currentInstallments,
+                                          controller: _gastoController.parcelaAtual,
                                         ),
                                       ]
                                     ),
@@ -212,13 +240,13 @@ class _OutScreenState extends State<OutScreen> {
                               )
                             ),
                             Visibility(
-                              visible: _controller.formPayment.text != 'C',
+                              visible: _gastoController.formaDePagamento.text != 'C',
                               child: FormCheckboxComponent(
                                 label: 'Gasto mensal',
-                                checkVariable: _controller.monthlyExpense.text == 'true' ? true : false,
+                                checkVariable: _gastoController.gastoMensal.text == 'true' ? true : false,
                                 onChanged: (value) {
                                   setState(() {
-                                    _controller.monthlyExpense.text = value.toString();
+                                    _gastoController.gastoMensal.text = value.toString();
                                   });
                                 },
                               ),
@@ -228,12 +256,12 @@ class _OutScreenState extends State<OutScreen> {
                               width: MediaQuery.of(context).size.width-32,
                               child: ButtonComponent(
                                 onPressed: () {
-                                  _controller.handleSubmitOut(
+                                  _gastoController.handleSubmitOut(
                                     onSuccess: () {
                                       Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const SpendingScreen(),
+                                          builder: (context) => const GastoScreen(),
                                         ),
                                         (route) => false
                                       );

@@ -3,18 +3,18 @@ import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Spending/SpendingFlow/EntryScreen/index.dart';
-import 'package:finances/src/ui/screens/Spending/SpendingFlow/OutScreen/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/EntradaScreen/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/SaidaScreen/index.dart';
 import 'package:flutter/material.dart';
 
-class SpendingScreen extends StatefulWidget {
-  const SpendingScreen({super.key});
+class GastoScreen extends StatefulWidget {
+  const GastoScreen({super.key});
 
   @override
-  State<SpendingScreen> createState() => _SpendingScreenState();
+  State<GastoScreen> createState() => _GastoScreenState();
 }
 
-class _SpendingScreenState extends State<SpendingScreen> {
+class _GastoScreenState extends State<GastoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +70,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const EntryScreen()),
+                                  MaterialPageRoute(builder: (context) => const EntradaScreen()),
                                 );
                               },
                               style: 'success',
@@ -84,7 +84,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const OutScreen()),
+                                  MaterialPageRoute(builder: (context) => const SaidaScreen()),
                                 );
                               },
                               style: 'danger',

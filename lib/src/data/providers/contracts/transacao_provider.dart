@@ -1,6 +1,6 @@
 import 'package:finances/src/data/providers/contracts/crud_provider.dart';
 
-abstract class TransactionProvider extends CRUDProvider {
+abstract class TransacaoProvider extends CRUDProvider {
   Future<List<Map<String, dynamic>>> recoverAllByCard(String cardId);
   Future<List<Map<String, dynamic>>> recoverAllByDate(DateTime date);
   Future<List<Map<String, dynamic>>> recoverAllByDateRange(DateTime startDate, DateTime endDate);

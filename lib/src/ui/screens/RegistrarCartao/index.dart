@@ -1,48 +1,61 @@
 
-import 'package:finances/src/controllers/card_controller.dart';
+import 'package:finances/src/controllers/cartao_controller.dart';
+import 'package:finances/src/controllers/tipo_cartao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/data/models/card.dart' as card_model;
+import 'package:finances/src/data/models/cartao.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Card/index.dart';
 import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Card/index.dart';
+import 'package:finances/src/ui/screens/Cartao/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:motion_toast/motion_toast.dart';
 
-class RegisterCardScreen extends StatefulWidget {
-  card_model.Card? card;
+class RegistrarCartaoScreen extends StatefulWidget {
+  Cartao? cartao;
 
-  RegisterCardScreen({
+  RegistrarCartaoScreen({
     super.key,
-    this.card,
+    this.cartao,
   });
 
   @override
-  State<RegisterCardScreen> createState() => _RegisterCardScreenState();
+  State<RegistrarCartaoScreen> createState() => _RegistrarCartaoScreenState();
 }
 
-class _RegisterCardScreenState extends State<RegisterCardScreen> {
-  var _formKey;
-  final _controller = CardController();
+class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
+  final CartaoController _cartaoController = CartaoController();
+  final TipoCartaoController _tipoCartaoController = TipoCartaoController();
+
+  List<Map<dynamic, String>> tiposCartao = [];
 
   @override
   void initState() {
     super.initState();
-    _formKey = GlobalKey<FormState>();
-    _controller.current = widget.card;
-    _controller.typeController.text = _controller.current?.type ?? 'credit';
+    _cartaoController.current = widget.cartao;
+    _cartaoController.idTipoCartaoController.text = _cartaoController.current!.idTipoCartao.toString();
     
-    if (_controller.hexColorController.text.isEmpty) {
-      _controller.hexColorController.text = AppColors.purple.toString().substring(10, AppColors.purple.toString().length - 1);
+    if (_cartaoController.hexCorController.text.isEmpty) {
+      _cartaoController.hexCorController.text = AppColors.purple.toString().substring(10, AppColors.purple.toString().length - 1);
     }
   }
 
   void changeColor(Color color) {
-    setState(() => _controller.hexColorController.text = color.toString().substring(10, color.toString().length - 1));
+    setState(() => _cartaoController.hexCorController.text = color.toString().substring(10, color.toString().length - 1));
+  }
+
+  void loadTipoCartao() async {
+    await _tipoCartaoController.getTiposCartao();
+
+    for (var tipo in _tipoCartaoController.dataSourceTipoCartao) {
+      tiposCartao.add({
+        'value': tipo.id.toString(),
+        'label': tipo.descricao.toString(),
+      });
+    }
   }
 
   @override
@@ -73,39 +86,35 @@ class _RegisterCardScreenState extends State<RegisterCardScreen> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 24.0),
                         child: TextComponent(
-                          text: _controller.current == null ? 'Cadastrar cartão' : 'Editar cartão',
+                          text: _cartaoController.current == null ? 'Cadastrar cartão' : 'Editar cartão',
                           style: 'title',
                         ),
                       ),
                       Form(
-                        key: _formKey,
                         child: Column(
                           children: [
                             FormInputComponent(
-                              controller: _controller.nameController,
+                              controller: _cartaoController.nomeController,
                               label: 'Nome para o cartão'
                             ),
                             FormInputComponent(
-                              controller: _controller.finalNumberController,
+                              controller: _cartaoController.finalCartaoController,
                               label: 'Final do cartão',
                               keyboardType: TextInputType.number,
                               isRequired: false,
                             ),
                             FormInputComponent(
-                              controller: _controller.dueDayController,
+                              controller: _cartaoController.diaVencimentoController,
                               label: 'Dia de vencimento',
                               keyboardType: TextInputType.number,
                               isRequired: false,
                             ),
                             FormDropdownComponent(
                               label: 'Tipo de cartão',
-                              items: const [
-                                {'value': 'credit', 'label': 'Crédito'},
-                                {'value': 'debit', 'label': 'Débito'},
-                              ],
-                              startValue: _controller.typeController.text,
+                              items: tiposCartao,
+                              startValue: _cartaoController.idTipoCartaoController.text,
                               onChanged: (value) {
-                                _controller.typeController.text = value;
+                                _cartaoController.idTipoCartaoController.text = value;
                               },
                             ),
                             TextButton(
@@ -117,7 +126,7 @@ class _RegisterCardScreenState extends State<RegisterCardScreen> {
                                       title: const Text('Pick a color!'),
                                       content: SingleChildScrollView(
                                         child: ColorPicker(
-                                          pickerColor: Color(int.parse("0xff${_controller.hexColorController.text}")),
+                                          pickerColor: Color(int.parse("0xff${_cartaoController.hexCorController.text}")),
                                           onColorChanged: changeColor,
                                         ),
                                       ),
@@ -154,10 +163,10 @@ class _RegisterCardScreenState extends State<RegisterCardScreen> {
                         ),
                       ),
                       CardComponent(
-                        cardName: _controller.nameController.text,
-                        cardNumVenc: _controller.dueDayController.text,
-                        cardNumFinal: _controller.finalNumberController.text,
-                        cardColor: Color(int.parse("0xff${_controller.hexColorController.text}")),
+                        cardName: _cartaoController.nomeController.text,
+                        cardNumVenc: _cartaoController.diaVencimentoController.text,
+                        cardNumFinal: _cartaoController.finalCartaoController.text,
+                        cardColor: Color(int.parse("0xff${_cartaoController.hexCorController.text}")),
                         onPressed: () {},
                       ),
                       Container(
@@ -177,34 +186,32 @@ class _RegisterCardScreenState extends State<RegisterCardScreen> {
                         ),
                         child: ButtonComponent(
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              _controller.handleSubmit(
-                                onSuccess: () {
+                            _cartaoController.handleSubmit(
+                              onSuccess: () {
 
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const CardScreen(),
-                                    ),
-                                    (route) => false
-                                  );
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CartaoScreen(),
+                                  ),
+                                  (route) => false
+                                );
 
-                                  MotionToast.success(description: const Text('Cartão cadastrado com sucesso')).show(context);
+                                MotionToast.success(description: const Text('Cartão cadastrado com sucesso')).show(context);
 
-                                  return null;
-                                },
-                                onFailure: (onFailure) {
-                                  MotionToast
-                                    .error(
-                                      title: const Text("Atenção"),
-                                      description: Text(onFailure)
-                                    )
-                                    .show(context);
-                                  return null;
-                                }
-                              );
-                              setState(() {});
-                            }
+                                return null;
+                              },
+                              onFailure: (onFailure) {
+                                MotionToast
+                                  .error(
+                                    title: const Text("Atenção"),
+                                    description: Text(onFailure)
+                                  )
+                                  .show(context);
+                                return null;
+                              }
+                            );
+                            setState(() {});
                           },
                           children: TextComponent(
                             text: 'Salvar',

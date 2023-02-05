@@ -1,19 +1,19 @@
-import 'package:finances/src/controllers/card_controller.dart';
+import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/data/models/card.dart' as card_model;
+import 'package:finances/src/data/models/cartao.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Card/index.dart';
-import 'package:finances/src/ui/screens/RegisterCard/index.dart';
+import 'package:finances/src/ui/screens/Cartao/index.dart';
+import 'package:finances/src/ui/screens/RegistrarCartao/index.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
 
 class MyCardComponent extends StatefulWidget {
-  final card_model.Card card;
+  final Cartao cartao;
 
   const MyCardComponent({
     super.key,
-    required this.card
+    required this.cartao
   });
 
   @override
@@ -21,7 +21,7 @@ class MyCardComponent extends StatefulWidget {
 }
 
 class _MyCardComponentState extends State<MyCardComponent> {
-  final _controller = CardController();
+  final _controller = CartaoController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class _MyCardComponentState extends State<MyCardComponent> {
               margin: const EdgeInsets.only(right: 16.0),
               child: const Icon(Icons.credit_card),
             ),
-            TextComponent(text: widget.card.name.toString()),
+            TextComponent(text: widget.cartao.nome.toString()),
           ]
         ),
         Row(
@@ -47,7 +47,7 @@ class _MyCardComponentState extends State<MyCardComponent> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RegisterCardScreen(card: widget.card)
+                    builder: (context) => RegistrarCartaoScreen(cartao: widget.cartao)
                   )
                 );
               },
@@ -62,7 +62,7 @@ class _MyCardComponentState extends State<MyCardComponent> {
                     return AlertDialog(
                       title: const Text('Remover cartão'),
                       content: SingleChildScrollView(
-                        child: Text('Tem certeza que deseja remover ${widget.card.name?.toUpperCase()}?')
+                        child: Text('Tem certeza que deseja remover ${widget.cartao.nome?.toUpperCase()}?')
                       ),
                       actions: <Widget>[
                         Row(
@@ -72,12 +72,12 @@ class _MyCardComponentState extends State<MyCardComponent> {
                               style: 'danger',
                               onPressed: () {
                                 _controller.deleteCard(
-                                  widget.card.id!,
+                                  widget.cartao.id!,
                                   onSuccess: () {
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const CardScreen(),
+                                        builder: (context) => const CartaoScreen(),
                                       ),
                                       (route) => false
                                     );

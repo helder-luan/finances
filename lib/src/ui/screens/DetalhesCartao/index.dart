@@ -1,28 +1,26 @@
 
+import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/helpers/functions.dart';
-import 'package:finances/src/mock/mockDataUser.dart';
-import 'package:finances/src/data/models/card.dart' as card_model;
+import 'package:finances/src/data/models/cartao.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
 
-class CardDetails extends StatefulWidget {
-  final card_model.Card card;
-  const CardDetails({super.key, required this.card});
+class DetalhesCartao extends StatefulWidget {
+  final Cartao cartao;
+  const DetalhesCartao({super.key, required this.cartao});
 
   @override
-  State<CardDetails> createState() => _CardDetailsState();
+  State<DetalhesCartao> createState() => _DetalhesCartaoState();
 }
 
-class _CardDetailsState extends State<CardDetails> {
-  var historyCurrentYear = history['${DateTime.now().year}'];
+class _DetalhesCartaoState extends State<DetalhesCartao> {
+  final GastoController _controller = GastoController();
   
-  var historyCurrentMonth;
-
-  var historyDetails;
+  late List<Map<String, dynamic>> historico;
 
   double faturaTotal = 0;
 
@@ -30,21 +28,15 @@ class _CardDetailsState extends State<CardDetails> {
   void initState() {
     super.initState();
 
-    loadCurrentTransactions();
+    loadHistorico();
 
-    if (historyDetails != null) {
-      faturaTotal = historyDetails
-        .where((element) => element.type == 'out' && element.cardId == widget.card.id)
-        .fold(0, (previousValue, element) => previousValue + element.value);
-    } else {
-      faturaTotal = 0;
+    for (var element in historico) {
+      faturaTotal += element['valor'];
     }
   }
-  
-  void loadCurrentTransactions() {
-    historyCurrentMonth = historyCurrentYear!.firstWhere((element) => element['monthNumber'] == DateTime.now().month, orElse: () => {});
-    
-    historyDetails = historyCurrentMonth != null ? historyCurrentMonth!['transactions'] : null;
+
+  void loadHistorico() async {
+    historico = await _controller.getTransacoesMesAtualECartao();
   }
 
   @override
@@ -83,7 +75,7 @@ class _CardDetailsState extends State<CardDetails> {
                                 size: 24.0,
                               ),
                               TextComponent(
-                                text: widget.card.name.toString().toUpperCase(),
+                                text: widget.cartao.nome.toString().toUpperCase(),
                                 weigth: FontWeight.bold,
                                 size: 24.0,
                               ),
@@ -106,7 +98,7 @@ class _CardDetailsState extends State<CardDetails> {
                         style: 'subtitle',
                       ),
                     ),
-                    historyDetails == null
+                    historico.isNotEmpty
                     ? Container(
                       margin: const EdgeInsets.symmetric(vertical: 32.0),
                       alignment: Alignment.center,
@@ -116,20 +108,20 @@ class _CardDetailsState extends State<CardDetails> {
                     )
                     : ListView.builder(
                       shrinkWrap: true,
-                      itemCount: historyDetails.isNotEmpty ? historyDetails.length : 1,
+                      itemCount: historico.isNotEmpty ? historico.length : 1,
                       itemBuilder: (BuildContext context, int index) {
-                        var formattedValue = Functions.toCurrency(historyDetails[index].value);
+                        var formattedValue = Functions.toCurrency(historico[index]['valor']);
           
-                        if (historyDetails.isNotEmpty && historyDetails[index].cardId == widget.card.id) {
+                        if (historico.isNotEmpty && historico[index]['idCartao'] == widget.cartao.id) {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               TextComponent(
-                                text: historyDetails[index].description.toString(),
+                                text: historico[index]['descricao'].toString(),
                               ),
                               TextComponent(
-                                text: historyDetails[index].type == 'entry' ? "+ ${formattedValue.toString()}" : "- ${formattedValue.toString()}",
-                                color: historyDetails[index].type == 'entry' ? AppColors.success : AppColors.danger,
+                                text: historico[index]['type'] == 'entry' ? "+ ${formattedValue.toString()}" : "- ${formattedValue.toString()}",
+                                color: historico[index]['type'] == 'entry' ? AppColors.success : AppColors.danger,
                               ),
                             ],
                           );
@@ -173,7 +165,7 @@ class _CardDetailsState extends State<CardDetails> {
                           Container(
                             margin: const EdgeInsets.only(right: 8.0),
                             child: TextComponent(
-                              text: widget.card.dueDay.toString(),
+                              text: widget.cartao.diaVencimento.toString(),
                             ),
                           ),
                           TextComponent(
@@ -181,7 +173,7 @@ class _CardDetailsState extends State<CardDetails> {
                             weigth: FontWeight.bold,
                           ),
                           TextComponent(
-                            text: widget.card.finalNumber.toString(),
+                            text: widget.cartao.finalCartao.toString(),
                           ),
                         ],
                       ),

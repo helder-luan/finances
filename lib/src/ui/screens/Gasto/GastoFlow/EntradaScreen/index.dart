@@ -1,33 +1,36 @@
-import 'package:finances/src/controllers/spending_controller.dart';
+import 'package:finances/src/controllers/cartao_controller.dart';
+import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/mock/mockDataUser.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Form/Checkbox/index.dart';
 import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Spending/index.dart';
+import 'package:finances/src/ui/screens/Gasto/index.dart';
 import 'package:flutter/material.dart';
 import 'package:mask/mask/mask.dart';
 import 'package:motion_toast/motion_toast.dart';
 
-class EntryScreen extends StatefulWidget {
-  const EntryScreen({super.key});
+class EntradaScreen extends StatefulWidget {
+  const EntradaScreen({super.key});
 
   @override
-  State<EntryScreen> createState() => _EntryScreenState();
+  State<EntradaScreen> createState() => _EntradaScreenState();
 }
 
-class _EntryScreenState extends State<EntryScreen> {
+class _EntradaScreenState extends State<EntradaScreen> {
   var _formKey;
-  bool? ressarcimento = false;
+  final GastoController _gastoController = GastoController();
+  final CartaoController _cartaoController = CartaoController();
+  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
 
-  final _controller = SpendingController();
+  bool? ressarcimento = false;
 
   List<Map<String, String>> myCards = [
     {
-      'value': '0',
+      'value': '',
       'label': 'Selecione um cartão',
     }
   ];
@@ -37,15 +40,26 @@ class _EntryScreenState extends State<EntryScreen> {
     // TODO: implement initState
     super.initState();
 
-    cards.map((card) {
+    loadCartoes();
+    loadTipoOperacao();
+
+    _gastoController.reembolso.text = 'false';
+  }
+
+  void loadCartoes() async {
+    await _cartaoController.atualizarDados();
+    _cartaoController.dataSourceCartao.map((cartao) {
       myCards.add({
-        'value': card.id.toString(),
-        'label': card.name.toString(),
+        'value': cartao.id.toString(),
+        'label': cartao.nome.toString(),
       });
     }).toList();
+  }
 
-    _controller.movimentType.text = 'entry';
-    _controller.refound.text = 'false';
+  void loadTipoOperacao() async {
+    await _tipoOperacaoController.getTiposOperacao();
+
+    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.first.id.toString();
   }
   
   @override
@@ -89,17 +103,17 @@ class _EntryScreenState extends State<EntryScreen> {
                           children: [
                             FormInputComponent(
                               label: 'Descrição',
-                              controller: _controller.description,
+                              controller: _gastoController.descricao,
                             ),
                             FormInputComponent(
                               label: 'Valor',
-                              controller: _controller.value,
+                              controller: _gastoController.valor,
                               keyboardType: TextInputType.number,
                               formatters: [Mask.money()],
                             ),
                             FormInputComponent(
                               label: 'Detalhes',
-                              controller: _controller.details,
+                              controller: _gastoController.detalhes,
                             ),
                             FormCheckboxComponent(
                               label: 'Ressarcimento',
@@ -107,7 +121,7 @@ class _EntryScreenState extends State<EntryScreen> {
                               onChanged: (value) {
                                 setState(() {
                                   ressarcimento = value;
-                                  _controller.refound.text = value.toString();
+                                  _gastoController.reembolso.text = value.toString();
                                 });
                               },
                             ),
@@ -116,9 +130,9 @@ class _EntryScreenState extends State<EntryScreen> {
                               child: FormDropdownComponent(
                                 label: 'Cartão',
                                 items: myCards,
-                                startValue: '0',
+                                startValue: '',
                                 onChanged: (value) {
-                                  _controller.cardId.text = value.toString();
+                                  _gastoController.idCartao.text = value.toString();
                                 },
                               )
                             ),
@@ -127,12 +141,12 @@ class _EntryScreenState extends State<EntryScreen> {
                               width: MediaQuery.of(context).size.width-32,
                               child: ButtonComponent(
                                 onPressed: () {
-                                  _controller.handleSubmitEntry(
+                                  _gastoController.handleSubmitEntry(
                                     onSuccess: () {
                                       Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const SpendingScreen(),
+                                          builder: (context) => const GastoScreen(),
                                         ),
                                         (route) => false
                                       );

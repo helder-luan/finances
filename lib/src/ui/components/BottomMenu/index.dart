@@ -1,8 +1,8 @@
 import 'package:finances/src/core/app_images.dart';
-import 'package:finances/src/ui/screens/Card/index.dart';
-import 'package:finances/src/ui/screens/History/index.dart';
+import 'package:finances/src/ui/screens/Cartao/index.dart';
+import 'package:finances/src/ui/screens/Historico/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
-import 'package:finances/src/ui/screens/Spending/index.dart';
+import 'package:finances/src/ui/screens/Gasto/index.dart';
 import 'package:flutter/material.dart';
 
 class BottomMenu extends StatelessWidget {
@@ -31,7 +31,7 @@ class BottomMenu extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SpendingScreen(),
+                    builder: (context) => const GastoScreen(),
                   ),
                   (route) => false);
             },
@@ -43,7 +43,7 @@ class BottomMenu extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CardScreen(),
+                    builder: (context) => const CartaoScreen(),
                   ),
                   (route) => false);
             },
@@ -67,7 +67,7 @@ class BottomMenu extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HistoryScreen(),
+                    builder: (context) => const HistoricoScreen(),
                   ),
                   (route) => false);
             },

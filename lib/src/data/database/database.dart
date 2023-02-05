@@ -39,7 +39,7 @@ class Database {
     await db.insert('tbl_tipo_cartao', {'descricao': 'Débito'});
 
     await db.insert('tbl_tipo_operacao', {'descricao': 'Entrada'});
-    await db.insert('tbl_tipo_operacao', {'descricao': 'Saida'});
+    await db.insert('tbl_tipo_operacao', {'descricao': 'Saída'});
   }
 
   String get _tipoCartao => '''
@@ -74,8 +74,9 @@ class Database {
       descricao TEXT NOT NULL,
       valor TEXT NOT NULL,
       detalhes TEXT,
-      dataCadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+      dataCadastro DATETIME NOT NULL,
       idTipoOperacao INTEGER NOT NULL,
+      mesReferencia INTEGER NOT NULL,
       reembolso BOOLEAN DEFAULT 0,
       idCartao INTEGER DEFAULT NULL,
       gastoMensal BOOLEAN DEFAULT 0,

@@ -1,36 +1,39 @@
 
+import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/helpers/functions.dart';
-import 'package:finances/src/mock/mockDataUser.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
 
-class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+class HistoricoScreen extends StatefulWidget {
+  const HistoricoScreen({super.key});
 
   @override
-  State<HistoryScreen> createState() => _HistoryScreenState();
+  State<HistoricoScreen> createState() => _HistoricoScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
-  var historyCurrentYear = history['${DateTime.now().year}'];
-  
-  var historyCurrentMonth;
+class _HistoricoScreenState extends State<HistoricoScreen> {
+  final GastoController _gastoController = GastoController();
+  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
 
-  var historyDetails;
+  late List<Map<String, dynamic>> historico;
 
   @override
   void initState() {
     super.initState();
 
-    loadCurrentTransactions();
+    loadTipoOperacao();
+    loadHistorico();
   }
-  
-  void loadCurrentTransactions() {
-    historyCurrentMonth = historyCurrentYear!.firstWhere((element) => element['monthNumber'] == DateTime.now().month, orElse: () => {});
-    
-    historyDetails = historyCurrentMonth != null ? historyCurrentMonth!['transactions'] : null;
+
+  void loadTipoOperacao() async {
+    await _tipoOperacaoController.getTiposOperacao();
+  }
+
+  void loadHistorico() async {
+    historico = await _gastoController.getTransacoesMesAtual();
   }
 
   @override
@@ -40,7 +43,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         child: RefreshIndicator(
           onRefresh: () async {
             setState(() {
-              loadCurrentTransactions();
+              loadHistorico();
             });
           },
           child: Container(
@@ -75,7 +78,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         style: 'subtitle',
                       ),
                       Visibility(
-                        visible: historyDetails == null,
+                        visible: historico.isNotEmpty,
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 32.0),
                           alignment: Alignment.center,
@@ -85,23 +88,33 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         )
                       ),
                       Visibility(
-                        visible: historyDetails != null,
+                        visible: historico.isNotEmpty,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: historyDetails != null ? historyDetails.length : 1,
+                          itemCount: historico.isNotEmpty ? historico.length : 1,
                           itemBuilder: (BuildContext context, int index) {
-                            var formattedValue = Functions.toCurrency(historyDetails[index].value);
+                            var valorFormatado = Functions.toCurrency(historico[index]['valor']);
+
+                            bool entrada = false;
+
+                            if (
+                              historico[index]['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].id
+                              &&
+                              _tipoOperacaoController.dataSourceTipoOperacao[0].descricao == 'Entrada'
+                            ) {
+                              entrada = true;
+                            }
                       
-                            if (historyDetails != null) {
+                            if (historico.isNotEmpty) {
                               return Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextComponent(
-                                    text: historyDetails[index].description.toString(),
+                                    text: historico[index]['descricao'],
                                   ),
                                   TextComponent(
-                                    text: historyDetails[index].type == 'entry' ? "+ ${formattedValue.toString()}" : "- ${formattedValue.toString()}",
-                                    color: historyDetails[index].type == 'entry' ? AppColors.success : AppColors.danger,
+                                    text: entrada ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}",
+                                    color: entrada ? AppColors.success : AppColors.danger,
                                   ),
                                 ],
                               );

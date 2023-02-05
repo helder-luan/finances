@@ -1,8 +1,9 @@
 
 
+import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/core/app_images.dart';
-import 'package:finances/src/mock/mockDataUser.dart';
+import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
@@ -15,19 +16,17 @@ class MonthlyHistory extends StatefulWidget {
 }
 
 class _MonthlyHistoryState extends State<MonthlyHistory> {
-  var historyCurrentYear = history['${DateTime.now().year}'];
-  
-  var historyCurrentMonth;
+  final GastoController _gastoController = GastoController();
 
   @override
   void initState() {
     super.initState();
 
-    loadCurrentTransactions();
+    loadHistorico();
   }
   
-  void loadCurrentTransactions() {
-    historyCurrentMonth = historyCurrentYear!.firstWhere((element) => element['monthNumber'] == DateTime.now().month, orElse: () => {});
+  void loadHistorico() async {
+    await _gastoController.getTransacoes();
   }
 
   @override
@@ -117,13 +116,13 @@ class _MonthlyHistoryState extends State<MonthlyHistory> {
                     // ),
                     Wrap(
                       children: [
-                        for (var month in historyCurrentYear!)
+                        for (var transacao in _gastoController.dataSourceTransacao)
                           Container(
                             width: (MediaQuery.of(context).size.width / 2) - 32,
                             margin: const EdgeInsets.only(bottom: 16.0, right: 16.0),
                             padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
-                              color: month['monthNumber'] == DateTime.now().month ? AppColors.primary : Colors.white,
+                              color: transacao.mesReferencia == DateTime.now().month ? AppColors.primary : Colors.white,
                               borderRadius: BorderRadius.circular(8.0),
                               boxShadow: [
                                 BoxShadow(
@@ -139,12 +138,12 @@ class _MonthlyHistoryState extends State<MonthlyHistory> {
                               children: [
                                 TextComponent(
                                   text: "Mês",
-                                  color: month['monthNumber'] == DateTime.now().month ? Colors.white : Colors.black,
+                                  color: transacao.mesReferencia == DateTime.now().month ? Colors.white : Colors.black,
                                 ),
                                 TextComponent(
-                                  text: month['month'],
+                                  text: Functions.fullMonthName(int.parse(transacao.mesReferencia.toString())),
                                   style: 'subtitle',
-                                  color: month['monthNumber'] == DateTime.now().month ? Colors.white : Colors.black,
+                                  color: transacao.mesReferencia == DateTime.now().month ? Colors.white : Colors.black,
                                 ),
                               ],
                             ),

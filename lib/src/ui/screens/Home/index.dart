@@ -1,12 +1,14 @@
 
+import 'package:finances/src/controllers/cartao_controller.dart';
+import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/helpers/functions.dart';
-import 'package:finances/src/mock/mockDataUser.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Card/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/CardDetails/index.dart';
+import 'package:finances/src/ui/screens/DetalhesCartao/index.dart';
 import 'package:finances/src/ui/screens/MonthlyHistory/index.dart';
 import 'package:flutter/material.dart';
 
@@ -18,36 +20,60 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var historyCurrentYear = history['${DateTime.now().year}'];
-  var historyCurrentMonth;
-  var historyDetails;
+  final GastoController _gastoController = GastoController();
+  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
+  final CartaoController _cartaoController = CartaoController();
+  late List<Map<String, dynamic>> historico;
 
   late double gastoTotal;
   late double dividaTotal;
 
-  void loadCurrentTransactions() {
-    historyCurrentMonth = historyCurrentYear!.firstWhere((element) => element['monthNumber'] == DateTime.now().month, orElse: () => {});
-    
-    historyDetails = historyCurrentMonth != null ? historyCurrentMonth!['transactions'] : null;
-  }
-
   @override
   void initState() {
     super.initState();
-    loadCurrentTransactions();
+    loadTipoOperacao();
+    loadHistorico();
 
-    if (historyDetails != null) {
-      gastoTotal = historyDetails
-        !.where((element) => element.type == 'out')
-        .fold(0, (previousValue, element) => previousValue + element.value);
+    _cartaoController.atualizarDados();
 
-      dividaTotal = historyDetails
-        !.where((element) => element.type == 'out' && element.monthlyExpense)
-        .fold(0, (previousValue, element) => previousValue + element.value);
+    if (historico.isNotEmpty) {
+      gastoTotal = historico.where(
+        (transacao) => 
+          transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].id
+          &&
+          _tipoOperacaoController.dataSourceTipoOperacao[0].descricao == 'Saída'
+      )
+      .fold(
+        0,
+        (double previousValue, transacao) =>
+          previousValue + transacao['valor']
+      );
+
+      dividaTotal = historico.where(
+        (transacao) =>
+        transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].id
+        &&
+        _tipoOperacaoController.dataSourceTipoOperacao[0].descricao == 'Saída'
+        &&
+        transacao['gastoMensal'] == true
+      )
+      .fold(
+        0,
+        (previousValue, transacao) =>
+          previousValue + transacao['valor']
+      );
     } else {
       gastoTotal = 0;
       dividaTotal = 0;
     }
+  }
+
+  void loadTipoOperacao() async {
+    await _tipoOperacaoController.getTiposOperacao();
+  }
+
+  void loadHistorico() async {
+    historico = await _gastoController.getTransacoesMesAtual();
   }
 
   @override
@@ -190,20 +216,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     // cards
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: cards.length,
+                      itemCount: _cartaoController.dataSourceCartao.length,
                       itemBuilder: (context, index) {
-                        var card = cards[index];
+                        var cartao = _cartaoController.dataSourceCartao[index];
                             
                         return CardComponent(
-                          cardName: card.name.toString(),
-                          cardNumVenc: card.dueDay.toString(),
-                          cardNumFinal: card.finalNumber.toString(),
-                          cardColor: Color(int.parse("0xFF${card.hexColor}")),
+                          cardName: cartao.nome.toString(),
+                          cardNumVenc: cartao.diaVencimento.toString(),
+                          cardNumFinal: cartao.finalCartao.toString(),
+                          cardColor: Color(int.parse("0xFF${cartao.hexCor}")),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CardDetails(card: card),
+                                builder: (context) => DetalhesCartao(cartao: cartao),
                               ),
                             );
                           },

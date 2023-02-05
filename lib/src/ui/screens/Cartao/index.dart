@@ -1,45 +1,28 @@
+import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/core/app_images.dart';
-import 'package:finances/src/mock/mockDataUser.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/MyCard/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
-import 'package:finances/src/ui/screens/RegisterCard/index.dart';
+import 'package:finances/src/ui/screens/RegistrarCartao/index.dart';
 import 'package:flutter/material.dart';
 
-class CardScreen extends StatefulWidget {
-  const CardScreen({
+class CartaoScreen extends StatefulWidget {
+  const CartaoScreen({
     super.key
   });
 
   @override
-  State<CardScreen> createState() => _CardScreenState();
+  State<CartaoScreen> createState() => _CartaoScreenState();
 }
 
-class _CardScreenState extends State<CardScreen> {
+class _CartaoScreenState extends State<CartaoScreen> {
+  final CartaoController _cartaoController = CartaoController();
   var _formKey;
 
-  List<Map<dynamic, String>> formPayment = [
-    {'value': '1', 'label': 'Dinheiro'},
-    {'value': '2', 'label': 'Cartão de débito'},
-    {'value': '3', 'label': 'Cartão de crédito'},
-  ];
-
-  List<Map<dynamic, String>> myCards = [
-    {'value': '1', 'label': 'Cartão 1'},
-    {'value': '2', 'label': 'Cartão 2'},
-    {'value': '3', 'label': 'Cartão 3'}
-  ];
-
-  var formPaymentChoice = '1';
-  var cardChoice = '1';
-
-  var monthlyExpense = false;
-
-  var installments = false;
-  var cardInstallments = '1';
+  var parcelado = false;
 
   @override
   void initState() {
@@ -105,11 +88,11 @@ class _CardScreenState extends State<CardScreen> {
                             },
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: cards.length,
+                              itemCount: _cartaoController.dataSourceCartao.length,
                               itemBuilder: (context, index) {
-                                var card = cards[index];
+                                var cartao = _cartaoController.dataSourceCartao[index];
                           
-                                return MyCardComponent(card: card);
+                                return MyCardComponent(cartao: cartao);
                               },
                             ),
                           ),
@@ -133,7 +116,7 @@ class _CardScreenState extends State<CardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => RegisterCardScreen(),
+                                    builder: (context) => RegistrarCartaoScreen(),
                                   )
                                 );
                               },
