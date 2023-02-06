@@ -35,17 +35,6 @@ class _EntradaScreenState extends State<EntradaScreen> {
     }
   ];
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    loadCartoes();
-    loadTipoOperacao();
-
-    _gastoController.reembolso.text = 'false';
-  }
-
   void loadCartoes() async {
     await _cartaoController.atualizarDados();
     _cartaoController.dataSourceCartao.map((cartao) {
@@ -60,6 +49,17 @@ class _EntradaScreenState extends State<EntradaScreen> {
     await _tipoOperacaoController.getTiposOperacao();
 
     _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.first.id.toString();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    loadCartoes();
+    loadTipoOperacao();
+
+    _gastoController.reembolso.text = 'false';
   }
   
   @override

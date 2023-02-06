@@ -24,6 +24,10 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
 
   double faturaTotal = 0;
 
+  void loadHistorico() async {
+    historico = await _controller.getTransacoesMesAtualECartao();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -33,10 +37,6 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
     for (var element in historico) {
       faturaTotal += element['valor'];
     }
-  }
-
-  void loadHistorico() async {
-    historico = await _controller.getTransacoesMesAtualECartao();
   }
 
   @override

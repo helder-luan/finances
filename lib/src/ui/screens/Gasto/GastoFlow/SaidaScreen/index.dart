@@ -48,18 +48,6 @@ class _SaidaScreenState extends State<SaidaScreen> {
     }
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _gastoController.reembolso.text = 'false';
-    _gastoController.parcelado.text = 'false';
-    _gastoController.gastoMensal.text = 'false';
-
-    loadTipoOperacao();
-    loadTiposCartao();
-    loadCartoes();
-  }
-
   void loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao();
 
@@ -96,6 +84,18 @@ class _SaidaScreenState extends State<SaidaScreen> {
         });
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _gastoController.reembolso.text = 'false';
+    _gastoController.parcelado.text = 'false';
+    _gastoController.gastoMensal.text = 'false';
+
+    loadTipoOperacao();
+    loadTiposCartao();
+    loadCartoes();
   }
   
   @override

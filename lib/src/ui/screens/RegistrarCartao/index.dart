@@ -32,17 +32,6 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
 
   List<Map<dynamic, String>> tiposCartao = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _cartaoController.current = widget.cartao;
-    _cartaoController.idTipoCartaoController.text = _cartaoController.current!.idTipoCartao.toString();
-    
-    if (_cartaoController.hexCorController.text.isEmpty) {
-      _cartaoController.hexCorController.text = AppColors.purple.toString().substring(10, AppColors.purple.toString().length - 1);
-    }
-  }
-
   void changeColor(Color color) {
     setState(() => _cartaoController.hexCorController.text = color.toString().substring(10, color.toString().length - 1));
   }
@@ -55,6 +44,17 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
         'value': tipo.id.toString(),
         'label': tipo.descricao.toString(),
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _cartaoController.current = widget.cartao;
+    _cartaoController.idTipoCartaoController.text = _cartaoController.current!.idTipoCartao.toString();
+    
+    if (_cartaoController.hexCorController.text.isEmpty) {
+      _cartaoController.hexCorController.text = AppColors.purple.toString().substring(10, AppColors.purple.toString().length - 1);
     }
   }
 

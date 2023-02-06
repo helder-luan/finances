@@ -28,13 +28,25 @@ class _HomeScreenState extends State<HomeScreen> {
   late double gastoTotal;
   late double dividaTotal;
 
+  void loadCartoes() async {
+    await _cartaoController.atualizarDados();
+  }
+
+  void loadTipoOperacao() async {
+    await _tipoOperacaoController.getTiposOperacao();
+  }
+
+  void loadHistorico() async {
+    historico = await _gastoController.getTransacoesMesAtual();
+  }
+
   @override
   void initState() {
     super.initState();
+
+    loadCartoes();
     loadTipoOperacao();
     loadHistorico();
-
-    _cartaoController.atualizarDados();
 
     if (historico.isNotEmpty) {
       gastoTotal = historico.where(
@@ -66,14 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
       gastoTotal = 0;
       dividaTotal = 0;
     }
-  }
-
-  void loadTipoOperacao() async {
-    await _tipoOperacaoController.getTiposOperacao();
-  }
-
-  void loadHistorico() async {
-    historico = await _gastoController.getTransacoesMesAtual();
   }
 
   @override

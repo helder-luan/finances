@@ -1,31 +1,21 @@
-import 'dart:io';
-
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart' as sqlite;
 
-class Database {
-  Database._();
+class DB {
+  static final DB _db = DB._();
+  DB._();
 
-  static final instance = Database._();
+  static DB get instance => _db;
+  static late Database _database;
 
-  static sqlite.Database? _database;
+  get databaseInstance => _database;
 
-  Future getDB() async {
-    if (_database != null) return _database;
-
-    return await initDB();
-  }
-
-  Future<sqlite.Database> initDB() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.path, 'finances.db');
-    
-    return await openDatabase(
+  Future<void> initDB() async {
+    final String path = join(await getDatabasesPath(), 'finances.db');
+    _database = await openDatabase(
       path,
       version: 1,
-      onCreate: _onCreate,
+      onCreate: _onCreate
     );
   }
 
@@ -46,7 +36,14 @@ class Database {
     CREATE TABLE tbl_tipo_cartao (
       idTipoCartao INTEGER PRIMARY KEY AUTOINCREMENT,
       descricao TEXT NOT NULL
-    );
+    )
+  ''';
+
+  String get _tipoOperacao => '''
+    CREATE TABLE tbl_tipo_operacao (
+      idTipoOperacao INTEGER PRIMARY KEY AUTOINCREMENT,
+      descricao TEXT NOT NULL
+    )
   ''';
 
   String get _cartoes => '''
@@ -57,15 +54,8 @@ class Database {
       finalCartao TEXT NOT NULL,
       diaVencimento INTEGER NOT NULL,
       hexCor TEXT NOT NULL,
-      FOREIGN KEY (id_tipo_cartao) REFERENCES tbl_tipo_cartao (id)
-    );
-  ''';
-
-  String get _tipoOperacao => '''
-    CREATE TABLE tbl_tipo_operacao (
-      idTipoOperacao INTEGER PRIMARY KEY AUTOINCREMENT,
-      descricao TEXT NOT NULL
-    );
+      FOREIGN KEY (idTipoCartao) REFERENCES tbl_tipo_cartao (idTipoCartao)
+    )
   ''';
 
   String get _transacoes => '''
@@ -85,6 +75,6 @@ class Database {
       parcelaAtual INTEGER DEFAULT 0,
       FOREIGN KEY (idCartao) REFERENCES tbl_cartoes (idCartao),
       FOREIGN KEY (idTipoOperacao) REFERENCES tbl_tipo_operacao (idTipoOperacao)
-    );
+    )
   ''';
 }

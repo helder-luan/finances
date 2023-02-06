@@ -18,15 +18,15 @@ class MonthlyHistory extends StatefulWidget {
 class _MonthlyHistoryState extends State<MonthlyHistory> {
   final GastoController _gastoController = GastoController();
 
+  void loadHistorico() async {
+    await _gastoController.getTransacoes();
+  }
+  
   @override
   void initState() {
     super.initState();
 
     loadHistorico();
-  }
-  
-  void loadHistorico() async {
-    await _gastoController.getTransacoes();
   }
 
   @override

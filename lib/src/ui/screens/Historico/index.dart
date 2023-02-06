@@ -20,20 +20,20 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
 
   late List<Map<String, dynamic>> historico;
 
-  @override
-  void initState() {
-    super.initState();
-
-    loadTipoOperacao();
-    loadHistorico();
-  }
-
   void loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao();
   }
 
   void loadHistorico() async {
     historico = await _gastoController.getTransacoesMesAtual();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadTipoOperacao();
+    loadHistorico();
   }
 
   @override

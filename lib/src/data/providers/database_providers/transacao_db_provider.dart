@@ -1,9 +1,9 @@
 import 'package:finances/src/data/database/database.dart';
-import 'package:sqflite/sqflite.dart' as sqlite;
+import 'package:sqflite/sqflite.dart';
 import 'package:finances/src/data/providers/contracts/transacao_provider.dart';
 
 class TransacaoDbProvider extends TransacaoProvider {
-  final sqlite.Database _database = Database.instance.getDB() as sqlite.Database;
+  final Database _database = DB.instance.databaseInstance;
   final String table = 'tbl_transacoes';
   
   @override

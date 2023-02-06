@@ -1,9 +1,9 @@
 import 'package:finances/src/data/providers/contracts/tipo_cartao_provider.dart';
 import 'package:finances/src/data/database/database.dart';
-import 'package:sqflite/sqflite.dart' as sqlite;
+import 'package:sqflite/sqflite.dart';
 
 class TipoCartaoDbProvider extends TipoCartaoProvider {
-  final sqlite.Database _database = Database.instance.getDB() as sqlite.Database;
+  final Database _database = DB.instance.databaseInstance;
   final String table = 'tbl_cartoes';
 
   @override

@@ -20,7 +20,6 @@ class CartaoScreen extends StatefulWidget {
 
 class _CartaoScreenState extends State<CartaoScreen> {
   final CartaoController _cartaoController = CartaoController();
-  var _formKey;
 
   var parcelado = false;
 
