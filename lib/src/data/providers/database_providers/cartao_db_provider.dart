@@ -8,7 +8,7 @@ class CartaoDbProvider extends CartaoProvider {
 
   @override
   Future<bool> insert(Map<String, dynamic> registro) async {
-    registro.remove('id');
+    registro.remove('idCartao');
     await _database.insert(table, registro);
 
     return true;
@@ -16,7 +16,7 @@ class CartaoDbProvider extends CartaoProvider {
   
   @override
   Future<Map<String, dynamic>> recover(String id) async {
-    var result = await _database.query(table, where: 'id = ?', whereArgs: [id]);
+    var result = await _database.query(table, where: 'idCartao = ?', whereArgs: [id]);
     
     return result.isNotEmpty ? result.first : {};
   }
@@ -32,14 +32,15 @@ class CartaoDbProvider extends CartaoProvider {
   Future<bool> update(Map<String, dynamic> registro) async {
     var id = registro['id'];
     registro.remove('id');
-    await _database.update(table, registro, where: 'id = ?', whereArgs: [id]);
+    await _database.update(table, registro, where: 'idCartao = ?', whereArgs: [id]);
 
     return true;
   }
   
   @override
   Future<bool> delete(String id) async {
-    await _database.delete(table, where: 'id = ?', whereArgs: [id]);
+    await _database.delete(table, where: 'idCartao = ?', whereArgs: [id]);
+    
     return true;
   }
 }

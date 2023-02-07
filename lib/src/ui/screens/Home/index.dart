@@ -25,33 +25,28 @@ class _HomeScreenState extends State<HomeScreen> {
   final CartaoController _cartaoController = CartaoController();
   late List<Map<String, dynamic>> historico;
 
-  late double gastoTotal;
-  late double dividaTotal;
+  double gastoTotal = 0.0;
+  double dividaTotal = 0.0;
 
-  void loadCartoes() async {
+  Future loadCartoes() async {
     await _cartaoController.atualizarDados();
   }
 
-  void loadTipoOperacao() async {
+  Future loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao();
   }
 
-  void loadHistorico() async {
+  Future loadHistorico() async {
     historico = await _gastoController.getTransacoesMesAtual();
+    
+    calculaGastos();
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    loadCartoes();
-    loadTipoOperacao();
-    loadHistorico();
-
+  void calculaGastos() {
     if (historico.isNotEmpty) {
       gastoTotal = historico.where(
         (transacao) => 
-          transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].id
+          transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].idTipoOperacao
           &&
           _tipoOperacaoController.dataSourceTipoOperacao[0].descricao == 'Saída'
       )
@@ -63,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       dividaTotal = historico.where(
         (transacao) =>
-        transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].id
+        transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].idTipoOperacao
         &&
         _tipoOperacaoController.dataSourceTipoOperacao[0].descricao == 'Saída'
         &&
@@ -80,172 +75,188 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future loadAll() async {
+    await loadCartoes();
+    await loadTipoOperacao();
+    await loadHistorico();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.gradient,
-          ),
-          child: Column(
-            children: [
-              // header
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(0),
-                        backgroundColor: Colors.transparent,
-                      ),
-                      child: const ClipOval(
-                        child: Image(image: AssetImage('assets/upload/gary-final-space.jpg'), height: 50, width: 50, fit: BoxFit.cover),
-                      ),
-                    ),
-        
-                    Container(
-                      width: (MediaQuery.of(context).size.width-64)/2,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      ),
-                      alignment: Alignment.centerRight,
-                      child: ButtonComponent(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MonthlyHistory(),
-                            ),
-                          );
-                        },
-                        children: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  TextComponent(
-                                    text: 'Mês'
-                                  ),
-                                  TextComponent(
-                                    text: Functions.fullMonthName(DateTime.now().month),
-                                    style: 'title',
-                                  ),
-                                ]
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  ]
-                ),
+      body: FutureBuilder(
+        future: loadAll(),
+        builder: (context, snapshot) {
+          return SingleChildScrollView(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: AppColors.gradient,
               ),
-        
-              // body
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
-                ),
-                child: Column(
-                  children: [
-                    Row(
+              child: Column(
+                children: [
+                  // header
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        ElevatedButton(
+                          onPressed: () {
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(0),
+                            backgroundColor: Colors.transparent,
+                          ),
+                          child: const ClipOval(
+                            child: Image(image: AssetImage('assets/upload/gary-final-space.jpg'), height: 50, width: 50, fit: BoxFit.cover),
+                          ),
+                        ),
+            
                         Container(
                           width: (MediaQuery.of(context).size.width-64)/2,
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 8.0,
-                                spreadRadius: 1.0,
-                                offset: Offset(-5, 5),
-                              )
-                            ],
                           ),
                           alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                TextComponent(text: 'Gasto total'),
-                                TextComponent(text: Functions.toCurrency(gastoTotal), style: 'title'),
-                              ]
+                          child: ButtonComponent(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const MonthlyHistory(),
+                                ),
+                              );
+                            },
+                            children: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      TextComponent(
+                                        text: 'Mês'
+                                      ),
+                                      TextComponent(
+                                        text: Functions.fullMonthName(DateTime.now().month),
+                                        style: 'title',
+                                      ),
+                                    ]
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          width: (MediaQuery.of(context).size.width-64)/2,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 8.0,
-                                spreadRadius: 1.0,
-                                offset: Offset(-5, 5),
-                              )
-                            ],
-                          ),
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                TextComponent(text: 'Dívida total'),
-                                TextComponent(text: Functions.toCurrency(dividaTotal), style: 'title'),
-                              ]
-                            ),
-                          ),
-                        ),
+                        )
                       ]
                     ),
-                    // cards
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _cartaoController.dataSourceCartao.length,
-                      itemBuilder: (context, index) {
-                        var cartao = _cartaoController.dataSourceCartao[index];
-                            
-                        return CardComponent(
-                          cardName: cartao.nome.toString(),
-                          cardNumVenc: cartao.diaVencimento.toString(),
-                          cardNumFinal: cartao.finalCartao.toString(),
-                          cardColor: Color(int.parse("0xFF${cartao.hexCor}")),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetalhesCartao(cartao: cartao),
+                  ),
+            
+                  // body
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: (MediaQuery.of(context).size.width-64)/2,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 8.0,
+                                    spreadRadius: 1.0,
+                                    offset: Offset(-5, 5),
+                                  )
+                                ],
                               ),
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    TextComponent(text: 'Gasto total'),
+                                    TextComponent(text: Functions.toCurrency(gastoTotal), style: 'title'),
+                                  ]
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: (MediaQuery.of(context).size.width-64)/2,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 8.0,
+                                    spreadRadius: 1.0,
+                                    offset: Offset(-5, 5),
+                                  )
+                                ],
+                              ),
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    TextComponent(text: 'Dívida total'),
+                                    TextComponent(text: Functions.toCurrency(dividaTotal), style: 'title'),
+                                  ]
+                                ),
+                              ),
+                            ),
+                          ]
+                        ),
+                        // cards
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _cartaoController.dataSourceCartao.length,
+                          itemBuilder: (context, index) {
+                            var cartao = _cartaoController.dataSourceCartao[index];
+                                
+                            return CardComponent(
+                              cardName: cartao.nome.toString(),
+                              cardNumVenc: cartao.diaVencimento.toString(),
+                              cardNumFinal: cartao.finalCartao.toString(),
+                              cardColor: Color(int.tryParse("0xFF${cartao.hexCor}")!),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetalhesCartao(cartao: cartao),
+                                  ),
+                                );
+                              },
                             );
                           },
-                        );
-                      },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ]
               ),
-            ]
-          ),
-        ),
+            ),
+          );
+        },
       ),
       bottomNavigationBar: const BottomMenu(),
     );

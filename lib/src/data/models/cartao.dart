@@ -2,6 +2,7 @@ import 'package:finances/src/data/models/base_model.dart';
 import 'dart:convert';
 
 class Cartao extends BaseModel{
+  int? idCartao;
   int? idTipoCartao;
   String? nome;
   String? finalCartao;
@@ -9,17 +10,17 @@ class Cartao extends BaseModel{
   String? hexCor;
 
   Cartao({
-    String? id,
+    this.idCartao,
     this.idTipoCartao,
     this.nome,
     this.finalCartao,
     this.diaVencimento,
     this.hexCor,
-  }) : super(id: id);
+  });
 
   factory Cartao.fromMap(Map<String, dynamic> map) {
     return Cartao(
-      id: map['id'],
+      idCartao: map['idCartao'],
       idTipoCartao: map['idTipoCartao'],
       nome: map['nome'],
       finalCartao: map['finalCartao'],
@@ -31,7 +32,7 @@ class Cartao extends BaseModel{
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'idCartao': idCartao,
       'idTipoCartao': idTipoCartao,
       'nome': nome,
       'finalCartao': finalCartao,

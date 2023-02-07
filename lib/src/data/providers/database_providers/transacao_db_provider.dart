@@ -8,7 +8,7 @@ class TransacaoDbProvider extends TransacaoProvider {
   
   @override
   Future<bool> insert(Map<String, dynamic> registro) async {
-    registro.remove('id');
+    registro.remove('idTransacao');
     await _database.insert(table, registro);
 
     return true;
@@ -16,7 +16,7 @@ class TransacaoDbProvider extends TransacaoProvider {
 
   @override
   Future<Map<String, dynamic>> recover(String id) async {
-    var result = await _database.query(table, where: 'id = ?', whereArgs: [id]);
+    var result = await _database.query(table, where: 'idTransacao = ?', whereArgs: [id]);
 
     return result.isNotEmpty ? result.first : {};
   }
@@ -30,7 +30,7 @@ class TransacaoDbProvider extends TransacaoProvider {
 
   @override
   Future<bool> delete(String id) async {
-    await _database.delete(table, where: 'id = ?', whereArgs: [id]);
+    await _database.delete(table, where: 'idTransacao = ?', whereArgs: [id]);
 
     return true;
   }
@@ -39,7 +39,7 @@ class TransacaoDbProvider extends TransacaoProvider {
   Future<bool> update(Map<String, dynamic> registro) async {
     var id = registro['id'];
     registro.remove('id');
-    await _database.update(table, registro, where: 'id = ?', whereArgs: [id]);
+    await _database.update(table, registro, where: 'idTransacao = ?', whereArgs: [id]);
 
     return true;
   }
@@ -52,28 +52,28 @@ class TransacaoDbProvider extends TransacaoProvider {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> recoverAllByDate(DateTime date) async {
+  Future<List<Map<String, dynamic>>> recoverAllByDate(String date) async {
     var result = await _database.query(table, where: 'dataCadastro = ?', whereArgs: [date]);
 
     return result.isNotEmpty ? result : [];
   }
 
   @override
-  Future<List<Map<String, dynamic>>> recoverAllByDateAndCard(DateTime date, String cardId) async {
+  Future<List<Map<String, dynamic>>> recoverAllByDateAndCard(String date, String cardId) async {
     var result = await _database.query(table, where: 'dataCadastro = ? AND idCartao = ?', whereArgs: [date, cardId]);
 
     return result.isNotEmpty ? result : [];
   }
 
   @override
-  Future<List<Map<String, dynamic>>> recoverAllByDateRange(DateTime startDate, DateTime endDate) async {
+  Future<List<Map<String, dynamic>>> recoverAllByDateRange(String startDate, String endDate) async {
     var result = await _database.query(table, where: 'dataCadastro BETWEEN ? AND ?', whereArgs: [startDate, endDate]);
 
     return result.isNotEmpty ? result : [];
   }
 
   @override
-  Future<List<Map<String, dynamic>>> recoverAllByDateRangeAndCard(DateTime startDate, DateTime endDate, String cardId) async {
+  Future<List<Map<String, dynamic>>> recoverAllByDateRangeAndCard(String startDate, String endDate, String cardId) async {
     var result = await _database.query(table, where: 'dataCadastro BETWEEN ? AND ? AND idCartao = ?', whereArgs: [startDate, endDate, cardId]);
 
     return result.isNotEmpty ? result : [];

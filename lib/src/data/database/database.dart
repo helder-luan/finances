@@ -64,7 +64,7 @@ class DB {
       descricao TEXT NOT NULL,
       valor TEXT NOT NULL,
       detalhes TEXT,
-      dataCadastro DATETIME NOT NULL,
+      dataCadastro TEXT NOT NULL,
       idTipoOperacao INTEGER NOT NULL,
       mesReferencia INTEGER NOT NULL,
       reembolso BOOLEAN DEFAULT 0,

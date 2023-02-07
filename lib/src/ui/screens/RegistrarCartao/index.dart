@@ -30,28 +30,39 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
   final CartaoController _cartaoController = CartaoController();
   final TipoCartaoController _tipoCartaoController = TipoCartaoController();
 
-  List<Map<dynamic, String>> tiposCartao = [];
+  List<Map<dynamic, String>> tiposCartao = [
+    {
+      'value': '',
+      'label': 'Selecione um tipo de cartão',
+    }
+  ];
 
   void changeColor(Color color) {
     setState(() => _cartaoController.hexCorController.text = color.toString().substring(10, color.toString().length - 1));
   }
 
-  void loadTipoCartao() async {
-    await _tipoCartaoController.getTiposCartao();
-
+  void mapTipoCartao() {
     for (var tipo in _tipoCartaoController.dataSourceTipoCartao) {
       tiposCartao.add({
-        'value': tipo.id.toString(),
+        'value': tipo.idTipoCartao.toString(),
         'label': tipo.descricao.toString(),
       });
     }
   }
 
+  Future loadTipoCartao() async {
+    await _tipoCartaoController.getTiposCartao();
+
+    tiposCartao.length <= 1 ? mapTipoCartao() : null;
+  }
+
   @override
   void initState() {
+    loadTipoCartao();
+
     super.initState();
     _cartaoController.current = widget.cartao;
-    _cartaoController.idTipoCartaoController.text = _cartaoController.current!.idTipoCartao.toString();
+    _cartaoController.idTipoCartaoController.text = _cartaoController.current?.idTipoCartao.toString() ?? '';
     
     if (_cartaoController.hexCorController.text.isEmpty) {
       _cartaoController.hexCorController.text = AppColors.purple.toString().substring(10, AppColors.purple.toString().length - 1);
@@ -109,12 +120,23 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                               keyboardType: TextInputType.number,
                               isRequired: false,
                             ),
-                            FormDropdownComponent(
-                              label: 'Tipo de cartão',
-                              items: tiposCartao,
-                              startValue: _cartaoController.idTipoCartaoController.text,
-                              onChanged: (value) {
-                                _cartaoController.idTipoCartaoController.text = value;
+                            FutureBuilder(
+                              future: loadTipoCartao(),
+                              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                                if (tiposCartao.length > 1) {
+                                  return FormDropdownComponent(
+                                    label: 'Tipo de cartão',
+                                    items: tiposCartao,
+                                    startValue: _cartaoController.idTipoCartaoController.text,
+                                    onChanged: (value) {
+                                      _cartaoController.idTipoCartaoController.text = value;
+                                    },
+                                  );
+                                } else {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
                               },
                             ),
                             TextButton(
@@ -126,7 +148,7 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                                       title: const Text('Pick a color!'),
                                       content: SingleChildScrollView(
                                         child: ColorPicker(
-                                          pickerColor: Color(int.parse("0xff${_cartaoController.hexCorController.text}")),
+                                          pickerColor: Color(int.tryParse("0xff${_cartaoController.hexCorController.text}")!),
                                           onColorChanged: changeColor,
                                         ),
                                       ),
@@ -166,7 +188,7 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                         cardName: _cartaoController.nomeController.text,
                         cardNumVenc: _cartaoController.diaVencimentoController.text,
                         cardNumFinal: _cartaoController.finalCartaoController.text,
-                        cardColor: Color(int.parse("0xff${_cartaoController.hexCorController.text}")),
+                        cardColor: Color(int.tryParse("0xff${_cartaoController.hexCorController.text}")!),
                         onPressed: () {},
                       ),
                       Container(
@@ -188,7 +210,7 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                           onPressed: () async {
                             _cartaoController.handleSubmit(
                               onSuccess: () {
-
+    
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
@@ -196,9 +218,9 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                                   ),
                                   (route) => false
                                 );
-
+    
                                 MotionToast.success(description: const Text('Cartão cadastrado com sucesso')).show(context);
-
+    
                                 return null;
                               },
                               onFailure: (onFailure) {

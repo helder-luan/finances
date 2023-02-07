@@ -43,7 +43,7 @@ class CartaoController extends ChangeNotifier {
       ];
     }
 
-    if (diaVencimentoController.text.trim().isNotEmpty && int.parse(diaVencimentoController.text.trim()) > 31) {
+    if (diaVencimentoController.text.trim().isNotEmpty && int.tryParse(diaVencimentoController.text.trim())! > 31) {
       return [
         false,
         'Dia de vencimento inválido!',
@@ -74,21 +74,21 @@ class CartaoController extends ChangeNotifier {
 
       if (current == null) {
         var cartao = Cartao(
-          idTipoCartao: int.parse(idTipoCartaoController.text),
+          idTipoCartao: int.tryParse(idTipoCartaoController.text),
           nome: nomeController.text,
           finalCartao: finalCartaoController.text,
-          diaVencimento: int.parse(diaVencimentoController.text),
+          diaVencimento: int.tryParse(diaVencimentoController.text),
           hexCor: hexCorController.text,
         );
 
         await _repository.insert(cartao);
       } else {
         var cartao = Cartao(
-          id: current!.id,
-          idTipoCartao: int.parse(idTipoCartaoController.text),
+          idCartao: current!.idCartao,
+          idTipoCartao: int.tryParse(idTipoCartaoController.text),
           nome: nomeController.text,
           finalCartao: finalCartaoController.text,
-          diaVencimento: int.parse(diaVencimentoController.text),
+          diaVencimento: int.tryParse(diaVencimentoController.text),
           hexCor: hexCorController.text,
         );
         
@@ -123,8 +123,6 @@ class CartaoController extends ChangeNotifier {
           dataSourceCartao = value;
         });
       }
-
-      notifyListeners();
     } catch (e) {
       print(e);
     }

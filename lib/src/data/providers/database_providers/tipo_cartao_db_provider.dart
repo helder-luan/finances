@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 class TipoCartaoDbProvider extends TipoCartaoProvider {
   final Database _database = DB.instance.databaseInstance;
-  final String table = 'tbl_cartoes';
+  final String table = 'tbl_tipo_cartao';
 
   @override
   Future<bool> delete(String id) {

@@ -162,10 +162,10 @@ class GastoController extends ChangeNotifier {
     if (idCartao.text.trim().isNotEmpty) {
       Cartao cartao = await _cartaoRepository.recover(idCartao.text.trim());
       
-      if ((int.parse(cartao.diaVencimento.toString()) - 7) > 0) {
-        diaFechamento = int.parse(cartao.diaVencimento.toString()) - 7;
+      if ((int.tryParse(cartao.diaVencimento.toString())! - 7) > 0) {
+        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! - 7;
       } else {
-        diaFechamento = int.parse(cartao.diaVencimento.toString()) + 23;
+        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! + 23;
       }
 
       if (diaFechamento <= DateTime.now().day) {
@@ -197,11 +197,11 @@ class GastoController extends ChangeNotifier {
           descricao: descricao.text.trim(),
           valor: valorFormatado,
           detalhes: detalhes.text.trim(),
-          dataCadastro: DateTime.now(),
-          idTipoOperacao: int.parse(idTipoOperacao.text.trim()),
+          dataCadastro: DateTime.now().toString(),
+          idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
           mesReferencia: mesReferencia,
           reembolso: reembolso.text.trim() == 'true' ? true : false,
-          idCartao: int.parse(idCartao.text.trim()),
+          idCartao: int.tryParse(idCartao.text.trim()),
           gastoMensal: false,
           parcelado: false,
           totalParcelas: 0,
@@ -228,22 +228,22 @@ class GastoController extends ChangeNotifier {
       }
 
       int mesReferencia = await getMesParaLacamento();
-      String valorFormatado = valor.text.replaceAll(",", ".").replaceAll(".", "");
+      String valorFormatado = valor.text.replaceAll("R\$ ", "").replaceAll(",", ".").replaceAll(".", "");
 
       await _transacaoRepository.insert(
         Transacao(
           descricao: descricao.text.trim(),
           valor: valorFormatado,
           detalhes: detalhes.text.trim(),
-          dataCadastro: DateTime.now(),
-          idTipoOperacao: int.parse(idTipoOperacao.text.trim()),
+          dataCadastro: DateTime.now().toString(),
+          idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
           mesReferencia: mesReferencia,
           reembolso: reembolso.text.trim() == 'true' ? true : false,
-          idCartao: int.parse(idCartao.text.trim()),
+          idCartao: int.tryParse(idCartao.text.trim()),
           gastoMensal: gastoMensal.text.trim() == 'true' ? true : false,
           parcelado: parcelado.text.trim() == 'true' ? true : false,
-          totalParcelas: int.parse(totalParcelas.text.trim()),
-          parcelaAtual: int.parse(parcelaAtual.text.trim())
+          totalParcelas: int.tryParse(totalParcelas.text.trim()),
+          parcelaAtual: int.tryParse(parcelaAtual.text.trim())
         )
       );
       onSuccess();
@@ -258,8 +258,8 @@ class GastoController extends ChangeNotifier {
     DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
     return await _transacaoRepository.recoverAllByDateRange(
-      dataInicio,
-      dataFim
+      dataInicio.toString(),
+      dataFim.toString()
     );
   }
 
@@ -268,8 +268,8 @@ class GastoController extends ChangeNotifier {
     DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
     return await _transacaoRepository.recoverAllByDateRangeAndCard(
-      dataInicio,
-      dataFim,
+      dataInicio.toString(),
+      dataFim.toString(),
       idCartao.text.trim()
     );
   }
@@ -281,8 +281,6 @@ class GastoController extends ChangeNotifier {
           dataSourceTransacao = value;
         });
       }
-      
-      notifyListeners();
     } catch (e) {
       print(e);
     }

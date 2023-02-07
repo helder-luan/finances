@@ -26,6 +26,8 @@ class _CartaoScreenState extends State<CartaoScreen> {
   @override
   void initState() {
     super.initState();
+
+    _cartaoController.atualizarDados();
   }
   
   @override
@@ -83,17 +85,28 @@ class _CartaoScreenState extends State<CartaoScreen> {
                         children: [
                           RefreshIndicator(
                             onRefresh: () async {
-                              setState(() {});
+                              setState(() {
+                                _cartaoController.atualizarDados();
+                              });
                             },
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: _cartaoController.dataSourceCartao.length,
-                              itemBuilder: (context, index) {
-                                var cartao = _cartaoController.dataSourceCartao[index];
-                          
-                                return MyCardComponent(cartao: cartao);
-                              },
-                            ),
+                            child: FutureBuilder(
+                              future: _cartaoController.atualizarDados(),
+                              builder: (context, snapshot) {
+                                if (_cartaoController.dataSourceCartao.isNotEmpty) {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: _cartaoController.dataSourceCartao.length,
+                                    itemBuilder: (context, index) {
+                                      var cartao = _cartaoController.dataSourceCartao[index];
+                                
+                                      return MyCardComponent(cartao: cartao);
+                                    },
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              }
+                            )
                           ),
                           Container(
                             margin: const EdgeInsets.only(top: 16.0),
@@ -127,7 +140,7 @@ class _CartaoScreenState extends State<CartaoScreen> {
                             ),
                           )
                         ],
-                      )
+                      ),  
                     ],
                   )
                 )

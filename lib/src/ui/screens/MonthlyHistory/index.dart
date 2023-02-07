@@ -141,7 +141,7 @@ class _MonthlyHistoryState extends State<MonthlyHistory> {
                                   color: transacao.mesReferencia == DateTime.now().month ? Colors.white : Colors.black,
                                 ),
                                 TextComponent(
-                                  text: Functions.fullMonthName(int.parse(transacao.mesReferencia.toString())),
+                                  text: Functions.fullMonthName(int.tryParse(transacao.mesReferencia.toString())!),
                                   style: 'subtitle',
                                   color: transacao.mesReferencia == DateTime.now().month ? Colors.white : Colors.black,
                                 ),

@@ -1,9 +1,8 @@
 import 'dart:convert';
 
 abstract class BaseModel {
-  String? id;
 
-  BaseModel({this.id});
+  BaseModel();
 
   String toJson() => json.encode(toMap());
   BaseModel.fromMap(Map<String, dynamic> map);

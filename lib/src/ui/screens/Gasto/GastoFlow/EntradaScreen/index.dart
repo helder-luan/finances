@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/controllers/tipo_operacao_controller.dart';
@@ -21,7 +23,6 @@ class EntradaScreen extends StatefulWidget {
 }
 
 class _EntradaScreenState extends State<EntradaScreen> {
-  var _formKey;
   final GastoController _gastoController = GastoController();
   final CartaoController _cartaoController = CartaoController();
   final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
@@ -39,16 +40,18 @@ class _EntradaScreenState extends State<EntradaScreen> {
     await _cartaoController.atualizarDados();
     _cartaoController.dataSourceCartao.map((cartao) {
       myCards.add({
-        'value': cartao.id.toString(),
+        'value': cartao.idCartao.toString(),
         'label': cartao.nome.toString(),
       });
     }).toList();
   }
 
   void loadTipoOperacao() async {
+    print(_tipoOperacaoController.dataSourceTipoOperacao);
     await _tipoOperacaoController.getTiposOperacao();
+    print(json.encode(_tipoOperacaoController.dataSourceTipoOperacao));
 
-    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.first.id.toString();
+    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.first.idTipoOperacao.toString();
   }
 
   @override
@@ -98,7 +101,6 @@ class _EntradaScreenState extends State<EntradaScreen> {
                         ),
                       ),
                       Form(
-                        key: _formKey,
                         child: Column(
                           children: [
                             FormInputComponent(

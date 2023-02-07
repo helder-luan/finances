@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:finances/src/data/models/base_model.dart';
 
 class TipoCartao extends BaseModel {
+  int? idTipoCartao;
   String? descricao;
 
   TipoCartao({
-    String? id,
+    this.idTipoCartao,
     this.descricao
-  }) : super(id: id);
+  });
 
   @override
   bool isValid() {
@@ -19,13 +20,13 @@ class TipoCartao extends BaseModel {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'idTipoCartao': idTipoCartao,
       'descricao': descricao
     };
   }
 
   TipoCartao.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+    idTipoCartao = map['idTipoCartao'];
     descricao = map['descricao'];
   }
 

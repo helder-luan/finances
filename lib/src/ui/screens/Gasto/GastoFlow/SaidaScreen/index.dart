@@ -1,3 +1,4 @@
+
 import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/controllers/tipo_cartao_controller.dart';
@@ -37,53 +38,59 @@ class _SaidaScreenState extends State<SaidaScreen> {
   List<Map<dynamic, String>> cartoesDeDebito = [
     {
       'value': '0',
-      'label': 'Selecione um cartão',
+      'label': 'Selecione um cartão de débito',
     }
   ];
 
   List<Map<dynamic, String>> cartoesDeCredito = [
     {
       'value': '0',
-      'label': 'Selecione um cartão',
+      'label': 'Selecione um cartão de crédito',
     }
   ];
 
-  void loadTipoOperacao() async {
+  Future loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao();
 
-    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.last.id.toString();
+    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.last.idTipoOperacao.toString();
   }
 
-  void loadTiposCartao() async {
+  Future loadTiposCartao() async {
     await _tipoCartaoController.getTiposCartao();
   }
 
-  void loadCartoes() async {
-    await _cartaoController.atualizarDados();
-
-    for (var cartao in _cartaoController.dataSourceCartao) {
-      // se cartao.idTipoCartao for igual ao id do tipo de cartao 'Crédito'
-      if (
-        cartao.idTipoCartao.toString() == _tipoCartaoController.dataSourceTipoCartao.first.id &&
-        _tipoCartaoController.dataSourceTipoCartao.first.descricao == 'Crédito'
-      ) {
-        cartoesDeCredito.add({
-          'value': cartao.id.toString(),
-          'label': cartao.nome.toString(),
-        });
-      }
-
-      // se cartao.idTipoCartao for igual ao id do tipo de cartao 'Débito'
-      if (
-        cartao.idTipoCartao.toString() == _tipoCartaoController.dataSourceTipoCartao.first.id &&
-        _tipoCartaoController.dataSourceTipoCartao.first.descricao == 'Débito'
-      ) {
-        cartoesDeDebito.add({
-          'value': cartao.id.toString(),
-          'label': cartao.nome.toString(),
-        });
+  void separaCartoes() {
+    if (cartoesDeCredito.length <= 1 && cartoesDeDebito.length <= 1) {
+      for (var cartao in _cartaoController.dataSourceCartao) {
+        // se cartao.idTipoCartao for igual ao id do tipo de cartao 'Crédito'
+        if (
+          cartao.idTipoCartao == _tipoCartaoController.dataSourceTipoCartao.first.idTipoCartao &&
+          _tipoCartaoController.dataSourceTipoCartao.first.descricao == 'Crédito'
+        ) {
+          cartoesDeCredito.add({
+            'value': cartao.idCartao.toString(),
+            'label': cartao.nome.toString(),
+          });
+        } else {
+          cartoesDeDebito.add({
+            'value': cartao.idCartao.toString(),
+            'label': cartao.nome.toString(),
+          });
+        }
       }
     }
+  }
+
+  Future loadCartoes() async {
+    await _cartaoController.atualizarDados();
+
+    separaCartoes();
+  }
+
+  Future loadAll() async {
+    await loadTipoOperacao();
+    await loadTiposCartao();
+    await loadCartoes();
   }
 
   @override
@@ -92,212 +99,223 @@ class _SaidaScreenState extends State<SaidaScreen> {
     _gastoController.reembolso.text = 'false';
     _gastoController.parcelado.text = 'false';
     _gastoController.gastoMensal.text = 'false';
-
-    loadTipoOperacao();
-    loadTiposCartao();
-    loadCartoes();
   }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            decoration: const BoxDecoration(
-              gradient: AppColors.gradient,
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 32.0),
-                  padding: const EdgeInsets.all(16.0),
-                  width: MediaQuery.of(context).size.width,
+      body: FutureBuilder(
+        future: loadAll(),
+        builder: ((context, snapshot) {
+          if (
+            _cartaoController.dataSourceCartao.isNotEmpty &&
+            _tipoCartaoController.dataSourceTipoCartao.isNotEmpty &&
+            _tipoOperacaoController.dataSourceTipoOperacao.isNotEmpty
+          ) {
+            return SafeArea(
+              child: SingleChildScrollView(
+                child: Container(
                   decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16.0),
-                      topRight: Radius.circular(16.0),
-                    ),
+                    gradient: AppColors.gradient,
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(bottom: 24.0),
-                        child: TextComponent(
-                          text: 'Saída',
-                          color: AppColors.danger,
-                          style: 'title',
+                        margin: const EdgeInsets.only(top: 32.0),
+                        padding: const EdgeInsets.all(16.0),
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16.0),
+                            topRight: Radius.circular(16.0),
+                          ),
                         ),
-                      ),
-                      Form(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            FormDropdownComponent(
-                              label: 'Forma de pagamento',
-                              items: formaDePagamento,
-                              startValue: '0',
-                              onChanged: (value) {
-                                setState(() {
-                                  _gastoController.formaDePagamento.text = value;
-                                  _gastoController.parcelado.text = "false";
-                                });
-                              },
-                            ),
-                            // conditional rendering
-                            Visibility(
-                              visible: _gastoController.formaDePagamento.text == 'M',
-                              child: Column(
-                                children: [
-                                  FormInputComponent(
-                                    label: 'Descrição',
-                                    controller: _gastoController.descricao,
-                                  ),
-                                  FormInputComponent(
-                                    label: 'Valor',
-                                    keyboardType: TextInputType.number,
-                                    formatters: [Mask.money()],
-                                    controller: _gastoController.valor,
-                                  ),
-                                  FormInputComponent(
-                                    label: 'Detalhes',
-                                    controller: _gastoController.detalhes,
-                                  ),
-                                ]
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 24.0),
+                              child: TextComponent(
+                                text: 'Saída',
+                                color: AppColors.danger,
+                                style: 'title',
                               ),
                             ),
-                            Visibility(
-                              visible: _gastoController.formaDePagamento.text != 'M',
+                            Form(
                               child: Column(
                                 children: [
                                   FormDropdownComponent(
-                                    label: 'Cartão Usado',
-                                    items: _gastoController.formaDePagamento.text == 'D' ? cartoesDeDebito : cartoesDeCredito,
+                                    label: 'Forma de pagamento',
+                                    items: formaDePagamento,
                                     startValue: '0',
                                     onChanged: (value) {
                                       setState(() {
-                                        _gastoController.idCartao.text = value;
+                                        _gastoController.formaDePagamento.text = value;
+                                        _gastoController.parcelado.text = "false";
                                       });
                                     },
                                   ),
-                                  FormInputComponent(
-                                    label: 'Descrição',
-                                    controller: _gastoController.descricao,
-                                  ),
-                                  FormInputComponent(
-                                    label: 'Valor',
-                                    keyboardType: TextInputType.number,
-                                    formatters: [Mask.money()],
-                                    controller: _gastoController.valor,
-                                  ),
-                                  FormInputComponent(
-                                    label: 'Detalhes',
-                                    controller: _gastoController.detalhes,
+                                  // conditional rendering
+                                  Visibility(
+                                    visible: _gastoController.formaDePagamento.text == 'M',
+                                    child: Column(
+                                      children: [
+                                        FormInputComponent(
+                                          label: 'Descrição',
+                                          controller: _gastoController.descricao,
+                                        ),
+                                        FormInputComponent(
+                                          label: 'Valor',
+                                          keyboardType: TextInputType.number,
+                                          formatters: [Mask.money()],
+                                          controller: _gastoController.valor,
+                                        ),
+                                        FormInputComponent(
+                                          label: 'Detalhes',
+                                          controller: _gastoController.detalhes,
+                                        ),
+                                      ]
+                                    ),
                                   ),
                                   Visibility(
-                                    visible: _gastoController.formaDePagamento.text == 'C' && _gastoController.parcelado.text == 'false',
+                                    visible: _gastoController.formaDePagamento.text != 'M',
+                                    child: Column(
+                                      children: [
+                                        FormDropdownComponent(
+                                          label: 'Cartão Usado',
+                                          items: _gastoController.formaDePagamento.text == 'D' ? cartoesDeDebito : cartoesDeCredito,
+                                          startValue: '0',
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _gastoController.idCartao.text = value;
+                                            });
+                                          },
+                                        ),
+                                        FormInputComponent(
+                                          label: 'Descrição',
+                                          controller: _gastoController.descricao,
+                                        ),
+                                        FormInputComponent(
+                                          label: 'Valor',
+                                          keyboardType: TextInputType.number,
+                                          formatters: [Mask.money()],
+                                          controller: _gastoController.valor,
+                                        ),
+                                        FormInputComponent(
+                                          label: 'Detalhes',
+                                          controller: _gastoController.detalhes,
+                                        ),
+                                        Visibility(
+                                          visible: _gastoController.formaDePagamento.text == 'C' && _gastoController.parcelado.text == 'false',
+                                          child: FormCheckboxComponent(
+                                            label: 'Cobrança recorrente',
+                                            checkVariable: _gastoController.gastoMensal.text == 'true' ? true : false,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _gastoController.gastoMensal.text = value.toString();
+                                              });
+                                            },
+                                          )
+                                        ),
+                                        Visibility(
+                                          visible: _gastoController.formaDePagamento.text == 'C' && _gastoController.gastoMensal.text == 'false',
+                                          child: FormCheckboxComponent(
+                                            label: 'Parcelado',
+                                            checkVariable: _gastoController.parcelado.text == 'true' ? true : false,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _gastoController.parcelado.text = value.toString();
+                                              });
+                                            },
+                                          )
+                                        ),
+                                        Visibility(
+                                          visible: _gastoController.parcelado.text == 'true',
+                                          child: Column(
+                                            children: [
+                                              FormInputComponent(
+                                                label: 'Quantidade de Parcelas',
+                                                keyboardType: TextInputType.number,
+                                                controller: _gastoController.totalParcelas,
+                                              ),
+                                              FormInputComponent(
+                                                label: 'Parcela Atual',
+                                                keyboardType: TextInputType.number,
+                                                controller: _gastoController.parcelaAtual,
+                                              ),
+                                            ]
+                                          ),
+                                        )
+                                      ]
+                                    )
+                                  ),
+                                  Visibility(
+                                    visible: _gastoController.formaDePagamento.text != 'C',
                                     child: FormCheckboxComponent(
-                                      label: 'Cobrança recorrente',
+                                      label: 'Gasto mensal',
                                       checkVariable: _gastoController.gastoMensal.text == 'true' ? true : false,
                                       onChanged: (value) {
                                         setState(() {
                                           _gastoController.gastoMensal.text = value.toString();
                                         });
                                       },
-                                    )
+                                    ),
                                   ),
-                                  Visibility(
-                                    visible: _gastoController.formaDePagamento.text == 'C' && _gastoController.gastoMensal.text == 'false',
-                                    child: FormCheckboxComponent(
-                                      label: 'Parcelado',
-                                      checkVariable: _gastoController.parcelado.text == 'true' ? true : false,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _gastoController.parcelado.text = value.toString();
-                                        });
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 16.0),
+                                    width: MediaQuery.of(context).size.width-32,
+                                    child: ButtonComponent(
+                                      onPressed: () {
+                                        _gastoController.handleSubmitOut(
+                                          onSuccess: () {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => const GastoScreen(),
+                                              ),
+                                              (route) => false
+                                            );
+
+                                            MotionToast.success(description: const Text('Entrada adicionada com sucesso!')).show(context);
+
+                                            return null;
+                                          },
+                                          onFailure: (onFailure) {
+                                            MotionToast
+                                              .error(
+                                                title: const Text("Atenção"),
+                                                description: Text(onFailure)
+                                              )
+                                              .show(context);
+                                            return null;
+                                          }
+                                        );
                                       },
-                                    )
-                                  ),
-                                  Visibility(
-                                    visible: _gastoController.parcelado.text == 'true',
-                                    child: Column(
-                                      children: [
-                                        FormInputComponent(
-                                          label: 'Quantidade de Parcelas',
-                                          keyboardType: TextInputType.number,
-                                          controller: _gastoController.totalParcelas,
-                                        ),
-                                        FormInputComponent(
-                                          label: 'Parcela Atual',
-                                          keyboardType: TextInputType.number,
-                                          controller: _gastoController.parcelaAtual,
-                                        ),
-                                      ]
+                                      style: 'danger',
+                                      children: TextComponent(
+                                        text: 'Adicionar',
+                                        weigth: FontWeight.bold
+                                      ),
                                     ),
                                   )
-                                ]
-                              )
-                            ),
-                            Visibility(
-                              visible: _gastoController.formaDePagamento.text != 'C',
-                              child: FormCheckboxComponent(
-                                label: 'Gasto mensal',
-                                checkVariable: _gastoController.gastoMensal.text == 'true' ? true : false,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _gastoController.gastoMensal.text = value.toString();
-                                  });
-                                },
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 16.0),
-                              width: MediaQuery.of(context).size.width-32,
-                              child: ButtonComponent(
-                                onPressed: () {
-                                  _gastoController.handleSubmitOut(
-                                    onSuccess: () {
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const GastoScreen(),
-                                        ),
-                                        (route) => false
-                                      );
-
-                                      MotionToast.success(description: const Text('Entrada adicionada com sucesso!')).show(context);
-
-                                      return null;
-                                    },
-                                    onFailure: (onFailure) {
-                                      MotionToast
-                                        .error(
-                                          title: const Text("Atenção"),
-                                          description: Text(onFailure)
-                                        )
-                                        .show(context);
-                                      return null;
-                                    }
-                                  );
-                                },
-                                style: 'danger',
-                                children: TextComponent(
-                                  text: 'Adicionar',
-                                  weigth: FontWeight.bold
-                                ),
+                                ],
                               ),
                             )
                           ],
-                        ),
+                        )
                       )
                     ],
                   )
-                )
-              ],
-            )
-          ),
-        ),
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }),
       ),
       bottomNavigationBar: const BottomMenu(),
     );

@@ -2,10 +2,11 @@ import 'package:finances/src/data/models/base_model.dart';
 import 'dart:convert';
 
 class Transacao extends BaseModel{
+  int? idTransacao;
   String? descricao;
   String? valor;
   String? detalhes;
-  DateTime? dataCadastro;
+  String? dataCadastro;
   int? idTipoOperacao;
   int? mesReferencia;
   bool? reembolso;
@@ -16,7 +17,7 @@ class Transacao extends BaseModel{
   int? parcelaAtual;
 
   Transacao({
-    String? id,
+    this.idTransacao,
     this.descricao,
     this.valor,
     this.detalhes,
@@ -29,11 +30,11 @@ class Transacao extends BaseModel{
     this.parcelado,
     this.totalParcelas,
     this.parcelaAtual,
-  }) : super(id: id);
+  });
 
   factory Transacao.fromMap(Map<String, dynamic> map) {
     return Transacao(
-      id: map['id'],
+      idTransacao: map['idTransacao'],
       descricao: map['descricao'],
       valor: map['valor'],
       detalhes: map['detalhes'],
@@ -52,7 +53,7 @@ class Transacao extends BaseModel{
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'idTransacao': idTransacao,
       'descricao': descricao,
       'valor': valor,
       'detalhes': detalhes,

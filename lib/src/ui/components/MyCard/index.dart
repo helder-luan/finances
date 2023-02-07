@@ -72,7 +72,7 @@ class _MyCardComponentState extends State<MyCardComponent> {
                               style: 'danger',
                               onPressed: () {
                                 _controller.deleteCard(
-                                  widget.cartao.id!,
+                                  widget.cartao.idCartao.toString(),
                                   onSuccess: () {
                                     Navigator.pushAndRemoveUntil(
                                       context,
@@ -93,6 +93,7 @@ class _MyCardComponentState extends State<MyCardComponent> {
                                         description: Text(onFailure)
                                       )
                                       .show(context);
+                                    print(onFailure);
                                     return null;
                                   }
                                 );

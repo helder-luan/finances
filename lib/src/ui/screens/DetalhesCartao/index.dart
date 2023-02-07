@@ -112,7 +112,7 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
                       itemBuilder: (BuildContext context, int index) {
                         var formattedValue = Functions.toCurrency(historico[index]['valor']);
           
-                        if (historico.isNotEmpty && historico[index]['idCartao'] == widget.cartao.id) {
+                        if (historico.isNotEmpty && historico[index]['idCartao'] == widget.cartao.idCartao) {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
