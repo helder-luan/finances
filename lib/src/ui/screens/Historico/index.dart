@@ -92,7 +92,10 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                             shrinkWrap: true,
                             itemCount: historico.isNotEmpty ? historico.length : 1,
                             itemBuilder: (BuildContext context, int index) {
-                              var valor = double.tryParse("${historico[index]['valor'].toString().substring(0, historico[index]['valor'].toString().length - 2)}.${historico[index]['valor'].toString().substring(historico[index]['valor'].toString().length - 2, historico[index]['valor'].toString().length)}".replaceAll("R\$ ", ""));
+                              var parteReal = historico[index]['valor'].toString().substring(0, historico[index]['valor'].toString().length - 2);
+                              var parteCentavos = historico[index]['valor'].toString().substring(historico[index]['valor'].toString().length - 2, historico[index]['valor'].toString().length);
+
+                              var valor = double.tryParse("$parteReal.$parteCentavos");
                               
                               var valorFormatado = Functions.toCurrency(valor!);
 
