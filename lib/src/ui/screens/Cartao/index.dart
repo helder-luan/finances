@@ -26,8 +26,6 @@ class _CartaoScreenState extends State<CartaoScreen> {
   @override
   void initState() {
     super.initState();
-
-    _cartaoController.atualizarDados();
   }
   
   @override
@@ -83,30 +81,23 @@ class _CartaoScreenState extends State<CartaoScreen> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          RefreshIndicator(
-                            onRefresh: () async {
-                              setState(() {
-                                _cartaoController.atualizarDados();
-                              });
-                            },
-                            child: FutureBuilder(
-                              future: _cartaoController.atualizarDados(),
-                              builder: (context, snapshot) {
-                                if (_cartaoController.dataSourceCartao.isNotEmpty) {
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _cartaoController.dataSourceCartao.length,
-                                    itemBuilder: (context, index) {
-                                      var cartao = _cartaoController.dataSourceCartao[index];
-                                
-                                      return MyCardComponent(cartao: cartao);
-                                    },
-                                  );
-                                } else {
-                                  return Container();
-                                }
+                          FutureBuilder(
+                            future: _cartaoController.atualizarDados(),
+                            builder: (context, snapshot) {
+                              if (_cartaoController.dataSourceCartao.isNotEmpty) {
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: _cartaoController.dataSourceCartao.length,
+                                  itemBuilder: (context, index) {
+                                    var cartao = _cartaoController.dataSourceCartao[index];
+                              
+                                    return MyCardComponent(cartao: cartao);
+                                  },
+                                );
+                              } else {
+                                return TextComponent(text: 'Nenhum cartão cadastrado');
                               }
-                            )
+                            }
                           ),
                           Container(
                             margin: const EdgeInsets.only(top: 16.0),

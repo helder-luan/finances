@@ -3,13 +3,14 @@ import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
+import 'package:finances/src/data/models/tipo_operacao_model.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Card/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/DetalhesCartao/index.dart';
-import 'package:finances/src/ui/screens/MonthlyHistory/index.dart';
+import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,32 +43,38 @@ class _HomeScreenState extends State<HomeScreen> {
     calculaGastos();
   }
 
-  void calculaGastos() {
+  formataValor(valor) {
+    var parteReal = valor.toString().substring(0, valor.toString().length - 2);
+
+    var parteCentavos = valor.toString().substring(valor.toString().length - 2, valor.toString().length);
+
+    return double.tryParse("$parteReal.$parteCentavos");
+  }
+
+  void calculaGastos() async {
+    TipoOperacao saida = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == 'Saída');
+
     if (historico.isNotEmpty) {
       gastoTotal = historico.where(
         (transacao) => 
-          transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].idTipoOperacao
-          &&
-          _tipoOperacaoController.dataSourceTipoOperacao[0].descricao == 'Saída'
+          transacao['idTipoOperacao'] == saida.idTipoOperacao
       )
       .fold(
         0,
         (double previousValue, transacao) =>
-          previousValue + transacao['valor']
+          previousValue + formataValor(transacao['valor'])
       );
 
       dividaTotal = historico.where(
         (transacao) =>
-        transacao['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao[0].idTipoOperacao
-        &&
-        _tipoOperacaoController.dataSourceTipoOperacao[0].descricao == 'Saída'
+        transacao['idTipoOperacao'] == saida.idTipoOperacao
         &&
         transacao['gastoMensal'] == true
       )
       .fold(
         0,
         (previousValue, transacao) =>
-          previousValue + transacao['valor']
+          previousValue + formataValor(transacao['valor'].toString())
       );
     } else {
       gastoTotal = 0;
@@ -130,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const MonthlyHistory(),
+                                  builder: (context) => const HistoricoMensal(),
                                 ),
                               );
                             },
@@ -169,84 +176,103 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: (MediaQuery.of(context).size.width-64)/2,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 8.0,
-                                    spreadRadius: 1.0,
-                                    offset: Offset(-5, 5),
-                                  )
-                                ],
-                              ),
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    TextComponent(text: 'Gasto total'),
-                                    TextComponent(text: Functions.toCurrency(gastoTotal), style: 'title'),
-                                  ]
+                        FutureBuilder(
+                          future: loadAll(),
+                          builder: (context, snapshot) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: (MediaQuery.of(context).size.width-64)/2,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 8.0,
+                                        spreadRadius: 1.0,
+                                        offset: Offset(-5, 5),
+                                      )
+                                    ],
+                                  ),
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        TextComponent(text: 'Gasto total'),
+                                        TextComponent(text: Functions.toCurrency(gastoTotal), style: 'title'),
+                                      ]
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: (MediaQuery.of(context).size.width-64)/2,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 8.0,
-                                    spreadRadius: 1.0,
-                                    offset: Offset(-5, 5),
-                                  )
-                                ],
-                              ),
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    TextComponent(text: 'Dívida total'),
-                                    TextComponent(text: Functions.toCurrency(dividaTotal), style: 'title'),
-                                  ]
+                                Container(
+                                  width: (MediaQuery.of(context).size.width-64)/2,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 8.0,
+                                        spreadRadius: 1.0,
+                                        offset: Offset(-5, 5),
+                                      )
+                                    ],
+                                  ),
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        TextComponent(text: 'Dívida total'),
+                                        TextComponent(text: Functions.toCurrency(dividaTotal), style: 'title'),
+                                      ]
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ]
+                              ]
+                            );
+                          },
                         ),
                         // cards
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _cartaoController.dataSourceCartao.length,
-                          itemBuilder: (context, index) {
-                            var cartao = _cartaoController.dataSourceCartao[index];
-                                
-                            return CardComponent(
-                              cardName: cartao.nome.toString(),
-                              cardNumVenc: cartao.diaVencimento.toString(),
-                              cardNumFinal: cartao.finalCartao.toString(),
-                              cardColor: Color(int.tryParse("0xFF${cartao.hexCor}")!),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetalhesCartao(cartao: cartao),
-                                  ),
-                                );
-                              },
-                            );
+                        FutureBuilder(
+                          future: loadAll(),
+                          builder: (context, snapshot) {
+                            if (_cartaoController.dataSourceCartao.isNotEmpty) {
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _cartaoController.dataSourceCartao.length,
+                                itemBuilder: (context, index) {
+                                  var cartao = _cartaoController.dataSourceCartao[index];
+                                      
+                                  return CardComponent(
+                                    cardName: cartao.nome.toString(),
+                                    cardNumVenc: cartao.diaVencimento.toString(),
+                                    cardNumFinal: cartao.finalCartao.toString(),
+                                    cardColor: Color(int.tryParse("0xFF${cartao.hexCor}")!),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => DetalhesCartao(cartao: cartao),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            } else {
+                              return Container(
+                                margin: const EdgeInsets.only(top: 32.0),
+                                child: Center(
+                                  child: TextComponent(text: 'Nenhum cartão cadastrado'),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],

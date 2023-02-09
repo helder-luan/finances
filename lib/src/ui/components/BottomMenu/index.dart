@@ -1,6 +1,7 @@
 import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/ui/screens/Cartao/index.dart';
 import 'package:finances/src/ui/screens/Historico/index.dart';
+import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
 import 'package:finances/src/ui/screens/Gasto/index.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,7 @@ class BottomMenu extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
+                    builder: (context) => const HistoricoMensal(),
                   ),
                   (route) => false);
             },

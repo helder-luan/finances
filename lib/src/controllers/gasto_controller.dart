@@ -190,7 +190,7 @@ class GastoController extends ChangeNotifier {
       }
 
       int mesReferencia = await getMesParaLacamento();
-      String valorFormatado = valor.text.replaceAll(",", ".").replaceAll(".", "");
+      String valorFormatado = valor.text.replaceAll("R\$ ", "").replaceAll(",", ".").replaceAll(".", "");
 
       await _transacaoRepository.insert(
         Transacao(
