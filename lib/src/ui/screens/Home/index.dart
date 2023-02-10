@@ -61,15 +61,17 @@ class _HomeScreenState extends State<HomeScreen> {
       )
       .fold(
         0,
-        (double previousValue, transacao) =>
-          previousValue + formataValor(transacao['valor'])
+        (double previousValue, transacao) => 
+          transacao['parcelado'] == 1
+          ? previousValue + (formataValor(transacao['valor']) / transacao['totalParcelas'])
+          : previousValue + formataValor(transacao['valor'])
       );
 
       dividaTotal = historico.where(
         (transacao) =>
         transacao['idTipoOperacao'] == saida.idTipoOperacao
         &&
-        transacao['gastoMensal'] == true
+        transacao['gastoMensal'] == 1
       )
       .fold(
         0,

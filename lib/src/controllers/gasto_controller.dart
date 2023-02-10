@@ -264,25 +264,23 @@ class GastoController extends ChangeNotifier {
   }
 
   Future<List<Map<String, dynamic>>> getTransacoesMesAtualECartao() async {
-    DateTime dataInicio = DateTime(DateTime.now().year, DateTime.now().month, 1);
-    DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
-    return await _transacaoRepository.recoverAllByDateRangeAndCard(
-      dataInicio.toString(),
-      dataFim.toString(),
+    return await _transacaoRepository.recoverAllByDateAndCard(
+      DateTime.now().month.toString(),
       idCartao.text.trim()
     );
   }
 
-  Future<void> getTransacoes() async {
+  Future<List<Transacao>> getTransacoes() async {
     try {
       if (dataSourceTransacao.isEmpty) {
         await _transacaoRepository.recoverAll().then((value) {
-          dataSourceTransacao = value;
+          return value;
         });
       }
     } catch (e) {
       print(e);
     }
+    return dataSourceTransacao;
   }
 }

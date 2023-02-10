@@ -51,7 +51,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
     await _tipoOperacaoController.getTiposOperacao();
     print(json.encode(_tipoOperacaoController.dataSourceTipoOperacao));
 
-    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.first.idTipoOperacao.toString();
+    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == 'Entrada').idTipoOperacao.toString();
   }
 
   @override

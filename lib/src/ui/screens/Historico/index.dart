@@ -92,12 +92,18 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                             shrinkWrap: true,
                             itemCount: historico.isNotEmpty ? historico.length : 1,
                             itemBuilder: (BuildContext context, int index) {
-                              var parteReal = historico[index]['valor'].toString().substring(0, historico[index]['valor'].toString().length - 2);
-                              var parteCentavos = historico[index]['valor'].toString().substring(historico[index]['valor'].toString().length - 2, historico[index]['valor'].toString().length);
+                              Map<String, dynamic> transacao = historico[index];
 
-                              var valor = double.tryParse("$parteReal.$parteCentavos");
+                              String parteReal = transacao['valor'].toString().substring(0, transacao['valor'].toString().length - 2);
+                              String parteCentavos = transacao['valor'].toString().substring(transacao['valor'].toString().length - 2, transacao['valor'].toString().length);
+
+                              double? valor = double.tryParse("$parteReal.$parteCentavos");
+
+                              if (transacao['parcelado'] == 1) {
+                                valor = valor! / transacao['totalParcelas'];
+                              }
                               
-                              var valorFormatado = Functions.toCurrency(valor!);
+                              String valorFormatado = Functions.toCurrency(valor!);
 
                               bool entrada = false;
 
@@ -110,6 +116,8 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                               }
                         
                               if (historico.isNotEmpty) {
+                                bool parcelado = transacao['parcelado'] == 1 ? true : false;
+
                                 return Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
@@ -117,7 +125,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                                       text: historico[index]['descricao'],
                                     ),
                                     TextComponent(
-                                      text: entrada ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}",
+                                      text: "${parcelado ? "${transacao['parcelaAtual']}/${transacao['totalParcelas']}" : ""} ${entrada ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}",
                                       color: entrada ? AppColors.success : AppColors.danger,
                                     ),
                                   ],

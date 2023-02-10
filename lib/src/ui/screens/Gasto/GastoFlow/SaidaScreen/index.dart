@@ -52,7 +52,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
   Future loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao();
 
-    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.last.idTipoOperacao.toString();
+    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == 'Saída').idTipoOperacao.toString();
   }
 
   Future loadTiposCartao() async {
@@ -277,7 +277,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                               (route) => false
                                             );
 
-                                            MotionToast.success(description: const Text('Entrada adicionada com sucesso!')).show(context);
+                                            MotionToast.success(description: const Text('Gasto adicionado com sucesso!')).show(context);
 
                                             return null;
                                           },

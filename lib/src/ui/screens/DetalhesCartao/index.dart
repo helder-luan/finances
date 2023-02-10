@@ -18,14 +18,14 @@ class DetalhesCartao extends StatefulWidget {
 }
 
 class _DetalhesCartaoState extends State<DetalhesCartao> {
-  final GastoController _controller = GastoController();
+  final GastoController _gastoController = GastoController();
   
-  late List<Map<String, dynamic>> historico;
+  List<Map<String, dynamic>> historico = [];
 
   double faturaTotal = 0;
 
   Future loadHistorico() async {
-    historico = await _controller.getTransacoesMesAtualECartao();
+    historico = await _gastoController.getTransacoesMesAtualECartao();
   }
 
   void calculaValorFatura() {
@@ -43,7 +43,7 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: loadHistorico(),
+        future: loadHistorico().then((value) => print(historico)),
         builder: (context, snapshot) {
           if (historico.isNotEmpty) {
             return SingleChildScrollView(
