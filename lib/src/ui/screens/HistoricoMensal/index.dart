@@ -20,10 +20,25 @@ class HistoricoMensal
 class _HistoricoMensalState extends State<HistoricoMensal> {
   final GastoController _gastoController = GastoController();
 
-  late List<Transacao> _transacoes = _gastoController.dataSourceTransacao;
+  Map<String, List<Transacao>> transacoes = {};
 
   Future loadHistorico() async {
-    _transacoes = await _gastoController.getTransacoes();
+    await _gastoController.getTransacoes();
+
+    ordenaPorMes();
+  }
+
+  void ordenaPorMes() {
+    _gastoController.dataSourceTransacao.sort((a, b) => a.mesReferencia!.compareTo(b.mesReferencia!));
+
+    
+    for(var transacao in _gastoController.dataSourceTransacao) {
+      if (transacoes.containsKey(transacao.mesReferencia.toString())) {
+        transacoes[transacao.mesReferencia.toString()]?.add(transacao);
+      } else {
+        transacoes[transacao.mesReferencia.toString()] = [transacao];
+      }
+    }
   }
   
   @override
@@ -79,13 +94,13 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                       builder: (context, snapshot) {
                         return Wrap(
                           children: [
-                            for (Transacao transacao in _transacoes)
+                            for (var mesReferencia in transacoes.keys)
                               Container(
                                 width: (MediaQuery.of(context).size.width / 2) - 32,
                                 margin: const EdgeInsets.only(bottom: 16.0, right: 16.0),
                                 padding: const EdgeInsets.all(16.0),
                                 decoration: BoxDecoration(
-                                  color: int.parse(transacao.mesReferencia.toString()) == DateTime.now().month ? AppColors.primary : Colors.white,
+                                  color: int.parse(mesReferencia) == DateTime.now().month ? AppColors.primary : Colors.white,
                                   borderRadius: BorderRadius.circular(8.0),
                                   boxShadow: [
                                     BoxShadow(
@@ -101,12 +116,12 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                                   children: [
                                     TextComponent(
                                       text: "Mês",
-                                      color: int.parse(transacao.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
+                                      color: int.parse(mesReferencia) == DateTime.now().month ? Colors.white : Colors.black,
                                     ),
                                     TextComponent(
-                                      text: Functions.fullMonthName(int.parse(transacao.mesReferencia.toString())),
+                                      text: Functions.fullMonthName(int.parse(mesReferencia.toString())),
                                       style: 'subtitle',
-                                      color: int.parse(transacao.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
+                                      color: int.parse(mesReferencia) == DateTime.now().month ? Colors.white : Colors.black,
                                     ),
                                   ],
                                 ),

@@ -102,7 +102,7 @@ class _MyCardComponentState extends State<MyCardComponent> {
                               },
                               children: TextComponent(
                                 text: 'Remover',
-                                weigth: FontWeight.bold,
+                                weight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
@@ -113,7 +113,7 @@ class _MyCardComponentState extends State<MyCardComponent> {
                               },
                               children: TextComponent(
                                 text: 'Cancelar',
-                                weigth: FontWeight.bold,
+                                weight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ), 

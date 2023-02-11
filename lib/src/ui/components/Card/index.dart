@@ -66,7 +66,7 @@ class _CardComponentState extends State<CardComponent> {
                       Row(
                         children: [
                           TextComponent(text: widget.cardNumVenc.isNotEmpty ? "Venc.    " : "", style: 'cardVenc'),
-                          TextComponent(text: widget.cardNumVenc.isNotEmpty ? widget.cardNumVenc : "", style: 'cardNumVenc')
+                          TextComponent(text: widget.cardNumVenc.isNotEmpty ? widget.cardNumVenc.toString().padLeft(2, '0') : "", style: 'cardNumVenc')
                         ],
                       ),
                       Row(

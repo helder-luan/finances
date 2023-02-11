@@ -125,7 +125,7 @@ class _CartaoScreenState extends State<CartaoScreen> {
                               },
                               children: TextComponent(
                                 text: 'Adicionar',
-                                weigth: FontWeight.bold,
+                                weight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),

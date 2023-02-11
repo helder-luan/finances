@@ -162,10 +162,10 @@ class GastoController extends ChangeNotifier {
     if (idCartao.text.trim().isNotEmpty) {
       Cartao cartao = await _cartaoRepository.recover(idCartao.text.trim());
       
-      if ((int.tryParse(cartao.diaVencimento.toString())! - 7) > 0) {
-        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! - 7;
+      if ((int.tryParse(cartao.diaVencimento.toString())! - 10) > 0) {
+        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! - 10;
       } else {
-        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! + 23;
+        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! + 20;
       }
 
       if (diaFechamento <= DateTime.now().day) {
@@ -200,10 +200,10 @@ class GastoController extends ChangeNotifier {
           dataCadastro: DateTime.now().toString(),
           idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
           mesReferencia: mesReferencia,
-          reembolso: reembolso.text.trim() == 'true' ? true : false,
+          reembolso: reembolso.text.trim() == 'true' ? 1 : 0,
           idCartao: int.tryParse(idCartao.text.trim()),
-          gastoMensal: false,
-          parcelado: false,
+          gastoMensal: 0,
+          parcelado: 0,
           totalParcelas: 0,
           parcelaAtual: 0
         )
@@ -228,6 +228,7 @@ class GastoController extends ChangeNotifier {
       }
 
       int mesReferencia = await getMesParaLacamento();
+      print(mesReferencia);
       String valorFormatado = valor.text.replaceAll("R\$ ", "").replaceAll(",", ".").replaceAll(".", "");
 
       await _transacaoRepository.insert(
@@ -238,10 +239,10 @@ class GastoController extends ChangeNotifier {
           dataCadastro: DateTime.now().toString(),
           idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
           mesReferencia: mesReferencia,
-          reembolso: reembolso.text.trim() == 'true' ? true : false,
+          reembolso: reembolso.text.trim() == 'true' ? 1 : 0,
           idCartao: int.tryParse(idCartao.text.trim()),
-          gastoMensal: gastoMensal.text.trim() == 'true' ? true : false,
-          parcelado: parcelado.text.trim() == 'true' ? true : false,
+          gastoMensal: gastoMensal.text.trim() == 'true' ? 1 : 0,
+          parcelado: parcelado.text.trim() == 'true' ? 1 : 0,
           totalParcelas: int.tryParse(totalParcelas.text.trim()),
           parcelaAtual: int.tryParse(parcelaAtual.text.trim())
         )
@@ -253,34 +254,46 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getTransacoesMesAtual() async {
+  Future<void> getTransacoesMesAtual() async {
     DateTime dataInicio = DateTime(DateTime.now().year, DateTime.now().month, 1);
     DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
-
-    return await _transacaoRepository.recoverAllByDateRange(
-      dataInicio.toString(),
-      dataFim.toString()
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> getTransacoesMesAtualECartao() async {
-
-    return await _transacaoRepository.recoverAllByDateAndCard(
-      DateTime.now().month.toString(),
-      idCartao.text.trim()
-    );
-  }
-
-  Future<List<Transacao>> getTransacoes() async {
+    
     try {
-      if (dataSourceTransacao.isEmpty) {
-        await _transacaoRepository.recoverAll().then((value) {
-          return value;
-        });
-      }
+      await _transacaoRepository.recoverAllByDateRange(
+        dataInicio.toString(),
+        dataFim.toString()
+      ).then((value) {
+        dataSourceTransacao = value;
+      });
     } catch (e) {
       print(e);
     }
-    return dataSourceTransacao;
+  }
+
+  Future<void> getTransacoesMesAtualECartao(String idCartao) async {
+    DateTime dataInicio = DateTime(DateTime.now().year, DateTime.now().month, 1);
+    DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
+    
+    try {
+      await _transacaoRepository.recoverAllByDateRangeAndCard(
+        dataInicio.toString(),
+        dataFim.toString(),
+        idCartao
+      ).then((value) {
+        dataSourceTransacao = value;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getTransacoes() async {
+    try {
+      await _transacaoRepository.recoverAll().then((value) {
+        dataSourceTransacao = value;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }

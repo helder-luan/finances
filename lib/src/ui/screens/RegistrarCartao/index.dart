@@ -237,7 +237,7 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                           },
                           children: TextComponent(
                             text: 'Salvar',
-                            weigth: FontWeight.bold,
+                            weight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
