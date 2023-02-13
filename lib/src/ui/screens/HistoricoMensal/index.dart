@@ -4,8 +4,8 @@ import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/data/models/transacao.dart';
-import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
+import 'package:finances/src/ui/components/CardMes/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
 
@@ -95,37 +95,7 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                         return Wrap(
                           children: [
                             for (var mesReferencia in transacoes.keys)
-                              Container(
-                                width: (MediaQuery.of(context).size.width / 2) - 32,
-                                margin: const EdgeInsets.only(bottom: 16.0, right: 16.0),
-                                padding: const EdgeInsets.all(16.0),
-                                decoration: BoxDecoration(
-                                  color: int.parse(mesReferencia) == DateTime.now().month ? AppColors.primary : Colors.white,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.25),
-                                      spreadRadius: 0,
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 4), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    TextComponent(
-                                      text: "Mês",
-                                      color: int.parse(mesReferencia) == DateTime.now().month ? Colors.white : Colors.black,
-                                    ),
-                                    TextComponent(
-                                      text: Functions.fullMonthName(int.parse(mesReferencia.toString())),
-                                      style: 'subtitle',
-                                      color: int.parse(mesReferencia) == DateTime.now().month ? Colors.white : Colors.black,
-                                    ),
-                                  ],
-                                ),
-                              )
+                              CardMes(mesReferencia: mesReferencia),
                           ]
                         );
                       },

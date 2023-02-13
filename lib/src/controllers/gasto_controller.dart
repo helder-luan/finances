@@ -228,7 +228,6 @@ class GastoController extends ChangeNotifier {
       }
 
       int mesReferencia = await getMesParaLacamento();
-      print(mesReferencia);
       String valorFormatado = valor.text.replaceAll("R\$ ", "").replaceAll(",", ".").replaceAll(".", "");
 
       await _transacaoRepository.insert(
@@ -238,7 +237,7 @@ class GastoController extends ChangeNotifier {
           detalhes: detalhes.text.trim(),
           dataCadastro: DateTime.now().toString(),
           idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
-          mesReferencia: mesReferencia,
+          mesReferencia: gastoMensal.text.trim() == 'true' ? null : mesReferencia,
           reembolso: reembolso.text.trim() == 'true' ? 1 : 0,
           idCartao: int.tryParse(idCartao.text.trim()),
           gastoMensal: gastoMensal.text.trim() == 'true' ? 1 : 0,

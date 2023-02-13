@@ -8,7 +8,7 @@ import 'package:finances/src/data/models/transacao.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
-import 'package:finances/src/ui/components/Card/index.dart';
+import 'package:finances/src/ui/components/Cartao/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/DetalhesCartao/index.dart';
 import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
@@ -54,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
       gastoTotal = historico.where(
         (transacao) => 
           transacao.idTipoOperacao == saida.idTipoOperacao
+          ||
+          transacao.gastoMensal == 1
       )
       .fold(
         0,
@@ -247,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemBuilder: (context, index) {
                                   var cartao = _cartaoController.dataSourceCartao[index];
                                       
-                                  return CardComponent(
+                                  return CartaoComponent(
                                     cardName: cartao.nome.toString(),
                                     cardNumVenc: cartao.diaVencimento.toString(),
                                     cardNumFinal: cartao.finalCartao.toString(),
