@@ -5,7 +5,7 @@ class TextComponent extends StatefulWidget {
   String style;
   String align;
   Color color;
-  FontWeight weigth;
+  FontWeight weight;
   double size;
   
   TextComponent({
@@ -14,7 +14,7 @@ class TextComponent extends StatefulWidget {
     this.style = 'primary',
     this.align = 'left',
     this.color = Colors.black,
-    this.weigth = FontWeight.w400,
+    this.weight = FontWeight.w400,
     this.size = 16.0,
   });
 
@@ -36,7 +36,7 @@ class _TextComponentState extends State<TextComponent> {
     ),
     'primary': TextStyle(
       fontSize: widget.size,
-      fontWeight: widget.weigth,
+      fontWeight: widget.weight,
       color: widget.color,
     ),
     'caption': TextStyle(

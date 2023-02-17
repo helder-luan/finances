@@ -4,8 +4,8 @@ import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/data/models/transacao.dart';
-import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
+import 'package:finances/src/ui/components/CardMes/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
 
@@ -20,10 +20,25 @@ class HistoricoMensal
 class _HistoricoMensalState extends State<HistoricoMensal> {
   final GastoController _gastoController = GastoController();
 
-  late List<Transacao> _transacoes = _gastoController.dataSourceTransacao;
+  Map<String, List<Transacao>> transacoes = {};
 
   Future loadHistorico() async {
-    _transacoes = await _gastoController.getTransacoes();
+    await _gastoController.getTransacoes();
+
+    ordenaPorMes();
+  }
+
+  void ordenaPorMes() {
+    _gastoController.dataSourceTransacao.sort((a, b) => a.mesReferencia!.compareTo(b.mesReferencia!));
+
+    
+    for(var transacao in _gastoController.dataSourceTransacao) {
+      if (transacoes.containsKey(transacao.mesReferencia.toString())) {
+        transacoes[transacao.mesReferencia.toString()]?.add(transacao);
+      } else {
+        transacoes[transacao.mesReferencia.toString()] = [transacao];
+      }
+    }
   }
   
   @override
@@ -79,38 +94,8 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                       builder: (context, snapshot) {
                         return Wrap(
                           children: [
-                            for (Transacao transacao in _transacoes)
-                              Container(
-                                width: (MediaQuery.of(context).size.width / 2) - 32,
-                                margin: const EdgeInsets.only(bottom: 16.0, right: 16.0),
-                                padding: const EdgeInsets.all(16.0),
-                                decoration: BoxDecoration(
-                                  color: int.parse(transacao.mesReferencia.toString()) == DateTime.now().month ? AppColors.primary : Colors.white,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.25),
-                                      spreadRadius: 0,
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 4), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    TextComponent(
-                                      text: "Mês",
-                                      color: int.parse(transacao.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
-                                    ),
-                                    TextComponent(
-                                      text: Functions.fullMonthName(int.parse(transacao.mesReferencia.toString())),
-                                      style: 'subtitle',
-                                      color: int.parse(transacao.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
-                                    ),
-                                  ],
-                                ),
-                              )
+                            for (var mesReferencia in transacoes.keys)
+                              CardMes(mesReferencia: mesReferencia),
                           ]
                         );
                       },

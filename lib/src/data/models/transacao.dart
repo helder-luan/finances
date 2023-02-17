@@ -9,10 +9,10 @@ class Transacao extends BaseModel{
   String? dataCadastro;
   int? idTipoOperacao;
   int? mesReferencia;
-  bool? reembolso;
+  int? reembolso; // boolean - 0 => false | 1 => true
   int? idCartao;
-  bool? gastoMensal;
-  bool? parcelado;
+  int? gastoMensal; // boolean - 0 => false | 1 => true
+  int? parcelado; // boolean - 0 => false | 1 => true
   int? totalParcelas;
   int? parcelaAtual;
 

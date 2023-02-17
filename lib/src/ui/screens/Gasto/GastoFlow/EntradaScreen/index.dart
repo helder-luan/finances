@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
@@ -47,9 +46,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
   }
 
   void loadTipoOperacao() async {
-    print(_tipoOperacaoController.dataSourceTipoOperacao);
     await _tipoOperacaoController.getTiposOperacao();
-    print(json.encode(_tipoOperacaoController.dataSourceTipoOperacao));
 
     _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == 'Entrada').idTipoOperacao.toString();
   }
@@ -171,7 +168,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
                                 style: 'success',
                                 children: TextComponent(
                                   text: 'Adicionar',
-                                  weigth: FontWeight.bold
+                                  weight: FontWeight.bold
                                 ),
                               ),
                             )

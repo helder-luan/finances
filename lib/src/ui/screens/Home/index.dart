@@ -4,10 +4,11 @@ import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/data/models/tipo_operacao_model.dart';
+import 'package:finances/src/data/models/transacao.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
-import 'package:finances/src/ui/components/Card/index.dart';
+import 'package:finances/src/ui/components/Cartao/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/DetalhesCartao/index.dart';
 import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
@@ -24,59 +25,56 @@ class _HomeScreenState extends State<HomeScreen> {
   final GastoController _gastoController = GastoController();
   final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
   final CartaoController _cartaoController = CartaoController();
-  late List<Map<String, dynamic>> historico;
+
+  List<Transacao> historico = [];
 
   double gastoTotal = 0.0;
   double dividaTotal = 0.0;
 
-  Future loadCartoes() async {
+  Future<void> loadCartoes() async {
     await _cartaoController.atualizarDados();
   }
 
-  Future loadTipoOperacao() async {
+  Future<void> loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao();
   }
 
-  Future loadHistorico() async {
-    historico = await _gastoController.getTransacoesMesAtual();
+  Future<void> loadHistorico() async {
+    await _gastoController.getTransacoesMesAtual();
+
+    historico = _gastoController.dataSourceTransacao;
     
     calculaGastos();
   }
 
-  formataValor(valor) {
-    var parteReal = valor.toString().substring(0, valor.toString().length - 2);
-
-    var parteCentavos = valor.toString().substring(valor.toString().length - 2, valor.toString().length);
-
-    return double.tryParse("$parteReal.$parteCentavos");
-  }
-
-  void calculaGastos() async {
+  void calculaGastos() {
     TipoOperacao saida = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == 'Saída');
 
     if (historico.isNotEmpty) {
       gastoTotal = historico.where(
         (transacao) => 
-          transacao['idTipoOperacao'] == saida.idTipoOperacao
+          transacao.idTipoOperacao == saida.idTipoOperacao
+          ||
+          transacao.gastoMensal == 1
       )
       .fold(
         0,
         (double previousValue, transacao) => 
-          transacao['parcelado'] == 1
-          ? previousValue + (formataValor(transacao['valor']) / transacao['totalParcelas'])
-          : previousValue + formataValor(transacao['valor'])
+          transacao.parcelado == 1
+          ? previousValue + (Functions.formataValor(transacao.valor)! / int.parse(transacao.totalParcelas.toString()))
+          : previousValue + Functions.formataValor(transacao.valor)!
       );
 
       dividaTotal = historico.where(
         (transacao) =>
-        transacao['idTipoOperacao'] == saida.idTipoOperacao
+        transacao.idTipoOperacao == saida.idTipoOperacao
         &&
-        transacao['gastoMensal'] == 1
+        transacao.gastoMensal == 1
       )
       .fold(
         0,
         (previousValue, transacao) =>
-          previousValue + formataValor(transacao['valor'].toString())
+          previousValue + Functions.formataValor(transacao.valor.toString())!
       );
     } else {
       gastoTotal = 0;
@@ -251,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemBuilder: (context, index) {
                                   var cartao = _cartaoController.dataSourceCartao[index];
                                       
-                                  return CardComponent(
+                                  return CartaoComponent(
                                     cardName: cartao.nome.toString(),
                                     cardNumVenc: cartao.diaVencimento.toString(),
                                     cardNumFinal: cartao.finalCartao.toString(),

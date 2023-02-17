@@ -2,9 +2,13 @@
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
+import 'package:finances/src/core/app_images.dart';
+import 'package:finances/src/data/models/tipo_operacao_model.dart';
+import 'package:finances/src/data/models/transacao.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
+import 'package:finances/src/ui/screens/DetalhesTransacao/index.dart';
 import 'package:flutter/material.dart';
 
 class HistoricoScreen extends StatefulWidget {
@@ -18,14 +22,16 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
   final GastoController _gastoController = GastoController();
   final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
 
-  List<Map<String, dynamic>> historico = [];
+  List<Transacao> historico = [];
 
-  Future loadTipoOperacao() async {
+  Future<void> loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao();
   }
 
-  Future loadHistorico() async {
-    historico = await _gastoController.getTransacoesMesAtual();
+  Future<void> loadHistorico() async {
+    await _gastoController.getTransacoesMesAtual();
+
+    historico = _gastoController.dataSourceTransacao;
   }
 
   Future loadAll() async {
@@ -41,110 +47,126 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: loadAll(),
-        builder: (context, snapshot) {
-          return SingleChildScrollView(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: AppColors.gradient,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 32.0),
-                    padding: const EdgeInsets.all(16.0),
-                    width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.0),
-                        topRight: Radius.circular(16.0),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.gradient,
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 32.0),
+                padding: const EdgeInsets.all(16.0),
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 16.0),
-                          child: TextComponent(
-                            text: 'Histórico',
-                            style: 'title',
-                          ),
+                        Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 16.0),
+                              child: TextComponent(
+                                text: 'Histórico',
+                                style: 'title',
+                              ),
+                            ),
+                            TextComponent(
+                              text: Functions.fullMonthName(DateTime.now().month),
+                              style: 'subtitle',
+                            ),
+                          ],
                         ),
-                        TextComponent(
-                          text: Functions.fullMonthName(DateTime.now().month),
-                          style: 'subtitle',
-                        ),
-                        Visibility(
-                          visible: historico.isEmpty,
-                          child: Container(
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Image(image: AssetImage(AppImages.voltar)),
+                          iconSize: 16,
+                        )
+                      ],
+                    ),
+                    FutureBuilder(
+                      future: loadAll(),
+                      builder: (context, snapshot) {
+                        if (historico.isEmpty) {
+                          return Container(
                             margin: const EdgeInsets.symmetric(vertical: 32.0),
                             alignment: Alignment.center,
                             child: TextComponent(
                               text: 'Ainda não há transações',
                             ),
-                          )
-                        ),
-                        Visibility(
-                          visible: historico.isNotEmpty,
-                          child: ListView.builder(
+                          );
+                        } else {
+                          return ListView.builder(
                             shrinkWrap: true,
-                            itemCount: historico.isNotEmpty ? historico.length : 1,
+                            itemCount: historico.length,
                             itemBuilder: (BuildContext context, int index) {
-                              Map<String, dynamic> transacao = historico[index];
+                              Transacao transacao = historico[index];
 
-                              String parteReal = transacao['valor'].toString().substring(0, transacao['valor'].toString().length - 2);
-                              String parteCentavos = transacao['valor'].toString().substring(transacao['valor'].toString().length - 2, transacao['valor'].toString().length);
+                              var valor = Functions.formataValor(transacao.valor);
 
-                              double? valor = double.tryParse("$parteReal.$parteCentavos");
-
-                              if (transacao['parcelado'] == 1) {
-                                valor = valor! / transacao['totalParcelas'];
+                              if (transacao.parcelado == 1) {
+                                valor = valor! / int.parse(transacao.totalParcelas.toString());
                               }
                               
                               String valorFormatado = Functions.toCurrency(valor!);
 
-                              bool entrada = false;
-
-                              if (
-                                historico[index]['idTipoOperacao'] == _tipoOperacaoController.dataSourceTipoOperacao.first.idTipoOperacao
-                                &&
-                                _tipoOperacaoController.dataSourceTipoOperacao.first.descricao == 'Entrada'
-                              ) {
-                                entrada = true;
-                              }
-                        
+                              TipoOperacao entrada = _tipoOperacaoController.dataSourceTipoOperacao.where((element) => element.descricao == 'Entrada').first;
+                          
                               if (historico.isNotEmpty) {
-                                bool parcelado = transacao['parcelado'] == 1 ? true : false;
+                                bool parcelado = transacao.parcelado == 1 ? true : false;
 
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextComponent(
-                                      text: historico[index]['descricao'],
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetalhesTransacao(transacao: transacao),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TextComponent(
+                                          text: transacao.descricao.toString().length > 20 ? '${transacao.descricao.toString().substring(0, 20).toUpperCase()}...' : transacao.descricao.toString().toUpperCase(),
+                                        ),
+                                        TextComponent(
+                                          text: "${parcelado ? "${transacao.parcelaAtual}/${transacao.totalParcelas}" : ""} ${transacao.idTipoOperacao == entrada.idTipoOperacao ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}",
+                                          color: transacao.idTipoOperacao == entrada.idTipoOperacao ? AppColors.success : AppColors.danger,
+                                        ),
+                                      ],
                                     ),
-                                    TextComponent(
-                                      text: "${parcelado ? "${transacao['parcelaAtual']}/${transacao['totalParcelas']}" : ""} ${entrada ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}",
-                                      color: entrada ? AppColors.success : AppColors.danger,
-                                    ),
-                                  ],
+                                  ),
                                 );
                               } else {
                                 return Container();
                               }
                             },
-                          ),
-                        )
-                      ],
-                    )
-                  )
-                ],
+                          );
+                        }
+                      }
+                    ),
+                  ],
+                )
               )
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       ),
+        
       bottomNavigationBar: const BottomMenu(),
     );
   }

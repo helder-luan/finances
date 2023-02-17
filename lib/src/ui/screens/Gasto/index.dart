@@ -74,7 +74,7 @@ class _GastoScreenState extends State<GastoScreen> {
                                 );
                               },
                               style: 'success',
-                              children: TextComponent(text: 'Entrada', color: Colors.white, weigth: FontWeight.bold,)
+                              children: TextComponent(text: 'Entrada', color: Colors.white, weight: FontWeight.bold,)
                             ),
                           ),
                           SizedBox(
@@ -88,7 +88,7 @@ class _GastoScreenState extends State<GastoScreen> {
                                 );
                               },
                               style: 'danger',
-                              children: TextComponent(text: 'Saída', color: Colors.white, weigth: FontWeight.bold,)
+                              children: TextComponent(text: 'Saída', color: Colors.white, weight: FontWeight.bold,)
                             ),
                           ),
                         ],

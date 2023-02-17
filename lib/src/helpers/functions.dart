@@ -32,9 +32,17 @@ abstract class Functions {
     }
   }
 
-  static toCurrency(double value) {
+  static String toCurrency(double value) {
     String formattedValue = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(value);
 
     return formattedValue;
+  }
+
+  static double? formataValor(valor) {
+    var parteReal = valor.toString().substring(0, valor.toString().length - 2);
+
+    var parteCentavos = valor.toString().substring(valor.toString().length - 2, valor.toString().length);
+
+    return double.tryParse("$parteReal.$parteCentavos");
   }
 }

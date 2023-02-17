@@ -3,10 +3,10 @@ import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
-import 'package:finances/src/ui/components/MyCard/index.dart';
+import 'package:finances/src/ui/components/CartaoListagemComponent/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
-import 'package:finances/src/ui/screens/RegistrarCartao/index.dart';
+import 'package:finances/src/ui/screens/CadastrarCartao/index.dart';
 import 'package:flutter/material.dart';
 
 class CartaoScreen extends StatefulWidget {
@@ -91,7 +91,7 @@ class _CartaoScreenState extends State<CartaoScreen> {
                                   itemBuilder: (context, index) {
                                     var cartao = _cartaoController.dataSourceCartao[index];
                               
-                                    return MyCardComponent(cartao: cartao);
+                                    return CartaoListagemComponent(cartao: cartao);
                                   },
                                 );
                               } else {
@@ -125,7 +125,7 @@ class _CartaoScreenState extends State<CartaoScreen> {
                               },
                               children: TextComponent(
                                 text: 'Adicionar',
-                                weigth: FontWeight.bold,
+                                weight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),

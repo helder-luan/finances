@@ -5,7 +5,7 @@ import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/data/models/cartao.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
-import 'package:finances/src/ui/components/Card/index.dart';
+import 'package:finances/src/ui/components/Cartao/index.dart';
 import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
@@ -36,9 +36,29 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
       'label': 'Selecione um tipo de cartão',
     }
   ];
+  
+  // Future verificaContrasteDaCorHexadecimal(String hexColor) async {
+  //   if (hexColor.length == 10) {
+  //     hexColor = hexColor.substring(4, 10);
+  //   }
 
-  void changeColor(Color color) {
-    setState(() => _cartaoController.hexCorController.text = color.toString().substring(10, color.toString().length - 1));
+  //   final r = int.parse(hexColor.substring(0, 2), radix: 16);
+  //   final g = int.parse(hexColor.substring(2, 4), radix: 16);
+  //   final b = int.parse(hexColor.substring(4, 6), radix: 16);
+
+  //   final brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+  //   if (brightness > 125) {
+  //     _cartaoController.textoCorController.text = Colors.white.toString().substring(10, Colors.white.toString().length - 1);
+  //   } else {
+  //     _cartaoController.textoCorController.text = Colors.black.toString().substring(10, Colors.black.toString().length - 1);
+  //   }
+  // }
+
+  void changeColor(Color color) async {
+    setState(() {
+      _cartaoController.hexCorController.text = color.toString().substring(10, color.toString().length - 1);
+    });
   }
 
   void mapTipoCartao() {
@@ -58,9 +78,9 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
 
   @override
   void initState() {
+    super.initState();
     loadTipoCartao();
 
-    super.initState();
     _cartaoController.current = widget.cartao;
     _cartaoController.idTipoCartaoController.text = _cartaoController.current?.idTipoCartao.toString() ?? '';
     
@@ -184,7 +204,7 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                           style: 'subtitle',
                         ),
                       ),
-                      CardComponent(
+                      CartaoComponent(
                         cardName: _cartaoController.nomeController.text,
                         cardNumVenc: _cartaoController.diaVencimentoController.text,
                         cardNumFinal: _cartaoController.finalCartaoController.text,
@@ -237,7 +257,7 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                           },
                           children: TextComponent(
                             text: 'Salvar',
-                            weigth: FontWeight.bold,
+                            weight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),

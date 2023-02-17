@@ -6,23 +6,63 @@ class TransacaoRepository extends BaseRepository<Transacao> {
   TransacaoRepository()
       : super(TransacaoDbProvider(), (map) => Transacao.fromMap(map));
 
-  Future<List<Map<String, dynamic>>> recoverAllByCard(String cardId) {
-    return (provider as TransacaoDbProvider).recoverAllByCard(cardId);
+  Future<List<Transacao>> recoverAllByCard(String cardId) async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllByCard(cardId);
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
   }
 
-  Future<List<Map<String, dynamic>>> recoverAllByDate(String date) {
-    return (provider as TransacaoDbProvider).recoverAllByDate(date);
+  Future<List<Transacao>> recoverAllByDate(String date) async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllByDate(date);
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
   }
 
-  Future<List<Map<String, dynamic>>> recoverAllByDateAndCard(String date, String cardId) {
-    return (provider as TransacaoDbProvider).recoverAllByDateAndCard(date, cardId);
+  Future<List<Transacao>> recoverAllByDateAndCard(String date, String cardId) async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllByDateAndCard(date, cardId);
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
   }
 
-  Future<List<Map<String, dynamic>>> recoverAllByDateRange(String startDate, String endDate) {
-    return (provider as TransacaoDbProvider).recoverAllByDateRange(startDate, endDate);
+  Future<List<Transacao>> recoverAllByDateRange(String startDate, String endDate) async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllByDateRange(startDate, endDate);
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
   }
 
-  Future<List<Map<String, dynamic>>> recoverAllByDateRangeAndCard(String startDate, String endDate, String cardId) {
-    return (provider as TransacaoDbProvider).recoverAllByDateRangeAndCard(startDate, endDate, cardId);
+  Future<List<Transacao>> recoverAllByDateRangeAndCard(String startDate, String endDate, String cardId) async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllByDateRangeAndCard(startDate, endDate, cardId);
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
   }
 }
