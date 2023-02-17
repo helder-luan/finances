@@ -24,14 +24,16 @@ class DB {
     await db.execute(_cartoes);
     await db.execute(_tipoOperacao);
     await db.execute(_transacoes);
+    await db.execute(_faturas);
 
     await db.insert('tbl_tipo_cartao', {'descricao': 'Crédito'});
     await db.insert('tbl_tipo_cartao', {'descricao': 'Débito'});
+    await db.insert('tbl_tipo_cartao', {'descricao': 'Ambos'});
 
     await db.insert('tbl_tipo_operacao', {'descricao': 'Entrada'});
     await db.insert('tbl_tipo_operacao', {'descricao': 'Saída'});
   }
-
+  
   String get _tipoCartao => '''
     CREATE TABLE tbl_tipo_cartao (
       idTipoCartao INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,6 +77,20 @@ class DB {
       parcelaAtual INTEGER DEFAULT 0,
       FOREIGN KEY (idCartao) REFERENCES tbl_cartoes (idCartao),
       FOREIGN KEY (idTipoOperacao) REFERENCES tbl_tipo_operacao (idTipoOperacao)
+    )
+  ''';
+
+  String get _faturas => '''
+    CREATE TABLE tbl_faturas (
+      idFatura INTEGER PRIMARY KEY AUTOINCREMENT,
+      idCartao INTEGER NOT NULL,
+      mesReferencia INTEGER NOT NULL,
+      dataFechamento TEXT NOT NULL,
+      dataVencimento TEXT NOT NULL,
+      dataPagamento TEXT NOT NULL,
+      valorTotal TEXT NOT NULL,
+      valorPago TEXT NOT NULL,
+      FOREIGN KEY (idCartao) REFERENCES tbl_cartoes (idCartao)
     )
   ''';
 }

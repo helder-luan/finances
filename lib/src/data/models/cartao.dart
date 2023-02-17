@@ -6,6 +6,7 @@ class Cartao extends BaseModel{
   int? idTipoCartao;
   String? nome;
   String? finalCartao;
+  int? diaFechamento;
   int? diaVencimento;
   String? hexCor;
 
@@ -14,6 +15,7 @@ class Cartao extends BaseModel{
     this.idTipoCartao,
     this.nome,
     this.finalCartao,
+    this.diaFechamento,
     this.diaVencimento,
     this.hexCor,
   });
@@ -24,6 +26,7 @@ class Cartao extends BaseModel{
       idTipoCartao: map['idTipoCartao'],
       nome: map['nome'],
       finalCartao: map['finalCartao'],
+      diaFechamento: map['diaFechamento'],
       diaVencimento: map['diaVencimento'],
       hexCor: map['hexCor'],
     );
@@ -36,6 +39,7 @@ class Cartao extends BaseModel{
       'idTipoCartao': idTipoCartao,
       'nome': nome,
       'finalCartao': finalCartao,
+      'diaFechamento': diaFechamento,
       'diaVencimento': diaVencimento,
       'hexCor': hexCor,
     };
