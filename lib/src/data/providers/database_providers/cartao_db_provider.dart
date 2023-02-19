@@ -30,8 +30,8 @@ class CartaoDbProvider extends CartaoProvider {
   
   @override
   Future<bool> update(Map<String, dynamic> registro) async {
-    var id = registro['id'];
-    registro.remove('id');
+    var id = registro['idCartao'];
+    registro.remove('idCartao');
     await _database.update(table, registro, where: 'idCartao = ?', whereArgs: [id]);
 
     return true;

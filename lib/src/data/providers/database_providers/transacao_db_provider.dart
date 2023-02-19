@@ -37,8 +37,8 @@ class TransacaoDbProvider extends TransacaoProvider {
 
   @override
   Future<bool> update(Map<String, dynamic> registro) async {
-    var id = registro['id'];
-    registro.remove('id');
+    var id = registro['idTransacao'];
+    registro.remove('idTransacao');
     await _database.update(table, registro, where: 'idTransacao = ?', whereArgs: [id]);
 
     return true;
