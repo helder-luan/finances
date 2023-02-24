@@ -71,6 +71,16 @@ class _SaidaScreenState extends State<SaidaScreen> {
             'value': cartao.idCartao.toString(),
             'label': cartao.nome.toString(),
           });
+        } else if (_tipoCartaoController.dataSourceTipoCartao.first.descricao == 'Ambos') {
+          cartoesDeCredito.add({
+            'value': cartao.idCartao.toString(),
+            'label': cartao.nome.toString(),
+          });
+
+          cartoesDeDebito.add({
+            'value': cartao.idCartao.toString(),
+            'label': cartao.nome.toString(),
+          });
         } else {
           cartoesDeDebito.add({
             'value': cartao.idCartao.toString(),
@@ -108,7 +118,6 @@ class _SaidaScreenState extends State<SaidaScreen> {
         future: loadAll(),
         builder: ((context, snapshot) {
           if (
-            _cartaoController.dataSourceCartao.isNotEmpty &&
             _tipoCartaoController.dataSourceTipoCartao.isNotEmpty &&
             _tipoOperacaoController.dataSourceTipoOperacao.isNotEmpty
           ) {

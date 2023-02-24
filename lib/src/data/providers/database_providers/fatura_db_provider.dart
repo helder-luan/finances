@@ -39,9 +39,13 @@ class FaturaDbProvider extends FaturaProvider {
   }
   
   @override
-  Future<Map<String, dynamic>> recoverByCardId(String cardId) async {
-    var result = await _database.query(table, where: 'idCartao = ?', whereArgs: [cardId]);
-    
+  Future<Map<String, dynamic>> recoverByCardIdAndRefMonth(String cardId, String refMonth) async  {
+    var result = await _database.query(
+      table,
+      where: 'idCartao = ? AND mesReferencia = ?',
+      whereArgs: [cardId, refMonth]
+    );
+
     return result.isNotEmpty ? result.first : {};
   }
 }
