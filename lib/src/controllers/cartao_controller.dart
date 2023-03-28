@@ -25,6 +25,7 @@ class CartaoController extends ChangeNotifier {
       nomeController.text = _current!.nome!;
       finalCartaoController.text = _current!.finalCartao!;
       diaVencimentoController.text = _current!.diaVencimento!.toString();
+      diaFechamentoController.text = _current!.diaFechamento!.toString();
       hexCorController.text = _current!.hexCor!;
     }
   }
@@ -33,31 +34,42 @@ class CartaoController extends ChangeNotifier {
   final TextEditingController nomeController = TextEditingController();
   final TextEditingController finalCartaoController = TextEditingController();
   final TextEditingController diaVencimentoController = TextEditingController();
+  final TextEditingController diaFechamentoController = TextEditingController();
   final TextEditingController hexCorController = TextEditingController();
 
-  Future<List<Object>?> validar() async {
+  Future<Map<String, Object>> validar() async {
     if (nomeController.text.trim().isEmpty) {
-      return [
-        false,
-        'Nome não informado!',
-      ];
+      return {
+        'isValid': false,
+        'message': 'Nome não informado!',
+      };
     }
 
     if (diaVencimentoController.text.trim().isNotEmpty && int.tryParse(diaVencimentoController.text.trim())! > 31) {
-      return [
-        false,
-        'Dia de vencimento inválido!',
-      ];
+      return {
+        'isValid': false,
+        'message': 'Dia de vencimento inválido!',
+      };
+    }
+
+    if (diaFechamentoController.text.trim().isNotEmpty && int.tryParse(diaFechamentoController.text.trim())! > 31) {
+      return {
+        'isValid': false,
+        'message': 'Dia de fechamento inválido!',
+      };
     }
 
     if (idTipoCartaoController.text.trim().isEmpty) {
-      return [
-        false,
-        'Tipo de cartão não informado!',
-      ];
+      return {
+        'isValid': false,
+        'message': 'Tipo de cartão não informado!',
+      };
     }
 
-    return null;
+    return {
+      'isValid': true,
+      'message': 'OK'
+    };
   }
 
   void handleSubmit({
@@ -65,10 +77,10 @@ class CartaoController extends ChangeNotifier {
     required VoidCallback? Function(String motivo) onFailure
   }) async {
     try {
-      List<Object>? validation = await validar();
+      Map validation = await validar();
 
-      if (validation != null) {
-        onFailure(validation[1].toString());
+      if (!validation['isValid']) {
+        onFailure(validation['message']);
         return;
       }
 
@@ -78,6 +90,7 @@ class CartaoController extends ChangeNotifier {
           nome: nomeController.text,
           finalCartao: finalCartaoController.text,
           diaVencimento: int.tryParse(diaVencimentoController.text),
+          diaFechamento: int.tryParse(diaFechamentoController.text),
           hexCor: hexCorController.text,
         );
 
@@ -89,6 +102,7 @@ class CartaoController extends ChangeNotifier {
           nome: nomeController.text,
           finalCartao: finalCartaoController.text,
           diaVencimento: int.tryParse(diaVencimentoController.text),
+          diaFechamento: int.tryParse(diaFechamentoController.text),
           hexCor: hexCorController.text,
         );
         

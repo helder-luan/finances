@@ -54,6 +54,7 @@ class DB {
       idTipoCartao INTEGER NOT NULL,
       nome TEXT NOT NULL,
       finalCartao TEXT NOT NULL,
+      diaFechamento INTEGER NOT NULL,
       diaVencimento INTEGER NOT NULL,
       hexCor TEXT NOT NULL,
       FOREIGN KEY (idTipoCartao) REFERENCES tbl_tipo_cartao (idTipoCartao)
