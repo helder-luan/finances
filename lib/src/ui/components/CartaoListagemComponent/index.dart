@@ -1,4 +1,5 @@
 import 'package:finances/src/controllers/cartao_controller.dart';
+import 'package:finances/src/controllers/tipo_cartao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/data/models/cartao.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
@@ -23,6 +24,7 @@ class CartaoListagemComponent extends StatefulWidget {
 
 class _CartaoListagemComponentState extends State<CartaoListagemComponent> {
   final _controller = CartaoController();
+  final _tipoController = TipoCartaoController();
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +134,8 @@ class _CartaoListagemComponentState extends State<CartaoListagemComponent> {
                 icon: const Icon(Icons.info_outline_rounded),
                 color: AppColors.primary,
                 onPressed: () async {
+                  var tipo = await _tipoController.getTipoCartaoByIdTipo(widget.cartao.idTipoCartao.toString());
+
                   await showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -165,26 +169,11 @@ class _CartaoListagemComponentState extends State<CartaoListagemComponent> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     TextComponent(
-                                      text: 'Dia de vencimento',
+                                      text: 'Tipo: ',
                                       weight: FontWeight.bold,
                                     ),
                                     TextComponent(
-                                      text: widget.cartao.diaVencimento.toString(),
-                                    ),
-                                  ]
-                                ),
-                              ),
-                              Visibility(
-                                visible: widget.cartao.finalCartao != null && widget.cartao.finalCartao!.isNotEmpty,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextComponent(
-                                      text: 'Final do cartão',
-                                      weight: FontWeight.bold,
-                                    ),
-                                    TextComponent(
-                                      text: widget.cartao.finalCartao.toString(),
+                                      text: tipo.first.descricao.toString(),
                                     ),
                                   ]
                                 ),
