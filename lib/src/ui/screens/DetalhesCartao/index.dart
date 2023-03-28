@@ -127,13 +127,19 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
                             shrinkWrap: true,
                             itemCount: historico.isNotEmpty ? historico.length : 1,
                             itemBuilder: (BuildContext context, int index) {
-                              var transacao = historico[index];
+                              Transacao transacao = historico[index];
 
                               double? valor = Functions.formataValor(transacao.valor.toString());
 
-                              var formattedValue = Functions.toCurrency(valor!);
+                              if (transacao.parcelado == 1) {
+                                valor = valor! / int.parse(transacao.totalParcelas.toString());
+                              }
+
+                              String valorFormatado = Functions.toCurrency(valor!);
 
                               TipoOperacao entrada = _tipoOperacaoController.dataSourceTipoOperacao.where((element) => element.descricao == 'Entrada').first;
+
+                              bool parcelado = transacao.parcelado == 1 ? true : false;
 
                               return Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,7 +148,7 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
                                     text: transacao.descricao.toString(),
                                   ),
                                   TextComponent(
-                                    text: transacao.idTipoOperacao == entrada.idTipoOperacao ? "+ ${formattedValue.toString()}" : "- ${formattedValue.toString()}",
+                                    text: "${parcelado ? "${transacao.parcelaAtual}/${transacao.totalParcelas}" : ""} ${transacao.idTipoOperacao == entrada.idTipoOperacao ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}",
                                     color: transacao.idTipoOperacao == entrada.idTipoOperacao ? AppColors.success : AppColors.danger,
                                   ),
                                 ],

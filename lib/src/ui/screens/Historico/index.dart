@@ -113,7 +113,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                             itemBuilder: (BuildContext context, int index) {
                               Transacao transacao = historico[index];
 
-                              var valor = Functions.formataValor(transacao.valor);
+                              double? valor = Functions.formataValor(transacao.valor);
 
                               if (transacao.parcelado == 1) {
                                 valor = valor! / int.parse(transacao.totalParcelas.toString());
