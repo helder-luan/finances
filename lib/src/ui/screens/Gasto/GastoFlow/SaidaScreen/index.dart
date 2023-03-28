@@ -62,16 +62,22 @@ class _SaidaScreenState extends State<SaidaScreen> {
   void separaCartoes() {
     if (cartoesDeCredito.length <= 1 && cartoesDeDebito.length <= 1) {
       for (var cartao in _cartaoController.dataSourceCartao) {
-        // se cartao.idTipoCartao for igual ao id do tipo de cartao 'Crédito'
-        if (
-          cartao.idTipoCartao == _tipoCartaoController.dataSourceTipoCartao.first.idTipoCartao &&
-          _tipoCartaoController.dataSourceTipoCartao.first.descricao == 'Crédito'
-        ) {
+        if (cartao.idTipoCartao == _tipoCartaoController.dataSourceTipoCartao.where((element) => element.descricao == 'Crédito').first.idTipoCartao) {
           cartoesDeCredito.add({
             'value': cartao.idCartao.toString(),
             'label': cartao.nome.toString(),
           });
-        } else {
+        } else if (cartao.idTipoCartao == _tipoCartaoController.dataSourceTipoCartao.where((element) => element.descricao == 'Débito').first.idTipoCartao) {
+          cartoesDeDebito.add({
+            'value': cartao.idCartao.toString(),
+            'label': cartao.nome.toString(),
+          });
+        } else if (cartao.idTipoCartao == _tipoCartaoController.dataSourceTipoCartao.where((element) => element.descricao == 'Ambos').first.idTipoCartao) {
+          cartoesDeCredito.add({
+            'value': cartao.idCartao.toString(),
+            'label': cartao.nome.toString(),
+          });
+          
           cartoesDeDebito.add({
             'value': cartao.idCartao.toString(),
             'label': cartao.nome.toString(),
