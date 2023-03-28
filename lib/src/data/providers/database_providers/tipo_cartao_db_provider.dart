@@ -37,4 +37,9 @@ class TipoCartaoDbProvider extends TipoCartaoProvider {
     throw UnimplementedError();
   }
 
+  Future<List<Map<String, dynamic>>> getTipoCartaoByIdTipo(String idTipoCartao) async {
+    var result = await _database.query(table, where: 'idTipoCartao = ?', whereArgs: [idTipoCartao]);
+
+    return result;
+  }
 }

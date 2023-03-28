@@ -22,4 +22,12 @@ class TipoCartaoController extends ChangeNotifier {
       print(e);
     }
   }
+
+  Future getTipoCartaoByIdTipo(String id) async {
+    try {
+      return await _tipoCartaoRepository.getTipoCartaoByIdTipo(id);
+    } catch (e) {
+      print(e);
+    }
+  }
 }
