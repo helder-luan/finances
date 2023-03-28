@@ -35,93 +35,96 @@ class GastoController extends ChangeNotifier {
   final TextEditingController totalParcelas = TextEditingController();
   final TextEditingController parcelaAtual = TextEditingController();
 
-  Future<List<Object>?> validarOperacaoEntrada() async {
+  Future<Map<String, Object>> validarOperacaoEntrada() async {
     if (descricao.text.trim().isEmpty) {
-      return [
-        false,
-        'Descrição não informada!',
-      ];
+      return {
+        'isValid': false,
+        'message': 'Descrição não informada!',
+      };
     }
 
     if (valor.text.trim().isEmpty) {
-      return [
-        false,
-        'Valor não informado!',
-      ];
+      return {
+        'isValid': false,
+        'message': 'Valor não informado!'
+      };
     }
 
     if (reembolso.text.trim() == 'true') {
       if (idCartao.text.trim().isEmpty) {
-        return [
-          false,
-          'Cartão não informado!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Cartão não informado!',
+        };
       }
     }
 
-    return null;
+    return {
+      'isValid': true,
+      'message': 'OK',
+    };
   }
 
-  Future<List<Object>?> validarOperacaoSaida() async {
+  Future<Map<String, Object>> validarOperacaoSaida() async {
     if (formaDePagamento.text.trim() == '0') {
-      return [
-        false,
-        'Forma de pagamento não informada!',
-      ];
+      return {
+        'isValid': false,
+        'message': 'Forma de pagamento não informada!',
+      };
     }
 
     if (formaDePagamento.text.trim() == 'M') {
       if (descricao.text.trim().isEmpty) {
-        return [
-          false,
-          'Descrição não informada!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Descrição não informada!',
+        };
       }
 
       if (valor.text.trim().isEmpty) {
-        return [
-          false,
-          'Valor não informado!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Valor não informado!',
+        };
       }
     }
 
     // credit payment
     if (formaDePagamento.text.trim() == 'C') {
       if (idCartao.text.trim().isEmpty) {
-        return [
-          false,
-          'Cartão não informado!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Cartão não informado!',
+        };
       }
 
       if (descricao.text.trim().isEmpty) {
-        return [
-          false,
-          'Descrição não informada!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Descrição não informada!',
+        };
       }
 
       if (valor.text.trim().isEmpty) {
-        return [
-          false,
-          'Valor não informado!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Valor não informado!',
+        };
       }
 
       if (parcelado.text.trim() == 'true') {
         if (totalParcelas.text.trim().isEmpty) {
-          return [
-            false,
-            'Total de parcelas não informado!',
-          ];
+          return {
+            'isValid': false,
+            'message': 'Total de parcelas não informado!',
+          };
         }
 
         if (parcelaAtual.text.trim().isEmpty) {
-          return [
-            false,
-            'Parcela atual não informada!',
-          ];
+          return {
+            'isValid': false,
+            'message': 'Parcela atual não informada!',
+          };
         }
       }
     }
@@ -130,28 +133,31 @@ class GastoController extends ChangeNotifier {
     // debit payment
     if (formaDePagamento.text.trim() == 'D') {
       if (idCartao.text.trim().isEmpty) {
-        return [
-          false,
-          'Cartão não informado!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Cartão não informado!',
+        };
       }
 
       if (descricao.text.trim().isEmpty) {
-        return [
-          false,
-          'Descrição não informada!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Descrição não informada!',
+        };
       }
 
       if (valor.text.trim().isEmpty) {
-        return [
-          false,
-          'Valor não informado!',
-        ];
+        return {
+          'isValid': false,
+          'message': 'Valor não informado!',
+        };
       }
     }
     
-    return null;
+    return {
+      'isValid': true,
+      'message': 'OK',
+    };
   }
 
   // verifica em qual mes deve ser lancado a transacao com base no dia de vencimento do cartao
@@ -182,10 +188,10 @@ class GastoController extends ChangeNotifier {
     required VoidCallback? Function(String motivo) onFailure
   }) async {
     try {
-      List<Object>? validacao = await validarOperacaoEntrada();
+      Map validacao = await validarOperacaoEntrada();
 
-      if (validacao != null) {
-        onFailure(validacao[1].toString());
+      if (!validacao['isValid']) {
+        onFailure(validacao['message']);
         return;
       }
 
@@ -220,10 +226,10 @@ class GastoController extends ChangeNotifier {
     required VoidCallback? Function(String motivo) onFailure
   }) async {
     try {
-      List<Object>? validacao = await validarOperacaoSaida();
+      Map validacao = await validarOperacaoSaida();
 
-      if (validacao != null) {
-        onFailure(validacao[1].toString());
+      if (!validacao['isValid']) {
+        onFailure(validacao['message']);
         return;
       }
 
