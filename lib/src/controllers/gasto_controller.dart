@@ -2,6 +2,7 @@
 import 'package:finances/src/data/models/cartao.dart';
 import 'package:finances/src/data/models/transacao.dart';
 import 'package:finances/src/data/repositories/cartao_repository.dart';
+import 'package:finances/src/data/repositories/fatura_repository.dart';
 import 'package:finances/src/data/repositories/transacao_repository.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -15,25 +16,26 @@ class GastoController extends ChangeNotifier {
 
   final TransacaoRepository _transacaoRepository = TransacaoRepository();
   final CartaoRepository _cartaoRepository = CartaoRepository();
+  final FaturaRepository _faturaRepository = FaturaRepository();
   
   // common
-  final TextEditingController formaDePagamento = TextEditingController();
-  final TextEditingController descricao = TextEditingController();
-  final TextEditingController valor = TextEditingController();
-  final TextEditingController detalhes = TextEditingController();
+  final TextEditingController formaDePagamento = TextEditingController(text: '');
+  final TextEditingController descricao = TextEditingController(text: '');
+  final TextEditingController valor = TextEditingController(text: '');
+  final TextEditingController detalhes = TextEditingController(text: '');
 
   // entry
-  final TextEditingController idTipoOperacao = TextEditingController();
-  final TextEditingController reembolso = TextEditingController();
+  final TextEditingController idTipoOperacao = TextEditingController(text: '');
+  final TextEditingController reembolso = TextEditingController(text: '');
 
   // common out and entry
-  final TextEditingController idCartao = TextEditingController();
+  final TextEditingController idCartao = TextEditingController(text: '');
 
   // out
-  final TextEditingController gastoMensal = TextEditingController();
-  final TextEditingController parcelado = TextEditingController();
-  final TextEditingController totalParcelas = TextEditingController();
-  final TextEditingController parcelaAtual = TextEditingController();
+  final TextEditingController gastoMensal = TextEditingController(text: '');
+  final TextEditingController parcelado = TextEditingController(text: '');
+  final TextEditingController totalParcelas = TextEditingController(text: '');
+  final TextEditingController parcelaAtual = TextEditingController(text: '');
 
   Future<Map<String, Object>> validarOperacaoEntrada() async {
     if (descricao.text.trim().isEmpty) {
@@ -214,6 +216,51 @@ class GastoController extends ChangeNotifier {
           parcelaAtual: 0
         )
       );
+
+      // await _faturaRepository.recoverByCardIdAndRefMonth(
+      //   idCartao.text.trim(),
+      //   mesReferencia.toString()
+      // ).then((fatura) async {
+      //   if (fatura != null) {
+      //     await _faturaRepository.update(
+      //       Fatura(
+      //         id: fatura.id,
+      //         idCartao: fatura.idCartao,
+      //         mesReferencia: fatura.mesReferencia,
+      //         dataFechamento: fatura.dataFechamento,
+      //         dataVencimento: fatura.dataVencimento,
+      //         valorFatura: (double.tryParse(fatura.valorFatura.toString())! + double.tryParse(valorFormatado)).toString(),
+      //         valorPago: fatura.valorPago,
+      //         valorMinimo: fatura.valorMinimo,
+      //         valorParcela: fatura.valorParcela,
+      //         totalParcelas: fatura.totalParcelas,
+      //         parcelaAtual: fatura.parcelaAtual,
+      //         dataPagamento: fatura.dataPagamento,
+      //         dataCadastro: fatura.dataCadastro,
+      //         dataAtualizacao: DateTime.now().toString()
+      //       )
+      //     );
+      //   } else {
+      //     await _faturaRepository.insert(
+      //       Fatura(
+      //         idCartao: int.tryParse(idCartao.text.trim()),
+      //         mesReferencia: mesReferencia,
+      //         dataFechamento: DateTime.now().toString(),
+      //         dataVencimento: DateTime.now().toString(),
+      //         valorFatura: valorFormatado,
+      //         valorPago: '0',
+      //         valorMinimo: '0',
+      //         valorParcela: '0',
+      //         totalParcelas: 0,
+      //         parcelaAtual: 0,
+      //         dataPagamento: DateTime.now().toString(),
+      //         dataCadastro: DateTime.now().toString(),
+      //         dataAtualizacao: DateTime.now().toString()
+      //       )
+      //     );
+      //   }
+      // });
+
       onSuccess();
     }
     catch (e) {

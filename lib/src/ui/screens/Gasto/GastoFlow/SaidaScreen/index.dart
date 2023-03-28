@@ -114,7 +114,6 @@ class _SaidaScreenState extends State<SaidaScreen> {
         future: loadAll(),
         builder: ((context, snapshot) {
           if (
-            _cartaoController.dataSourceCartao.isNotEmpty &&
             _tipoCartaoController.dataSourceTipoCartao.isNotEmpty &&
             _tipoOperacaoController.dataSourceTipoOperacao.isNotEmpty
           ) {
