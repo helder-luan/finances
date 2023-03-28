@@ -140,6 +140,12 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                               keyboardType: TextInputType.number,
                               isRequired: false,
                             ),
+                            FormInputComponent(
+                              controller: _cartaoController.diaFechamentoController,
+                              label: 'Dia do fechamento',
+                              keyboardType: TextInputType.number,
+                              isRequired: false,
+                            ),
                             FutureBuilder(
                               future: loadTipoCartao(),
                               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
