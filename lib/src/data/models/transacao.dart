@@ -4,7 +4,7 @@ import 'dart:convert';
 class Transacao extends BaseModel{
   int? idTransacao;
   String? descricao;
-  String? valor;
+  double? valor;
   String? detalhes;
   String? dataCadastro;
   int? idTipoOperacao;

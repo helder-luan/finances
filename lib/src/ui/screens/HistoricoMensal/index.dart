@@ -1,8 +1,5 @@
-
-
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/data/models/transacao.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/CardMes/index.dart';
@@ -30,7 +27,6 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
 
   void ordenaPorMes() {
     _gastoController.dataSourceTransacao.sort((a, b) => a.mesReferencia!.compareTo(b.mesReferencia!));
-
     
     for(var transacao in _gastoController.dataSourceTransacao) {
       if (transacoes.containsKey(transacao.mesReferencia.toString())) {
@@ -72,22 +68,10 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                   children: [
                     Container(
                       margin: const EdgeInsets.only(bottom: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextComponent(
-                            text: "Histórico Dos Meses",
-                            style: 'title',
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Image(image: AssetImage(AppImages.voltar)),
-                            iconSize: 16,
-                          )
-                        ],
-                      )
+                      child: TextComponent(
+                        text: "Histórico Dos Meses",
+                        style: 'title',
+                      ),
                     ),
                     FutureBuilder(
                       future: loadHistorico(),

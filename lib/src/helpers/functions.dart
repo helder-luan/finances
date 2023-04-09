@@ -45,4 +45,12 @@ abstract class Functions {
 
     return double.tryParse("$parteReal.$parteCentavos");
   }
+
+  static String formataData(String data) {
+    var dataFormatada = data.split(' ')[0];
+
+    var dataSeparada = dataFormatada.split('-');
+
+    return "${dataSeparada[2]}/${dataSeparada[1]}/${dataSeparada[0]}";
+  }
 }

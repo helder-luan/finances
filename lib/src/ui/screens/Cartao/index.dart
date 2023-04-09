@@ -1,11 +1,9 @@
 import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/CartaoListagemComponent/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Home/index.dart';
 import 'package:finances/src/ui/screens/CadastrarCartao/index.dart';
 import 'package:flutter/material.dart';
 
@@ -53,30 +51,12 @@ class _CartaoScreenState extends State<CartaoScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 24.0),
-                            child: TextComponent(
-                              text: 'Cartões',
-                              style: 'title',
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                                (route) => false,
-                              );
-                            },
-                            icon: Image(image: AssetImage(AppImages.voltar)),
-                            iconSize: 16,
-                          )
-                        ],
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 24.0),
+                        child: TextComponent(
+                          text: 'Cartões',
+                          style: 'title',
+                        ),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,7 +99,7 @@ class _CartaoScreenState extends State<CartaoScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => RegistrarCartaoScreen(),
+                                    builder: (context) => CadastrarCartaoScreen(),
                                   )
                                 );
                               },

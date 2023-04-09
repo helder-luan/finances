@@ -1,5 +1,4 @@
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
@@ -40,21 +39,9 @@ class _GastoScreenState extends State<GastoScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 24.0),
-                            child: TextComponent(text: 'Gerenciar Gastos', style: 'title'),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Image(image: AssetImage(AppImages.voltar)),
-                            iconSize: 16,
-                          )
-                        ],
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 24.0),
+                        child: TextComponent(text: 'Gerenciar Gastos', style: 'title'),
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),

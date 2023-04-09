@@ -9,8 +9,7 @@ class Fatura extends BaseModel {
   String? dataFechamento;
   String? dataVencimento;
   String? dataPagamento;
-  String? valorTotal;
-  String? valorPago;
+  double? valorTotal;
 
   Fatura({
     this.idFatura,
@@ -20,7 +19,6 @@ class Fatura extends BaseModel {
     this.dataVencimento,
     this.dataPagamento,
     this.valorTotal,
-    this.valorPago,
   });
 
   factory Fatura.fromMap(Map<String, dynamic> map) {
@@ -32,7 +30,6 @@ class Fatura extends BaseModel {
       dataVencimento: map['dataVencimento'],
       dataPagamento: map['dataPagamento'],
       valorTotal: map['valorTotal'],
-      valorPago: map['valorPago'],
     );
   }
 
@@ -46,7 +43,6 @@ class Fatura extends BaseModel {
       'dataVencimento': dataVencimento,
       'dataPagamento': dataPagamento,
       'valorTotal': valorTotal,
-      'valorPago': valorPago,
     };
   }
 

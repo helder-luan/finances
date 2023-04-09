@@ -6,9 +6,19 @@ class FaturaRepository extends BaseRepository<Fatura> {
   FaturaRepository()
       : super(FaturaDbProvider(), (map) => Fatura.fromMap(map));
 
+  Future<Fatura?> recoverByCardId(String cardId) async {
+    var result = await (provider as FaturaDbProvider).recoverByCardId(cardId);
+
+    return result.isNotEmpty ? instanceFromMap(result) : null;
+  }
+
   Future<Fatura?> recoverByCardIdAndRefMonth(String cardId, String refMonth) async {
     var result = await (provider as FaturaDbProvider).recoverByCardIdAndRefMonth(cardId, refMonth);
 
     return result.isNotEmpty ? instanceFromMap(result) : null;
+  }
+
+  Future<void> updateByCardIdAndRefMonth(String cardId, String refMonth, String valorTotal) async {
+    await (provider as FaturaDbProvider).updateByCardIdAndRefMonth(cardId, refMonth, valorTotal);
   }
 }

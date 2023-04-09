@@ -1,8 +1,11 @@
 
+import 'package:finances/src/controllers/fatura_controller.dart';
 import 'package:finances/src/data/models/cartao.dart';
+import 'package:finances/src/data/models/fatura.dart';
 import 'package:finances/src/data/models/transacao.dart';
 import 'package:finances/src/data/repositories/cartao_repository.dart';
 import 'package:finances/src/data/repositories/fatura_repository.dart';
+import 'package:finances/src/data/repositories/tipo_operacao_repository.dart';
 import 'package:finances/src/data/repositories/transacao_repository.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -14,9 +17,12 @@ class GastoController extends ChangeNotifier {
   ValueNotifier<List<Transacao>> dataSourceTransacaoNotifier =
       ValueNotifier(<Transacao>[]);
 
+  final FaturaController _faturaController = FaturaController();
+
   final TransacaoRepository _transacaoRepository = TransacaoRepository();
   final CartaoRepository _cartaoRepository = CartaoRepository();
   final FaturaRepository _faturaRepository = FaturaRepository();
+  final TipoOperacaoRepository _tipoOperacaoRepository = TipoOperacaoRepository();
   
   // common
   final TextEditingController formaDePagamento = TextEditingController(text: '');
@@ -170,10 +176,10 @@ class GastoController extends ChangeNotifier {
     if (idCartao.text.trim().isNotEmpty) {
       Cartao cartao = await _cartaoRepository.recover(idCartao.text.trim());
       
-      if ((int.tryParse(cartao.diaVencimento.toString())! - 10) > 0) {
-        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! - 10;
+      if ((cartao.diaVencimento! - 10) > 0) {
+        diaFechamento = cartao.diaVencimento! - 10;
       } else {
-        diaFechamento = int.tryParse(cartao.diaVencimento.toString())! + 20;
+        diaFechamento = cartao.diaVencimento! + 20;
       }
 
       if (diaFechamento <= DateTime.now().day) {
@@ -193,12 +199,11 @@ class GastoController extends ChangeNotifier {
       Map validacao = await validarOperacaoEntrada();
 
       if (!validacao['isValid']) {
-        onFailure(validacao['message']);
-        return;
+        throw validacao['message'];
       }
 
       int mesReferencia = await getMesParaLacamento();
-      String valorFormatado = valor.text.replaceAll("R\$ ", "").replaceAll(",", ".").replaceAll(".", "");
+      double valorFormatado = double.tryParse(valor.text.replaceAll("R\$ ", "").replaceAll(".", "").replaceAll(",", "."))!;
 
       await _transacaoRepository.insert(
         Transacao(
@@ -217,49 +222,34 @@ class GastoController extends ChangeNotifier {
         )
       );
 
-      // await _faturaRepository.recoverByCardIdAndRefMonth(
-      //   idCartao.text.trim(),
-      //   mesReferencia.toString()
-      // ).then((fatura) async {
-      //   if (fatura != null) {
-      //     await _faturaRepository.update(
-      //       Fatura(
-      //         id: fatura.id,
-      //         idCartao: fatura.idCartao,
-      //         mesReferencia: fatura.mesReferencia,
-      //         dataFechamento: fatura.dataFechamento,
-      //         dataVencimento: fatura.dataVencimento,
-      //         valorFatura: (double.tryParse(fatura.valorFatura.toString())! + double.tryParse(valorFormatado)).toString(),
-      //         valorPago: fatura.valorPago,
-      //         valorMinimo: fatura.valorMinimo,
-      //         valorParcela: fatura.valorParcela,
-      //         totalParcelas: fatura.totalParcelas,
-      //         parcelaAtual: fatura.parcelaAtual,
-      //         dataPagamento: fatura.dataPagamento,
-      //         dataCadastro: fatura.dataCadastro,
-      //         dataAtualizacao: DateTime.now().toString()
-      //       )
-      //     );
-      //   } else {
-      //     await _faturaRepository.insert(
-      //       Fatura(
-      //         idCartao: int.tryParse(idCartao.text.trim()),
-      //         mesReferencia: mesReferencia,
-      //         dataFechamento: DateTime.now().toString(),
-      //         dataVencimento: DateTime.now().toString(),
-      //         valorFatura: valorFormatado,
-      //         valorPago: '0',
-      //         valorMinimo: '0',
-      //         valorParcela: '0',
-      //         totalParcelas: 0,
-      //         parcelaAtual: 0,
-      //         dataPagamento: DateTime.now().toString(),
-      //         dataCadastro: DateTime.now().toString(),
-      //         dataAtualizacao: DateTime.now().toString()
-      //       )
-      //     );
-      //   }
-      // });
+      var tipoOperacao = await _tipoOperacaoRepository.recover(idTipoOperacao.text.trim());
+
+      if (
+        reembolso.text.trim() == 'true'
+        &&
+        idCartao.text.trim() != '0'
+      ) {
+        Fatura? fatura = await _faturaController.verificaSeExisteFaturaMesAtualDoCartao(idCartao.text.trim(), mesReferencia.toString());
+
+        if (fatura != null) {
+          var valorTotal = fatura.valorTotal! - valorFormatado;
+
+          await _faturaController.atualizaValorTotalFatura(idCartao.text.trim(), mesReferencia.toString(), valorTotal.toString());
+        } else {
+          var cartao = await _cartaoRepository.recover(idCartao.text.trim());
+
+          await _faturaController.criarFatura(
+            Fatura(
+              idCartao: cartao.idCartao,
+              mesReferencia: mesReferencia,
+              dataFechamento: cartao.diaFechamento.toString(),
+              dataVencimento: cartao.diaVencimento.toString(),
+              dataPagamento: null,
+              valorTotal: valorFormatado,
+            )
+          );
+        }
+      }
 
       onSuccess();
     }
@@ -281,7 +271,7 @@ class GastoController extends ChangeNotifier {
       }
 
       int mesReferencia = await getMesParaLacamento();
-      String valorFormatado = valor.text.replaceAll("R\$ ", "").replaceAll(",", ".").replaceAll(".", "");
+      double valorFormatado = double.tryParse(valor.text.replaceAll("R\$ ", "").replaceAll(".", "").replaceAll(",", "."))!;
 
       await _transacaoRepository.insert(
         Transacao(
@@ -299,6 +289,34 @@ class GastoController extends ChangeNotifier {
           parcelaAtual: int.tryParse(parcelaAtual.text.trim())
         )
       );
+
+      if (
+        formaDePagamento.text.trim() == "C"
+        &&
+        idCartao.text.trim() != '0'
+      ) {
+        Fatura? fatura = await _faturaController.verificaSeExisteFaturaMesAtualDoCartao(idCartao.text.trim(), mesReferencia.toString());
+
+        if (fatura != null) {
+          var valorTotal = fatura.valorTotal! + valorFormatado;
+
+          await _faturaController.atualizaValorTotalFatura(idCartao.text.trim(), mesReferencia.toString(), valorTotal.toString());
+        } else {
+          var cartao = await _cartaoRepository.recover(idCartao.text.trim());
+
+          await _faturaController.criarFatura(
+            Fatura(
+              idCartao: cartao.idCartao,
+              mesReferencia: mesReferencia,
+              dataFechamento: cartao.diaFechamento.toString(),
+              dataVencimento: cartao.diaVencimento.toString(),
+              dataPagamento: null,
+              valorTotal: valorFormatado,
+            )
+          );
+        }
+      }
+
       onSuccess();
     }
     catch (e) {
@@ -306,9 +324,9 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<void> getTransacoesMesAtual() async {
-    DateTime dataInicio = DateTime(DateTime.now().year, DateTime.now().month, 1);
-    DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
+  Future<void> getTransacoesMesAtual(int mesAtual) async {
+    DateTime dataInicio = DateTime(DateTime.now().year, mesAtual, 1);
+    DateTime dataFim = DateTime(DateTime.now().year, mesAtual + 1, 0);
     
     try {
       await _transacaoRepository.recoverAllByDateRange(

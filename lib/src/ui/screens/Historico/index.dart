@@ -1,8 +1,8 @@
 
 import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/mes_referencia_controller.dart';
 import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/data/models/tipo_operacao_model.dart';
 import 'package:finances/src/data/models/transacao.dart';
 import 'package:finances/src/helpers/functions.dart';
@@ -21,6 +21,7 @@ class HistoricoScreen extends StatefulWidget {
 class _HistoricoScreenState extends State<HistoricoScreen> {
   final GastoController _gastoController = GastoController();
   final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
+  final MesReferenciaController _mesReferenciaController = MesReferenciaController();
 
   List<Transacao> historico = [];
 
@@ -29,7 +30,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
   }
 
   Future<void> loadHistorico() async {
-    await _gastoController.getTransacoesMesAtual();
+    await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
 
     historico = _gastoController.dataSourceTransacao;
   }
@@ -68,32 +69,16 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 16.0),
-                              child: TextComponent(
-                                text: 'Histórico',
-                                style: 'title',
-                              ),
-                            ),
-                            TextComponent(
-                              text: Functions.fullMonthName(DateTime.now().month),
-                              style: 'subtitle',
-                            ),
-                          ],
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Image(image: AssetImage(AppImages.voltar)),
-                          iconSize: 16,
-                        )
-                      ],
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16.0),
+                      child: TextComponent(
+                        text: 'Histórico',
+                        style: 'title',
+                      ),
+                    ),
+                    TextComponent(
+                      text: Functions.fullMonthName(DateTime.now().month),
+                      style: 'subtitle',
                     ),
                     FutureBuilder(
                       future: loadAll(),
@@ -113,19 +98,19 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                             itemBuilder: (BuildContext context, int index) {
                               Transacao transacao = historico[index];
 
-                              double? valor = Functions.formataValor(transacao.valor);
+                              double valor = transacao.valor!;
 
-                              if (transacao.parcelado == 1) {
-                                valor = valor! / int.parse(transacao.totalParcelas.toString());
+                              bool parcelado = transacao.parcelado == 1 ? true : false;
+
+                              if (parcelado) {
+                                valor = valor / transacao.totalParcelas!;
                               }
                               
-                              String valorFormatado = Functions.toCurrency(valor!);
+                              String valorFormatado = Functions.toCurrency(valor);
 
                               TipoOperacao entrada = _tipoOperacaoController.dataSourceTipoOperacao.where((element) => element.descricao == 'Entrada').first;
                           
                               if (historico.isNotEmpty) {
-                                bool parcelado = transacao.parcelado == 1 ? true : false;
-
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.push(

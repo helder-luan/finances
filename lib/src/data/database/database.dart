@@ -54,7 +54,6 @@ class DB {
       idTipoCartao INTEGER NOT NULL,
       nome TEXT NOT NULL,
       finalCartao TEXT NOT NULL,
-      diaFechamento INTEGER NOT NULL,
       diaVencimento INTEGER NOT NULL,
       diaFechamento INTEGER NOT NULL,
       hexCor TEXT NOT NULL,
@@ -66,7 +65,7 @@ class DB {
     CREATE TABLE tbl_transacoes (
       idTransacao INTEGER PRIMARY KEY AUTOINCREMENT,
       descricao TEXT NOT NULL,
-      valor TEXT NOT NULL,
+      valor REAL NOT NULL,
       detalhes TEXT,
       dataCadastro TEXT NOT NULL,
       idTipoOperacao INTEGER NOT NULL,
@@ -89,9 +88,8 @@ class DB {
       mesReferencia INTEGER NOT NULL,
       dataFechamento TEXT NOT NULL,
       dataVencimento TEXT NOT NULL,
-      dataPagamento TEXT NOT NULL,
-      valorTotal TEXT NOT NULL,
-      valorPago TEXT NOT NULL,
+      dataPagamento TEXT NULL,
+      valorTotal REAL NOT NULL DEFAULT 0,
       FOREIGN KEY (idCartao) REFERENCES tbl_cartoes (idCartao)
     )
   ''';

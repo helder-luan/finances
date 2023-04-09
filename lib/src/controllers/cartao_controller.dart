@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:finances/src/data/models/cartao.dart';
 
 class CartaoController extends ChangeNotifier {
-  final CartaoRepository _repository = CartaoRepository();
+  final CartaoRepository _cartaoRepository = CartaoRepository();
 
   Cartao? _current;
 
@@ -94,7 +94,7 @@ class CartaoController extends ChangeNotifier {
           hexCor: hexCorController.text,
         );
 
-        await _repository.insert(cartao);
+        await _cartaoRepository.insert(cartao);
       } else {
         var cartao = Cartao(
           idCartao: current!.idCartao,
@@ -106,7 +106,7 @@ class CartaoController extends ChangeNotifier {
           hexCor: hexCorController.text,
         );
         
-        await _repository.update(cartao);
+        await _cartaoRepository.update(cartao);
       }
 
       onSuccess();
@@ -116,12 +116,12 @@ class CartaoController extends ChangeNotifier {
     }
   }
 
-  void deleteCard(String id, {
+  void deletarCartao(String id, {
     required VoidCallback? Function() onSuccess,
     required VoidCallback? Function(String motivo) onFailure
   }) async {
     try {
-      await _repository.delete(id);
+      await _cartaoRepository.delete(id);
 
       onSuccess();
     }
@@ -133,7 +133,7 @@ class CartaoController extends ChangeNotifier {
   Future<void> atualizarDados() async {
     try {
       if (dataSourceCartao.isEmpty) {
-        await _repository.recoverAll().then((value) {
+        await _cartaoRepository.recoverAll().then((value) {
           dataSourceCartao = value;
         });
       }

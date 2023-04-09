@@ -14,19 +14,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:motion_toast/motion_toast.dart';
 
-class RegistrarCartaoScreen extends StatefulWidget {
+class CadastrarCartaoScreen extends StatefulWidget {
   Cartao? cartao;
 
-  RegistrarCartaoScreen({
+  CadastrarCartaoScreen({
     super.key,
     this.cartao,
   });
 
   @override
-  State<RegistrarCartaoScreen> createState() => _RegistrarCartaoScreenState();
+  State<CadastrarCartaoScreen> createState() => _CadastrarCartaoScreenState();
 }
 
-class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
+class _CadastrarCartaoScreenState extends State<CadastrarCartaoScreen> {
   final CartaoController _cartaoController = CartaoController();
   final TipoCartaoController _tipoCartaoController = TipoCartaoController();
 
@@ -267,10 +267,91 @@ class _RegistrarCartaoScreenState extends State<RegistrarCartaoScreen> {
                             color: Colors.white,
                           ),
                         ),
-                      )
+                      ),
+                      Visibility(
+                        visible: _cartaoController.current != null,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 16.0),
+                          width: MediaQuery.of(context).size.width-32,
+                          child: ButtonComponent(
+                            onPressed: () async {
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Remover cartão'),
+                                    content: SingleChildScrollView(
+                                      child: Text('Tem certeza que deseja remover ${widget.cartao!.nome?.toUpperCase()}?')
+                                    ),
+                                    actions: <Widget>[
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          ButtonComponent(
+                                            style: 'danger',
+                                            onPressed: () {
+                                              _cartaoController.deletarCartao(
+                                                widget.cartao!.idCartao.toString(),
+                                                onSuccess: () {
+                                                  Navigator.pushAndRemoveUntil(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => const CartaoScreen(),
+                                                    ),
+                                                    (route) => false
+                                                  );
+                                                  
+                                                  MotionToast.success(description: const Text('Cartão excluído com sucesso')).show(context);
+
+                                                  return null;
+                                                },
+                                                onFailure: (onFailure) {
+                                                  MotionToast
+                                                    .error(
+                                                      title: const Text("Atenção"),
+                                                      description: Text(onFailure)
+                                                    )
+                                                    .show(context);
+                                                  return null;
+                                                }
+                                              );
+                                            },
+                                            children: TextComponent(
+                                              text: 'Remover',
+                                              weight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          ButtonComponent(
+                                            style: 'success',
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            children: TextComponent(
+                                              text: 'Cancelar',
+                                              weight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ), 
+                                        ]
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            style: 'danger',
+                            children: TextComponent(
+                              text: 'Excluir',
+                              weight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   )
-                )
+                ),
               ],
             )
           ),

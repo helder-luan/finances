@@ -19,9 +19,10 @@ class TipoOperacaoDbProvider extends TipoOperacaoProvider {
   }
   
   @override
-  Future<Map<String, dynamic>> recover(String id) {
-    // TODO: implement recover
-    throw UnimplementedError();
+  Future<Map<String, dynamic>> recover(String id) async {
+    var result = await _database.query(table, where: 'idTipoOperacao = ?', whereArgs: [id]);
+
+    return result.isNotEmpty ? result.first : {};
   }
   
   @override

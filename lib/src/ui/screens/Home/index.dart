@@ -1,6 +1,7 @@
 
 import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/mes_referencia_controller.dart';
 import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/data/models/tipo_operacao_model.dart';
@@ -25,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GastoController _gastoController = GastoController();
   final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
   final CartaoController _cartaoController = CartaoController();
+  final MesReferenciaController _mesReferenciaController = MesReferenciaController();
 
   List<Transacao> historico = [];
 
@@ -40,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> loadHistorico() async {
-    await _gastoController.getTransacoesMesAtual();
+    await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
 
     historico = _gastoController.dataSourceTransacao;
     
@@ -53,16 +55,21 @@ class _HomeScreenState extends State<HomeScreen> {
     if (historico.isNotEmpty) {
       gastoTotal = historico.where(
         (transacao) => 
-          transacao.idTipoOperacao == saida.idTipoOperacao
+          (transacao.idTipoOperacao == saida.idTipoOperacao
           ||
-          transacao.gastoMensal == 1
+          transacao.gastoMensal == 1) || (transacao.idTipoOperacao != saida.idTipoOperacao && transacao.reembolso == 1)
       )
       .fold(
         0,
-        (double previousValue, transacao) => 
-          transacao.parcelado == 1
-          ? previousValue + (Functions.formataValor(transacao.valor)! / int.parse(transacao.totalParcelas.toString()))
-          : previousValue + Functions.formataValor(transacao.valor)!
+        (double previousValue, transacao) {
+          if (transacao.parcelado == 1) {
+            return previousValue + (transacao.valor! / transacao.totalParcelas!);
+          } else if (transacao.reembolso == 1) {
+            return previousValue - transacao.valor!;
+          } else {
+            return previousValue + transacao.valor!;
+          }
+        },
       );
 
       dividaTotal = historico.where(
@@ -74,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       .fold(
         0,
         (previousValue, transacao) =>
-          previousValue + Functions.formataValor(transacao.valor.toString())!
+          previousValue + transacao.valor!
       );
     } else {
       gastoTotal = 0;

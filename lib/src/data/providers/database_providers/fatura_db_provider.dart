@@ -27,15 +27,33 @@ class FaturaDbProvider extends FaturaProvider {
   }
   
   @override
-  Future<List<Map<String, dynamic>>> recoverAll() {
-    // TODO: implement recoverAll
-    throw UnimplementedError();
+  Future<List<Map<String, dynamic>>> recoverAll() async {
+    var result = await _database.query(table);
+
+    return result;
   }
   
   @override
-  Future<bool> update(Map<String, dynamic> registro) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<bool> update(Map<String, dynamic> registro) async {
+    await _database.update(
+      table,
+      registro,
+      where: 'idFatura = ?',
+      whereArgs: [registro['idFatura']]
+    );
+
+    return true;
+  }
+
+  @override
+  Future<Map<String, dynamic>> recoverByCardId(String cardId) async {
+    var result = await _database.query(
+      table,
+      where: 'idCartao = ?',
+      whereArgs: [cardId]
+    );
+
+    return result.isNotEmpty ? result.first : {};
   }
   
   @override
@@ -47,5 +65,23 @@ class FaturaDbProvider extends FaturaProvider {
     );
 
     return result.isNotEmpty ? result.first : {};
+  }
+
+  @override
+  Future<void> updateByCardIdAndRefMonth(String cardId, String refMonth, String valorTotal) async {
+    var result = await _database.query(
+      table,
+      where: 'idCartao = ? AND mesReferencia = ?',
+      whereArgs: [cardId, refMonth]
+    );
+
+    if (result.isNotEmpty) {
+      await _database.update(
+        table,
+        {'valorTotal': valorTotal},
+        where: 'idCartao = ? AND mesReferencia = ?',
+        whereArgs: [cardId, refMonth]
+      );
+    }
   }
 }
