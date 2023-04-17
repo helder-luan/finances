@@ -298,7 +298,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                         );
                                       },
                                       style: 'danger',
-                                      children: TextComponent(
+                                      child: TextComponent(
                                         text: 'Adicionar',
                                         weight: FontWeight.bold
                                       ),

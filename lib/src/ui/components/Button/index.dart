@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class ButtonComponent extends StatefulWidget {
   final VoidCallback onPressed;
-  Widget children;
+  Widget child;
   String style;
   double height;
   double width;
   ButtonComponent({
     super.key,
     required this.onPressed,
-    required this.children,
+    required this.child,
     this.style = 'primary',
     this.height = 35.0,
     this.width = 100.0,
@@ -72,7 +72,7 @@ class _ButtonComponentState extends State<ButtonComponent> {
     return ElevatedButton(
       onPressed: widget.onPressed,
       style: buttonStyles[widget.style],
-      child: widget.children,
+      child: widget.child,
     );
   }
 }

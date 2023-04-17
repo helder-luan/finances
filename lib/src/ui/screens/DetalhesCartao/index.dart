@@ -246,7 +246,7 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
         ),
         child: ButtonComponent(
           onPressed: () {},
-          children: TextComponent(
+          child: TextComponent(
             text: 'Pagar fatura',
             weight: FontWeight.bold,
             color: Colors.white,

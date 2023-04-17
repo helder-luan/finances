@@ -261,7 +261,7 @@ class _CadastrarCartaoScreenState extends State<CadastrarCartaoScreen> {
                             );
                             setState(() {});
                           },
-                          children: TextComponent(
+                          child: TextComponent(
                             text: 'Salvar',
                             weight: FontWeight.bold,
                             color: Colors.white,
@@ -316,7 +316,7 @@ class _CadastrarCartaoScreenState extends State<CadastrarCartaoScreen> {
                                                 }
                                               );
                                             },
-                                            children: TextComponent(
+                                            child: TextComponent(
                                               text: 'Remover',
                                               weight: FontWeight.bold,
                                               color: Colors.white,
@@ -327,7 +327,7 @@ class _CadastrarCartaoScreenState extends State<CadastrarCartaoScreen> {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            children: TextComponent(
+                                            child: TextComponent(
                                               text: 'Cancelar',
                                               weight: FontWeight.bold,
                                               color: Colors.white,
@@ -341,7 +341,7 @@ class _CadastrarCartaoScreenState extends State<CadastrarCartaoScreen> {
                               );
                             },
                             style: 'danger',
-                            children: TextComponent(
+                            child: TextComponent(
                               text: 'Excluir',
                               weight: FontWeight.bold,
                               color: Colors.white,

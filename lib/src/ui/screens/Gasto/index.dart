@@ -1,4 +1,5 @@
 import 'package:finances/src/core/app_colors.dart';
+import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
@@ -47,38 +48,75 @@ class _GastoScreenState extends State<GastoScreen> {
                         margin: const EdgeInsets.only(bottom: 16.0),
                         child: TextComponent(text: 'Cadastrar', style: 'subtitle'),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            height: 35.0,
-                            width: (MediaQuery.of(context).size.width-32)/2,
-                            child: ButtonComponent(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const EntradaScreen()),
-                                );
-                              },
-                              style: 'success',
-                              children: TextComponent(text: 'Entrada', color: Colors.white, weight: FontWeight.bold,)
-                            ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 16.0),
+                        height: 80,
+                        width: MediaQuery.of(context).size.width-48,
+                        child: ButtonComponent(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const EntradaScreen()),
+                            );
+                          },
+                          style: 'success',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const EntradaScreen()),
+                                  );
+                                },
+                                icon: Image(image: AssetImage(AppImages.entrada)),
+                                iconSize: 32,
+                              ),
+                              TextComponent(
+                                text: 'Entrada',
+                                color: Colors.white,
+                                weight: FontWeight.bold,
+                                size: 24.0,
+                              )
+                            ],
                           ),
-                          SizedBox(
-                            height: 35.0,
-                            width: (MediaQuery.of(context).size.width-48)/2,
-                            child: ButtonComponent(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const SaidaScreen()),
-                                );
-                              },
-                              style: 'danger',
-                              children: TextComponent(text: 'Saída', color: Colors.white, weight: FontWeight.bold,)
-                            ),
+                        ), 
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 16.0),
+                        height: 80,
+                        width: MediaQuery.of(context).size.width-48,
+                        child: ButtonComponent(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SaidaScreen()),
+                            );
+                          },
+                          style: 'danger',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const SaidaScreen()),
+                                  );
+                                },
+                                icon: Image(image: AssetImage(AppImages.saida)),
+                                iconSize: 32,
+                              ),
+                              TextComponent(
+                                text: 'Saída',
+                                color: Colors.white,
+                                weight: FontWeight.bold,
+                                size: 24.0,
+                              ),
+                            ],
                           ),
-                        ],
+                        ), 
                       ),
                     ],
                   )

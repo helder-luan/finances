@@ -45,50 +45,52 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.gradient,
-          ),
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 32.0),
-                padding: const EdgeInsets.all(16.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 16.0),
-                      child: TextComponent(
-                        text: "Histórico Dos Meses",
-                        style: 'title',
-                      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: AppColors.gradient,
+            ),
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 32.0),
+                  padding: const EdgeInsets.all(16.0),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.0),
+                      topRight: Radius.circular(16.0),
                     ),
-                    FutureBuilder(
-                      future: loadHistorico(),
-                      builder: (context, snapshot) {
-                        return Wrap(
-                          children: [
-                            for (var mesReferencia in transacoes.keys)
-                              CardMes(mesReferencia: mesReferencia),
-                          ]
-                        );
-                      },
-                    )
-                  ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 16.0),
+                        child: TextComponent(
+                          text: "Histórico Dos Meses",
+                          style: 'title',
+                        ),
+                      ),
+                      FutureBuilder(
+                        future: loadHistorico(),
+                        builder: (context, snapshot) {
+                          return Wrap(
+                            children: [
+                              for (var mesReferencia in transacoes.keys)
+                                CardMes(mesReferencia: mesReferencia),
+                            ]
+                          );
+                        },
+                      )
+                    ],
+                  )
                 )
-              )
-            ],
-          )
+              ],
+            )
+          ),
         ),
       ),
       bottomNavigationBar: const BottomMenu(),

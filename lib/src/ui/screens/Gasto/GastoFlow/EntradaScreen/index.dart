@@ -166,7 +166,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
                                   );
                                 },
                                 style: 'success',
-                                children: TextComponent(
+                                child: TextComponent(
                                   text: 'Adicionar',
                                   weight: FontWeight.bold
                                 ),
