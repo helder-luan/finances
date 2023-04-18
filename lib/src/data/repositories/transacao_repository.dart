@@ -65,4 +65,28 @@ class TransacaoRepository extends BaseRepository<Transacao> {
 
     return lista;
   }
+
+  Future<List<Transacao>> recoverAllByMonthReference(int monthReference) async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllByMonthReference(monthReference);
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
+  }
+
+  Future<List<Transacao>> recoverAllByMonthReferenceAndCard(int monthReference, String cardId) async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllByMonthReferenceAndCard(monthReference, cardId);
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
+  }
 }

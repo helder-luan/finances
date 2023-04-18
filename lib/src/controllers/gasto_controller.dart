@@ -1,5 +1,6 @@
 
 import 'package:finances/src/controllers/fatura_controller.dart';
+import 'package:finances/src/controllers/mes_referencia_controller.dart';
 import 'package:finances/src/data/models/cartao.dart';
 import 'package:finances/src/data/models/fatura.dart';
 import 'package:finances/src/data/models/transacao.dart';
@@ -18,6 +19,7 @@ class GastoController extends ChangeNotifier {
       ValueNotifier(<Transacao>[]);
 
   final FaturaController _faturaController = FaturaController();
+  final MesReferenciaController _mesReferenciaController = MesReferenciaController();
 
   final TransacaoRepository _transacaoRepository = TransacaoRepository();
   final CartaoRepository _cartaoRepository = CartaoRepository();
@@ -324,15 +326,9 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<void> getTransacoesMesAtual(int mesAtual) async {
-    DateTime dataInicio = DateTime(DateTime.now().year, mesAtual, 1);
-    DateTime dataFim = DateTime(DateTime.now().year, mesAtual + 1, 0);
-    
+  Future<void> getTransacoesMesAtual(int mesAtual) async {    
     try {
-      await _transacaoRepository.recoverAllByDateRange(
-        dataInicio.toString(),
-        dataFim.toString()
-      ).then((value) {
+      await _transacaoRepository.recoverAllByMonthReference(_mesReferenciaController.current).then((value) {
         dataSourceTransacao = value;
       });
     } catch (e) {
@@ -345,9 +341,8 @@ class GastoController extends ChangeNotifier {
     DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
     
     try {
-      await _transacaoRepository.recoverAllByDateRangeAndCard(
-        dataInicio.toString(),
-        dataFim.toString(),
+      await _transacaoRepository.recoverAllByMonthReferenceAndCard(
+        _mesReferenciaController.current,
         idCartao
       ).then((value) {
         dataSourceTransacao = value;

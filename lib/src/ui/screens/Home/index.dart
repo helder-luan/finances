@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         (transacao) => 
           (transacao.idTipoOperacao == saida.idTipoOperacao
           ||
-          transacao.gastoMensal == 1) || (transacao.idTipoOperacao != saida.idTipoOperacao && transacao.reembolso == 1)
+          transacao.gastoMensal == 1) || (transacao.idTipoOperacao != saida.idTipoOperacao && transacao.reembolso == 1) && transacao.mesReferencia == _mesReferenciaController.current
       )
       .fold(
         0,
@@ -247,41 +247,44 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                           // cards
-                          FutureBuilder(
-                            future: loadAll(),
-                            builder: (context, snapshot) {
-                              if (_cartaoController.dataSourceCartao.isNotEmpty) {
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: _cartaoController.dataSourceCartao.length,
-                                  itemBuilder: (context, index) {
-                                    var cartao = _cartaoController.dataSourceCartao[index];
-                                        
-                                    return CartaoComponent(
-                                      cardName: cartao.nome.toString(),
-                                      cardNumVenc: cartao.diaVencimento.toString(),
-                                      cardNumFinal: cartao.finalCartao.toString(),
-                                      cardColor: Color(int.tryParse("0xFF${cartao.hexCor}")!),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => DetalhesCartao(cartao: cartao),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              } else {
-                                return Container(
-                                  margin: const EdgeInsets.only(top: 32.0),
-                                  child: Center(
-                                    child: TextComponent(text: 'Nenhum cartão cadastrado'),
-                                  ),
-                                );
-                              }
-                            },
+                          Container(
+                            margin: const EdgeInsets.only(top: 16.0),
+                            child: FutureBuilder(
+                              future: loadAll(),
+                              builder: (context, snapshot) {
+                                if (_cartaoController.dataSourceCartao.isNotEmpty) {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: _cartaoController.dataSourceCartao.length,
+                                    itemBuilder: (context, index) {
+                                      var cartao = _cartaoController.dataSourceCartao[index];
+                                          
+                                      return CartaoComponent(
+                                        cardName: cartao.nome.toString(),
+                                        cardNumVenc: cartao.diaVencimento.toString(),
+                                        cardNumFinal: cartao.finalCartao.toString(),
+                                        cardColor: Color(int.tryParse("0xFF${cartao.hexCor}")!),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => DetalhesCartao(cartao: cartao),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return Container(
+                                    margin: const EdgeInsets.only(top: 32.0),
+                                    child: Center(
+                                      child: TextComponent(text: 'Nenhum cartão cadastrado'),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                           ),
                         ],
                       ),

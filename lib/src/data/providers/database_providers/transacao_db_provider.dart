@@ -78,4 +78,18 @@ class TransacaoDbProvider extends TransacaoProvider {
 
     return result.isNotEmpty ? result : [];
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> recoverAllByMonthReference(int monthReference) async {
+    var result = await _database.query(table, where: 'mesReferencia = ?', whereArgs: [monthReference]);
+
+    return result.isNotEmpty ? result : [];
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> recoverAllByMonthReferenceAndCard(int monthReference, String cardId) async {
+    var result = await _database.query(table, where: 'mesReferencia BETWEEN ? AND ? AND idCartao = ?', whereArgs: [monthReference, cardId]);
+
+    return result.isNotEmpty ? result : [];
+  }
 }

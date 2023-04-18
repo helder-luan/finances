@@ -56,6 +56,7 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
           faturaTotal = value.valorTotal;
         }
       });
+
   }
 
   @override
@@ -66,7 +67,7 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Container(
           decoration: const BoxDecoration(
             gradient: AppColors.gradient,
