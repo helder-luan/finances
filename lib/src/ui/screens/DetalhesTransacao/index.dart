@@ -127,7 +127,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                                 size: 20,
                               ),
                               TextComponent(
-                                text: widget.transacao.detalhes.toString() != " " ? "Nenhum detalhe adicionado" : widget.transacao.detalhes.toString(),
+                                text: widget.transacao.detalhes.toString() == " " ? "Nenhum detalhe adicionado" : '"${widget.transacao.detalhes.toString()}"',
                               ),
                             ],
                           ),

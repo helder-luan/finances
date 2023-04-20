@@ -8,4 +8,5 @@ abstract class TransacaoProvider extends CRUDProvider {
   Future<List<Map<String, dynamic>>> recoverAllByDateAndCard(String date, String cardId);
   Future<List<Map<String, dynamic>>> recoverAllByDateRangeAndCard(String startDate, String endDate, String cardId);
   Future<List<Map<String, dynamic>>> recoverAllByMonthReferenceAndCard(int monthReference, String cardId);
+  Future<List<Map<String, dynamic>>> recoverAllGastoMensal();
 }

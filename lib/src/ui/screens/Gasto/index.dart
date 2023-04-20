@@ -4,6 +4,7 @@ import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Gasto/GastoFlow/EntradaScreen/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/Recorrente/index.dart';
 import 'package:finances/src/ui/screens/Gasto/GastoFlow/SaidaScreen/index.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,7 @@ class _GastoScreenState extends State<GastoScreen> {
                 Container(
                   margin: const EdgeInsets.only(top: 32.0),
                   padding: const EdgeInsets.all(16.0),
-                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -50,8 +51,8 @@ class _GastoScreenState extends State<GastoScreen> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
-                        height: 80,
-                        width: MediaQuery.of(context).size.width-48,
+                        height: 60,
+                        width: MediaQuery.of(context).size.width-32,
                         child: ButtonComponent(
                           onPressed: () {
                             Navigator.push(
@@ -85,8 +86,8 @@ class _GastoScreenState extends State<GastoScreen> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
-                        height: 80,
-                        width: MediaQuery.of(context).size.width-48,
+                        height: 60,
+                        width: MediaQuery.of(context).size.width-32,
                         child: ButtonComponent(
                           onPressed: () {
                             Navigator.push(
@@ -99,17 +100,46 @@ class _GastoScreenState extends State<GastoScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const SaidaScreen()),
-                                  );
-                                },
+                                onPressed: () {},
                                 icon: Image(image: AssetImage(AppImages.saida)),
                                 iconSize: 32,
                               ),
                               TextComponent(
                                 text: 'Saída',
+                                color: Colors.white,
+                                weight: FontWeight.bold,
+                                size: 24.0,
+                              ),
+                            ],
+                          ),
+                        ), 
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 16.0),
+                        height: 60,
+                        width: MediaQuery.of(context).size.width-32,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const CobrancaRecorrenteScreen()),
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const CobrancaRecorrenteScreen()),
+                                  );
+                                },
+                                icon: const Icon(Icons.repeat),
+                                iconSize: 32,
+                              ),
+                              TextComponent(
+                                text: 'Recorrente',
                                 color: Colors.white,
                                 weight: FontWeight.bold,
                                 size: 24.0,

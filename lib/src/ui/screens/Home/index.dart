@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> loadHistorico() async {
-    await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
+    await _gastoController.getTransacoes();
 
     historico = _gastoController.dataSourceTransacao;
     
@@ -55,9 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (historico.isNotEmpty) {
       gastoTotal = historico.where(
         (transacao) => 
-          (transacao.idTipoOperacao == saida.idTipoOperacao
-          ||
-          transacao.gastoMensal == 1) || (transacao.idTipoOperacao != saida.idTipoOperacao && transacao.reembolso == 1) && transacao.mesReferencia == _mesReferenciaController.current
+          (transacao.idTipoOperacao == saida.idTipoOperacao || transacao.gastoMensal == 1) 
+          || 
+          transacao.idTipoOperacao != saida.idTipoOperacao
+          && 
+          transacao.mesReferencia == _mesReferenciaController.current
       )
       .fold(
         0,

@@ -336,10 +336,7 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<void> getTransacoesMesAtualECartao(String idCartao) async {
-    DateTime dataInicio = DateTime(DateTime.now().year, DateTime.now().month, 1);
-    DateTime dataFim = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
-    
+  Future<void> getTransacoesMesAtualECartao(String idCartao) async {    
     try {
       await _transacaoRepository.recoverAllByMonthReferenceAndCard(
         _mesReferenciaController.current,
@@ -359,6 +356,15 @@ class GastoController extends ChangeNotifier {
       });
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<List<Transacao>> getTransacoesRecorrentes() async {
+    try {
+      return await _transacaoRepository.recoverAllGastoMensal();
+    } catch (e) {
+      print(e);
+      return [];
     }
   }
 }

@@ -89,4 +89,16 @@ class TransacaoRepository extends BaseRepository<Transacao> {
 
     return lista;
   }
+
+  Future<List<Transacao>> recoverAllGastoMensal() async {
+    List<Map<String, dynamic>> result = await (provider as TransacaoDbProvider).recoverAllGastoMensal();
+
+    var lista = <Transacao>[];
+
+    for (Map<String, dynamic> transacao in result) {
+      lista.add(instanceFromMap(transacao));
+    }
+
+    return lista;
+  }
 }
