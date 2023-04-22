@@ -1,4 +1,5 @@
 
+
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/data/models/transacao.dart';
@@ -6,6 +7,7 @@ import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
+import 'package:motion_toast/motion_toast.dart';
 
 class CobrancaRecorrenteScreen extends StatefulWidget {
   const CobrancaRecorrenteScreen({super.key});
@@ -29,7 +31,6 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
   @override
   void initState() {
     super.initState();
-    loadAll();
   }
   
   @override
@@ -90,11 +91,58 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                                         ),
                                       ),
                                       TextComponent(
-                                        text: Functions.toCurrency(double.parse(historico[index].valor.toString())),
+                                        text: Functions.toCurrency(double.tryParse(historico[index].valor.toString())!),
                                       ),
                                       IconButton(
-                                        onPressed: (){
-                                          print('Excluir cobrança recorrente');
+                                        onPressed: () async {
+                                          await showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: const Text('Excluir cobrança recorrente'),
+                                                content: Text("Deseja realmente excluir a cobrança \"${historico[index].descricao}\"?"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: TextComponent(
+                                                      text: 'Não',
+                                                      style: 'primary',
+                                                      weight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      var transacao = historico[index];
+
+                                                      await _gastoController.excluirCobrancaRecorrente(transacao)
+                                                      .then((value) => {
+                                                        Navigator.pop(context),
+                                                        MotionToast.success(
+                                                          description: const Text("Cobrança recorrente excluída com sucesso"),
+                                                        ).show(context)
+                                                      });
+
+
+                                                      setState(() {
+                                                        loadAll();
+                                                      });
+                                                    },
+                                                    child: TextComponent(
+                                                      text: 'Sim',
+                                                      style: 'warning',
+                                                      weight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            }
+                                          );
+
+                                          setState(() {
+                                            loadAll();
+                                          });
                                         },
                                         icon: const Icon(Icons.close_outlined, color: Colors.red,)
                                       )
@@ -104,8 +152,11 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                               }),
                             );
                           } else {
-                            return const Center(
-                              child: Text('Nenhuma cobrança recorrente'),
+                            return Container(
+                              margin: const EdgeInsets.only(top: 16.0),
+                              child: const Center(
+                                child: Text('Nenhuma cobrança recorrente'),
+                              ),
                             );
                           }
                         }),

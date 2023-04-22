@@ -11,8 +11,8 @@ class FaturaController extends ChangeNotifier {
     return fatura;
   }
 
-  Future<void> atualizaValorTotalFatura(String idCartao, String mesReferencia, String valorTotal) async {
-    await _faturaRepository.updateByCardIdAndRefMonth(idCartao, mesReferencia, valorTotal);
+  Future<void> atualizaValorFatura(String idCartao, String mesReferencia, double valorTotal) async {
+    await _faturaRepository.updateValueByCardIdAndRefMonth(idCartao, mesReferencia, valorTotal);
   }
 
   Future<Fatura?> recuperaFaturaDoCartao(String idCartao) async {

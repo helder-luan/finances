@@ -6,6 +6,7 @@ class Fatura extends BaseModel {
   int? idFatura;
   int? idCartao;
   int? mesReferencia;
+  int? anoReferencia;
   String? dataFechamento;
   String? dataVencimento;
   String? dataPagamento;
@@ -15,6 +16,7 @@ class Fatura extends BaseModel {
     this.idFatura,
     this.idCartao,
     this.mesReferencia,
+    this.anoReferencia,
     this.dataFechamento,
     this.dataVencimento,
     this.dataPagamento,
@@ -26,6 +28,7 @@ class Fatura extends BaseModel {
       idFatura: map['idFatura'],
       idCartao: map['idCartao'],
       mesReferencia: map['mesReferencia'],
+      anoReferencia: map['anoReferencia'],
       dataFechamento: map['dataFechamento'],
       dataVencimento: map['dataVencimento'],
       dataPagamento: map['dataPagamento'],
@@ -39,6 +42,7 @@ class Fatura extends BaseModel {
       'idFatura': idFatura,
       'idCartao': idCartao,
       'mesReferencia': mesReferencia,
+      'anoReferencia': anoReferencia,
       'dataFechamento': dataFechamento,
       'dataVencimento': dataVencimento,
       'dataPagamento': dataPagamento,
@@ -55,6 +59,7 @@ class Fatura extends BaseModel {
   bool isValid() {
     return 
     idCartao != null
-    && mesReferencia != null;
+    && mesReferencia != null
+    && anoReferencia != null;
   }
 }

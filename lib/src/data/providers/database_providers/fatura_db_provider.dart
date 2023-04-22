@@ -68,7 +68,7 @@ class FaturaDbProvider extends FaturaProvider {
   }
 
   @override
-  Future<void> updateByCardIdAndRefMonth(String cardId, String refMonth, String valorTotal) async {
+  Future<void> updateValueByCardIdAndRefMonth(String cardId, String refMonth, double valorTotal) async {
     var result = await _database.query(
       table,
       where: 'idCartao = ? AND mesReferencia = ?',

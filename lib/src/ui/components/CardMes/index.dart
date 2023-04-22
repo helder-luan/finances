@@ -33,7 +33,7 @@ class _CardMesState extends State<CardMes> {
         margin: const EdgeInsets.only(bottom: 16.0, right: 16.0),
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: int.parse(widget.mesReferencia.toString()) == DateTime.now().month ? AppColors.primary : Colors.white,
+          color: int.tryParse(widget.mesReferencia.toString()) == DateTime.now().month ? AppColors.primary : Colors.white,
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
@@ -49,12 +49,12 @@ class _CardMesState extends State<CardMes> {
           children: [
             TextComponent(
               text: "Mês",
-              color: int.parse(widget.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
+              color: int.tryParse(widget.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
             ),
             TextComponent(
-              text: Functions.fullMonthName(int.parse(widget.mesReferencia.toString())),
+              text: Functions.fullMonthName(int.tryParse(widget.mesReferencia.toString())!),
               style: 'subtitle',
-              color: int.parse(widget.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
+              color: int.tryParse(widget.mesReferencia.toString()) == DateTime.now().month ? Colors.white : Colors.black,
             ),
           ],
         ),

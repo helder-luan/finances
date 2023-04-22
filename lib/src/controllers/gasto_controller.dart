@@ -101,7 +101,7 @@ class GastoController extends ChangeNotifier {
 
     // credit payment
     if (formaDePagamento.text.trim() == 'C') {
-      if (idCartao.text.trim().isEmpty) {
+      if (idCartao.text.trim().isEmpty || idCartao.text.trim() == '0') {
         return {
           'isValid': false,
           'message': 'Cartão não informado!',
@@ -142,7 +142,7 @@ class GastoController extends ChangeNotifier {
 
     // debit payment
     if (formaDePagamento.text.trim() == 'D') {
-      if (idCartao.text.trim().isEmpty) {
+      if (idCartao.text.trim().isEmpty || idCartao.text.trim() == '0') {
         return {
           'isValid': false,
           'message': 'Cartão não informado!',
@@ -170,22 +170,15 @@ class GastoController extends ChangeNotifier {
     };
   }
 
-  // verifica em qual mes deve ser lancado a transacao com base no dia de vencimento do cartao
+  // verifica em qual mes deve ser lancado a transacao com base no dia do fechamento do cartao
   Future<int> getMesParaLacamento() async {
-    int mes = DateTime.now().month;
-    int diaFechamento = 0;
+    int mes = _mesReferenciaController.current;
 
-    if (idCartao.text.trim().isNotEmpty) {
+    if (idCartao.text.trim().isNotEmpty && idCartao.text.trim() != '0') {
       Cartao cartao = await _cartaoRepository.recover(idCartao.text.trim());
-      
-      if ((cartao.diaVencimento! - 10) > 0) {
-        diaFechamento = cartao.diaVencimento! - 10;
-      } else {
-        diaFechamento = cartao.diaVencimento! + 20;
-      }
 
-      if (diaFechamento <= DateTime.now().day) {
-        mes = DateTime.now().month + 1;
+      if (int.tryParse(cartao.diaFechamento.toString())! <= DateTime.now().day) {
+        mes = _mesReferenciaController.current + 1;
       }
     }
 
@@ -198,15 +191,19 @@ class GastoController extends ChangeNotifier {
     required VoidCallback? Function(String motivo) onFailure
   }) async {
     try {
+      // valida operacao de entrada
       Map validacao = await validarOperacaoEntrada();
 
       if (!validacao['isValid']) {
         throw validacao['message'];
       }
 
+      // verifica em qual mes deve ser lancado a transacao com base no dia do fechamento do cartao
       int mesReferencia = await getMesParaLacamento();
+
       double valorFormatado = double.tryParse(valor.text.replaceAll("R\$ ", "").replaceAll(".", "").replaceAll(",", "."))!;
 
+      // insere transacao
       await _transacaoRepository.insert(
         Transacao(
           descricao: descricao.text.trim(),
@@ -215,6 +212,7 @@ class GastoController extends ChangeNotifier {
           dataCadastro: DateTime.now().toString(),
           idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
           mesReferencia: mesReferencia,
+          anoReferencia: DateTime.now().year,
           reembolso: reembolso.text.trim() == 'true' ? 1 : 0,
           idCartao: int.tryParse(idCartao.text.trim()),
           gastoMensal: 0,
@@ -224,26 +222,29 @@ class GastoController extends ChangeNotifier {
         )
       );
 
-      var tipoOperacao = await _tipoOperacaoRepository.recover(idTipoOperacao.text.trim());
-
+      // se for reembolso
       if (
         reembolso.text.trim() == 'true'
         &&
         idCartao.text.trim() != '0'
       ) {
+        // verifica se existe fatura do mes atual
         Fatura? fatura = await _faturaController.verificaSeExisteFaturaMesAtualDoCartao(idCartao.text.trim(), mesReferencia.toString());
 
+        // se existir fatura, atualiza o valor total da fatura
         if (fatura != null) {
-          var valorTotal = fatura.valorTotal! - valorFormatado;
+          double valorTotal = fatura.valorTotal! - valorFormatado;
 
-          await _faturaController.atualizaValorTotalFatura(idCartao.text.trim(), mesReferencia.toString(), valorTotal.toString());
+          await _faturaController.atualizaValorFatura(idCartao.text.trim(), mesReferencia.toString(), valorTotal);
         } else {
+          // se nao existir fatura, cria uma nova fatura
           var cartao = await _cartaoRepository.recover(idCartao.text.trim());
 
           await _faturaController.criarFatura(
             Fatura(
               idCartao: cartao.idCartao,
               mesReferencia: mesReferencia,
+              anoReferencia: DateTime.now().year,
               dataFechamento: cartao.diaFechamento.toString(),
               dataVencimento: cartao.diaVencimento.toString(),
               dataPagamento: null,
@@ -265,6 +266,7 @@ class GastoController extends ChangeNotifier {
     required VoidCallback? Function(String motivo) onFailure
   }) async {
     try {
+      // valida a operacao de saida
       Map validacao = await validarOperacaoSaida();
 
       if (!validacao['isValid']) {
@@ -272,44 +274,82 @@ class GastoController extends ChangeNotifier {
         return;
       }
 
+      // verifica em qual mes deve ser lancado a transacao com base no dia do fechamento do cartao
       int mesReferencia = await getMesParaLacamento();
+
       double valorFormatado = double.tryParse(valor.text.replaceAll("R\$ ", "").replaceAll(".", "").replaceAll(",", "."))!;
 
-      await _transacaoRepository.insert(
-        Transacao(
-          descricao: descricao.text.trim(),
-          valor: valorFormatado,
-          detalhes: detalhes.text.trim(),
-          dataCadastro: DateTime.now().toString(),
-          idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
-          mesReferencia: gastoMensal.text.trim() == 'true' ? null : mesReferencia,
-          reembolso: reembolso.text.trim() == 'true' ? 1 : 0,
-          idCartao: int.tryParse(idCartao.text.trim()),
-          gastoMensal: gastoMensal.text.trim() == 'true' ? 1 : 0,
-          parcelado: parcelado.text.trim() == 'true' ? 1 : 0,
-          totalParcelas: int.tryParse(totalParcelas.text.trim()),
-          parcelaAtual: int.tryParse(parcelaAtual.text.trim())
-        )
-      );
+      // se for parcelado
+      if (parcelado.text.trim() == 'true') {
+        // calcula o total de parcelas restantes
+        int parcelasRestantes = (int.tryParse(totalParcelas.text.trim())! - int.tryParse(parcelaAtual.text.trim())!) + 1;
 
+        // para cada parcela restante insere uma transacao
+        for (var i = 1; i <= parcelasRestantes; i++) {
+          int mesLancamento = mesReferencia + (i - 1);
+
+          await _transacaoRepository.insert(
+            Transacao(
+              descricao: descricao.text.trim(),
+              valor: valorFormatado,
+              detalhes: detalhes.text.trim(),
+              dataCadastro: DateTime.now().toString(),
+              idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
+              mesReferencia: mesLancamento > 12 ? mesLancamento - 12 : mesLancamento,
+              anoReferencia: mesLancamento > 12 ? DateTime.now().year + 1 : DateTime.now().year,
+              reembolso: reembolso.text.trim() == 'true' ? 1 : 0,
+              idCartao: int.tryParse(idCartao.text.trim()),
+              gastoMensal: gastoMensal.text.trim() == 'true' ? 1 : 0,
+              parcelado: 1,
+              totalParcelas: int.tryParse(totalParcelas.text.trim()),
+              parcelaAtual: int.tryParse(parcelaAtual.text.trim())! + (i - 1),
+            )
+          );
+        }
+      } else {
+        // se nao for parcelado insere apenas uma transacao
+        await _transacaoRepository.insert(
+          Transacao(
+            descricao: descricao.text.trim(),
+            valor: valorFormatado,
+            detalhes: detalhes.text.trim(),
+            dataCadastro: DateTime.now().toString(),
+            idTipoOperacao: int.tryParse(idTipoOperacao.text.trim()),
+            mesReferencia: mesReferencia,
+            anoReferencia: DateTime.now().year,
+            reembolso: reembolso.text.trim() == 'true' ? 1 : 0,
+            idCartao: int.tryParse(idCartao.text.trim()),
+            gastoMensal: gastoMensal.text.trim() == 'true' ? 1 : 0,
+            parcelado: 0,
+            totalParcelas: 0,
+            parcelaAtual: 0,
+          )
+        );
+      }
+
+      // se pagamento for com cartao de credito
       if (
         formaDePagamento.text.trim() == "C"
         &&
         idCartao.text.trim() != '0'
       ) {
+        // verifica se existe fatura do cartao no mes atual
         Fatura? fatura = await _faturaController.verificaSeExisteFaturaMesAtualDoCartao(idCartao.text.trim(), mesReferencia.toString());
 
+        // se existir atualiza o valor total da fatura
         if (fatura != null) {
-          var valorTotal = fatura.valorTotal! + valorFormatado;
+          double valorTotal = fatura.valorTotal! + valorFormatado;
 
-          await _faturaController.atualizaValorTotalFatura(idCartao.text.trim(), mesReferencia.toString(), valorTotal.toString());
+          await _faturaController.atualizaValorFatura(idCartao.text.trim(), mesReferencia.toString(), valorTotal);
         } else {
+          // se nao existir cria uma nova fatura
           var cartao = await _cartaoRepository.recover(idCartao.text.trim());
 
           await _faturaController.criarFatura(
             Fatura(
               idCartao: cartao.idCartao,
               mesReferencia: mesReferencia,
+              anoReferencia: DateTime.now().year,
               dataFechamento: cartao.diaFechamento.toString(),
               dataVencimento: cartao.diaVencimento.toString(),
               dataPagamento: null,
@@ -328,7 +368,7 @@ class GastoController extends ChangeNotifier {
 
   Future<void> getTransacoesMesAtual(int mesAtual) async {    
     try {
-      await _transacaoRepository.recoverAllByMonthReference(_mesReferenciaController.current).then((value) {
+      await _transacaoRepository.recoverAllByMonthReference(mesAtual).then((value) {
         dataSourceTransacao = value;
       });
     } catch (e) {
@@ -363,8 +403,39 @@ class GastoController extends ChangeNotifier {
     try {
       return await _transacaoRepository.recoverAllGastoMensal();
     } catch (e) {
-      print(e);
       return [];
+    }
+  }
+
+  Future<void> excluirCobrancaRecorrente(Transacao transacao) async {
+    try {
+      if (transacao.idCartao != null) {
+        Cartao cartao = await _cartaoRepository.recover(transacao.idCartao.toString());
+        
+        DateTime dataFechamento = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          int.tryParse(cartao.diaFechamento.toString())!
+        );
+
+        DateTime dataAtual = DateTime.now();
+
+        Fatura? faturaDoCartao = await _faturaController.recuperaFaturaDoCartao(cartao.idCartao.toString());
+
+        if (dataAtual.isBefore(dataFechamento) && faturaDoCartao != null) {
+          double valorTotal = faturaDoCartao.valorTotal! - transacao.valor!;
+
+          _faturaController.atualizaValorFatura(
+            cartao.idCartao.toString(),
+            _mesReferenciaController.current.toString(),
+            valorTotal
+          );
+        }
+      }
+
+      await _transacaoRepository.delete(transacao.idTransacao.toString());
+    } catch (e) {
+      print(e);
     }
   }
 }

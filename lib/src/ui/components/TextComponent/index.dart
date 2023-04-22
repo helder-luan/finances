@@ -70,6 +70,21 @@ class _TextComponentState extends State<TextComponent> {
       fontWeight: FontWeight.w400,
       color: Colors.white,
     ),
+    'warning': TextStyle(
+      fontSize: 16.0,
+      fontWeight: widget.weight,
+      color: Colors.red,
+    ),
+    'success': TextStyle(
+      fontSize: 16.0,
+      fontWeight: widget.weight,
+      color: Colors.green,
+    ),
+    'alert': TextStyle(
+      fontSize: 16.0,
+      fontWeight: widget.weight,
+      color: Colors.yellow,
+    ),
   };
 
   Map<String, TextAlign> textAligns = {

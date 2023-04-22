@@ -134,7 +134,7 @@ class _DetalhesCartaoState extends State<DetalhesCartao> {
                               bool parcelado = transacao.parcelado == 1 ? true : false;
 
                               if (parcelado) {
-                                valor = valor / int.parse(transacao.totalParcelas.toString());
+                                valor = valor / int.tryParse(transacao.totalParcelas.toString())!;
                               }
 
                               String valorFormatado = Functions.toCurrency(valor);

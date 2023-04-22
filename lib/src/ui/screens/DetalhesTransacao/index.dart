@@ -23,7 +23,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
 
   Future<void> loadTipoOperacao() async {
     await _tipoOperacaoController.getTiposOperacao().then((value) {
-      entrada = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == "Entrada");
+      entrada = _tipoOperacaoController.dataSourceTipoOperacao.where((element) => element.descricao.toString() == "Entrada").first;
     },);
   }
 
@@ -65,23 +65,25 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                     double valor = widget.transacao.valor!;
 
                     if (parcelado) {
-                      valor = valor / int.parse(widget.transacao.totalParcelas.toString());
+                      valor = valor / int.tryParse(widget.transacao.totalParcelas.toString())!;
                     }
                     
                     String valorFormatado = Functions.toCurrency(valor);
+
+                    String textoValorFormatado = "${parcelado ? "${widget.transacao.parcelaAtual}/${widget.transacao.totalParcelas}" : ""} ${widget.transacao.idTipoOperacao == entrada?.idTipoOperacao ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}";
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(bottom: 16.0),
+                          margin: const EdgeInsets.only(bottom: 8.0),
                           child: TextComponent(
                             text: 'Detalhes da Transação',
                             style: 'title',
                           ),
                         ),
                         TextComponent(
-                          text: Functions.formataData(widget.transacao.dataCadastro.toString()),
+                          text: "Data: ${Functions.formataData(widget.transacao.dataCadastro.toString())}",
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16.0),
@@ -110,8 +112,8 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                                 size: 20,
                               ),
                               TextComponent(
-                                text: "${parcelado ? "${widget.transacao.parcelaAtual}/${widget.transacao.totalParcelas}" : ""} ${widget.transacao.idTipoOperacao == entrada!.idTipoOperacao ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}",
-                                color: widget.transacao.idTipoOperacao == entrada!.idTipoOperacao ? AppColors.success : AppColors.danger,
+                                text: textoValorFormatado,
+                                color: widget.transacao.idTipoOperacao == entrada?.idTipoOperacao ? AppColors.success : AppColors.danger,
                               ),
                             ],
                           ),
@@ -127,7 +129,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                                 size: 20,
                               ),
                               TextComponent(
-                                text: widget.transacao.detalhes.toString() == " " ? "Nenhum detalhe adicionado" : '"${widget.transacao.detalhes.toString()}"',
+                                text: widget.transacao.detalhes.toString().isEmpty ? "Nenhum detalhe adicionado" : '"${widget.transacao.detalhes.toString()}"',
                               ),
                             ],
                           ),

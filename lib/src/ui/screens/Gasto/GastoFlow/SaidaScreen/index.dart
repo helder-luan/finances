@@ -210,6 +210,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                         FormInputComponent(
                                           label: 'Detalhes',
                                           controller: _gastoController.detalhes,
+                                          isRequired: false,
                                         ),
                                         Visibility(
                                           visible: _gastoController.formaDePagamento.text == 'C' && _gastoController.parcelado.text == 'false',

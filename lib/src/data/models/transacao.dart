@@ -9,6 +9,7 @@ class Transacao extends BaseModel{
   String? dataCadastro;
   int? idTipoOperacao;
   int? mesReferencia;
+  int? anoReferencia;
   int? reembolso; // boolean - 0 => false | 1 => true
   int? idCartao;
   int? gastoMensal; // boolean - 0 => false | 1 => true
@@ -24,6 +25,7 @@ class Transacao extends BaseModel{
     this.dataCadastro,
     this.idTipoOperacao,
     this.mesReferencia,
+    this.anoReferencia,
     this.reembolso,
     this.idCartao,
     this.gastoMensal,
@@ -41,6 +43,7 @@ class Transacao extends BaseModel{
       dataCadastro: map['dataCadastro'],
       idTipoOperacao: map['idTipoOperacao'],
       mesReferencia: map['mesReferencia'],
+      anoReferencia: map['anoReferencia'],
       reembolso: map['reembolso'],
       idCartao: map['idCartao'],
       gastoMensal: map['gastoMensal'],
@@ -60,6 +63,7 @@ class Transacao extends BaseModel{
       'dataCadastro': dataCadastro,
       'idTipoOperacao': idTipoOperacao,
       'mesReferencia': mesReferencia,
+      'anoReferencia': anoReferencia,
       'reembolso': reembolso,
       'idCartao': idCartao,
       'gastoMensal': gastoMensal,

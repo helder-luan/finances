@@ -18,7 +18,7 @@ class FaturaRepository extends BaseRepository<Fatura> {
     return result.isNotEmpty ? instanceFromMap(result) : null;
   }
 
-  Future<void> updateByCardIdAndRefMonth(String cardId, String refMonth, String valorTotal) async {
-    await (provider as FaturaDbProvider).updateByCardIdAndRefMonth(cardId, refMonth, valorTotal);
+  Future<void> updateValueByCardIdAndRefMonth(String cardId, String refMonth, double valorTotal) async {
+    await (provider as FaturaDbProvider).updateValueByCardIdAndRefMonth(cardId, refMonth, valorTotal);
   }
 }

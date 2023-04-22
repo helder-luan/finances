@@ -113,6 +113,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
                             FormInputComponent(
                               label: 'Detalhes',
                               controller: _gastoController.detalhes,
+                              isRequired: false,
                             ),
                             FormCheckboxComponent(
                               label: 'Ressarcimento',

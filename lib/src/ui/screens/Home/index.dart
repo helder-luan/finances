@@ -55,10 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (historico.isNotEmpty) {
       gastoTotal = historico.where(
         (transacao) => 
-          (transacao.idTipoOperacao == saida.idTipoOperacao || transacao.gastoMensal == 1) 
-          || 
-          transacao.idTipoOperacao != saida.idTipoOperacao
-          && 
+          (transacao.idTipoOperacao == saida.idTipoOperacao || transacao.gastoMensal == 1)
+          &&
           transacao.mesReferencia == _mesReferenciaController.current
       )
       .fold(
@@ -76,14 +74,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
       dividaTotal = historico.where(
         (transacao) =>
-        transacao.idTipoOperacao == saida.idTipoOperacao
-        &&
-        transacao.gastoMensal == 1
+          transacao.idTipoOperacao == saida.idTipoOperacao
+          &&
+          (transacao.gastoMensal == 1 || transacao.parcelado == 1)
+          &&
+          transacao.mesReferencia == _mesReferenciaController.current
       )
       .fold(
         0,
         (previousValue, transacao) =>
-          previousValue + transacao.valor!
+          transacao.parcelado == 1 ? previousValue + (transacao.valor! / transacao.totalParcelas!) : previousValue + transacao.valor!,
       );
     } else {
       gastoTotal = 0;
