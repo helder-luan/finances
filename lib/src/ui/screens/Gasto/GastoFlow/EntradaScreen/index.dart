@@ -1,7 +1,4 @@
-
-import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
-import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
@@ -23,43 +20,11 @@ class EntradaScreen extends StatefulWidget {
 
 class _EntradaScreenState extends State<EntradaScreen> {
   final GastoController _gastoController = GastoController();
-  final CartaoController _cartaoController = CartaoController();
-  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
-
-  bool? ressarcimento = false;
-
-  List<Map<String, String>> myCards = [
-    {
-      'value': '',
-      'label': 'Selecione um cartão',
-    }
-  ];
-
-  void loadCartoes() async {
-    await _cartaoController.atualizarDados();
-    _cartaoController.dataSourceCartao.map((cartao) {
-      myCards.add({
-        'value': cartao.idCartao.toString(),
-        'label': cartao.nome.toString(),
-      });
-    }).toList();
-  }
-
-  void loadTipoOperacao() async {
-    await _tipoOperacaoController.getTiposOperacao();
-
-    _gastoController.idTipoOperacao.text = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == 'Entrada').idTipoOperacao.toString();
-  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    loadCartoes();
-    loadTipoOperacao();
-
-    _gastoController.reembolso.text = 'false';
   }
   
   @override
@@ -105,43 +70,22 @@ class _EntradaScreenState extends State<EntradaScreen> {
                               controller: _gastoController.descricao,
                             ),
                             FormInputComponent(
-                              label: 'Valor',
-                              controller: _gastoController.valor,
-                              keyboardType: TextInputType.number,
-                              formatters: [Mask.money()],
-                            ),
-                            FormInputComponent(
                               label: 'Detalhes',
                               controller: _gastoController.detalhes,
                               isRequired: false,
                             ),
-                            FormCheckboxComponent(
-                              label: 'Ressarcimento',
-                              checkVariable: ressarcimento,
-                              onChanged: (value) {
-                                setState(() {
-                                  ressarcimento = value;
-                                  _gastoController.reembolso.text = value.toString();
-                                });
-                              },
-                            ),
-                            Visibility(
-                              visible: ressarcimento!,
-                              child: FormDropdownComponent(
-                                label: 'Cartão',
-                                items: myCards,
-                                startValue: '',
-                                onChanged: (value) {
-                                  _gastoController.idCartao.text = value.toString();
-                                },
-                              )
+                            FormInputComponent(
+                              label: 'Valor',
+                              controller: _gastoController.valor,
+                              keyboardType: TextInputType.number,
+                              formatters: [Mask.money()],
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 16.0),
                               width: MediaQuery.of(context).size.width-32,
                               child: ButtonComponent(
                                 onPressed: () {
-                                  _gastoController.handleSubmitEntry(
+                                  _gastoController.handleSubmit(
                                     onSuccess: () {
                                       Navigator.pushAndRemoveUntil(
                                         context,

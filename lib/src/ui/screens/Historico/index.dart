@@ -2,10 +2,8 @@
 
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/controllers/mes_referencia_controller.dart';
-import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/data/models/tipo_operacao_model.dart';
-import 'package:finances/src/data/models/transacao.dart';
+import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
@@ -21,15 +19,9 @@ class HistoricoScreen extends StatefulWidget {
 
 class _HistoricoScreenState extends State<HistoricoScreen> {
   final GastoController _gastoController = GastoController();
-  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
   final MesReferenciaController _mesReferenciaController = MesReferenciaController();
 
-  List<Transacao> historico = [];
-
-  Future<void> loadTipoOperacao() async {
-    await _tipoOperacaoController.getTiposOperacao();
-  }
-
+  List<Lancamento> historico = [];
   Future<void> loadHistorico() async {
     await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
 
@@ -37,7 +29,6 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
   }
 
   Future loadAll() async {
-    await loadTipoOperacao();
     await loadHistorico();
   }
 
@@ -98,19 +89,9 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                               shrinkWrap: true,
                               itemCount: historico.length,
                               itemBuilder: (BuildContext context, int index) {
-                                Transacao transacao = historico[index];
+                                Lancamento lancamento = historico[index];
       
-                                double valor = transacao.valor!;
-      
-                                bool parcelado = transacao.parcelado == 1 ? true : false;
-      
-                                if (parcelado) {
-                                  valor = valor / transacao.totalParcelas!;
-                                }
-                                
-                                String valorFormatado = Functions.toCurrency(valor);
-      
-                                TipoOperacao entrada = _tipoOperacaoController.dataSourceTipoOperacao.where((element) => element.descricao == 'Entrada').first;
+                                double valor = lancamento.valor;
                             
                                 if (historico.isNotEmpty) {
                                   return GestureDetector(
@@ -118,7 +99,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetalhesTransacao(transacao: transacao),
+                                          builder: (context) => DetalhesTransacao(lancamento: lancamento),
                                         ),
                                       );
                                     },
@@ -128,11 +109,11 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           TextComponent(
-                                            text: transacao.descricao.toString().length > 20 ? '${transacao.descricao.toString().substring(0, 20).toUpperCase()}...' : transacao.descricao.toString().toUpperCase(),
+                                            text: lancamento.descricao.toString().length > 20 ? '${lancamento.descricao.toString().substring(0, 20).toUpperCase()}...' : lancamento.descricao.toString().toUpperCase(),
                                           ),
                                           TextComponent(
-                                            text: "${parcelado ? "${transacao.parcelaAtual}/${transacao.totalParcelas}" : ""} ${transacao.idTipoOperacao == entrada.idTipoOperacao ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}",
-                                            color: transacao.idTipoOperacao == entrada.idTipoOperacao ? AppColors.success : AppColors.danger,
+                                            text: "${lancamento.tipo == 'R' ? "+" : "-"} ${valor.toString()}",
+                                            color: lancamento.tipo == 'R' ? AppColors.success : AppColors.danger,
                                           ),
                                         ],
                                       ),

@@ -20,79 +20,47 @@ class DB {
   }
 
   Future _onCreate(db, version) async {
-    await db.execute(_tipoCartao);
-    await db.execute(_cartoes);
-    await db.execute(_tipoOperacao);
-    await db.execute(_transacoes);
-    await db.execute(_faturas);
+    await db.execute(_categoria);
+    await db.execute(_lancamento);
 
-    await db.insert('tbl_tipo_cartao', {'descricao': 'Crédito'});
-    await db.insert('tbl_tipo_cartao', {'descricao': 'Débito'});
-    await db.insert('tbl_tipo_cartao', {'descricao': 'Ambos'});
-
-    await db.insert('tbl_tipo_operacao', {'descricao': 'Entrada'});
-    await db.insert('tbl_tipo_operacao', {'descricao': 'Saída'});
+    await db.rawInsert('''
+      INSERT INTO tbl_categoria (descricao, situacao) VALUES
+        ('Lazer', 'A'),
+        ('Alimentação', 'A'),
+        ('Transporte', 'A'),
+        ('Saúde', 'A'),
+        ('Educação', 'A'),
+        ('Moradia', 'A'),
+        ('Vestuário', 'A'),
+        ('Outros', 'A'),
+        ('Salário', 'A'),
+        ('Investimento', 'A'),
+        ('Presente', 'A'),
+        ('Empréstimo', 'A')
+    ''');
   }
-  
-  String get _tipoCartao => '''
-    CREATE TABLE tbl_tipo_cartao (
-      idTipoCartao INTEGER PRIMARY KEY AUTOINCREMENT,
-      descricao TEXT NOT NULL
-    )
-  ''';
 
-  String get _tipoOperacao => '''
-    CREATE TABLE tbl_tipo_operacao (
-      idTipoOperacao INTEGER PRIMARY KEY AUTOINCREMENT,
-      descricao TEXT NOT NULL
-    )
-  ''';
-
-  String get _cartoes => '''
-    CREATE TABLE tbl_cartoes (
-      idCartao INTEGER PRIMARY KEY AUTOINCREMENT,
-      idTipoCartao INTEGER NOT NULL,
-      nome TEXT NOT NULL,
-      finalCartao TEXT NOT NULL,
-      diaVencimento INTEGER NOT NULL,
-      diaFechamento INTEGER NOT NULL,
-      hexCor TEXT NOT NULL,
-      FOREIGN KEY (idTipoCartao) REFERENCES tbl_tipo_cartao (idTipoCartao)
-    )
-  ''';
-
-  String get _transacoes => '''
-    CREATE TABLE tbl_transacoes (
-      idTransacao INTEGER PRIMARY KEY AUTOINCREMENT,
+  String get _categoria => '''
+    CREATE TABLE fnc_categoria (
+      idCategoria INTEGER PRIMARY KEY AUTOINCREMENT,
       descricao TEXT NOT NULL,
-      valor REAL NOT NULL,
-      detalhes TEXT,
-      dataCadastro TEXT NOT NULL,
-      idTipoOperacao INTEGER NOT NULL,
-      mesReferencia INTEGER,
-      anoReferencia INTEGER,
-      reembolso BOOLEAN DEFAULT 0,
-      idCartao INTEGER DEFAULT NULL,
-      gastoMensal BOOLEAN DEFAULT 0,
-      parcelado BOOLEAN DEFAULT 0,
-      totalParcelas INTEGER DEFAULT 0,
-      parcelaAtual INTEGER DEFAULT 0,
-      FOREIGN KEY (idCartao) REFERENCES tbl_cartoes (idCartao),
-      FOREIGN KEY (idTipoOperacao) REFERENCES tbl_tipo_operacao (idTipoOperacao)
+      situacao ENUM('A', 'I') DEFAULT 'A'
     )
   ''';
 
-  String get _faturas => '''
-    CREATE TABLE tbl_faturas (
-      idFatura INTEGER PRIMARY KEY AUTOINCREMENT,
-      idCartao INTEGER NOT NULL,
-      mesReferencia INTEGER NOT NULL,
-      anoReferencia INTEGER NOT NULL,
-      dataFechamento TEXT NOT NULL,
-      dataVencimento TEXT NOT NULL,
-      dataPagamento TEXT NULL,
-      valorTotal REAL NOT NULL DEFAULT 0,
-      FOREIGN KEY (idCartao) REFERENCES tbl_cartoes (idCartao)
+  String get _lancamento => '''
+    CREATE TABLE fnc_lancamento (
+      idLancamento INTEGER PRIMARY KEY AUTOINCREMENT,
+      descricao TEXT NOT NULL,
+      detalhes TEXT,
+      idCategoria INTEGER,
+      valor REAL NOT NULL,
+      dataOcorrencia DATE NOT NULL,
+      tipo ENUM('R', 'D') NOT NULL,
+      recorrente ENUM('S', 'N') DEFAULT 'N',
+      situacao ENUM('A', 'I') DEFAULT 'A',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (idCategoria) REFERENCES tbl_categorias (idCategoria)
     )
   ''';
 }

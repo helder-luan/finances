@@ -1,17 +1,11 @@
-
-import 'package:finances/src/controllers/cartao_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/controllers/mes_referencia_controller.dart';
-import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/data/models/tipo_operacao_model.dart';
-import 'package:finances/src/data/models/transacao.dart';
+import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
-import 'package:finances/src/ui/components/Cartao/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/DetalhesCartao/index.dart';
 import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
 import 'package:flutter/material.dart';
 
@@ -24,76 +18,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GastoController _gastoController = GastoController();
-  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
-  final CartaoController _cartaoController = CartaoController();
   final MesReferenciaController _mesReferenciaController = MesReferenciaController();
 
-  List<Transacao> historico = [];
+  List<Lancamento> lancamentos = [];
 
   double gastoTotal = 0.0;
   double dividaTotal = 0.0;
 
-  Future<void> loadCartoes() async {
-    await _cartaoController.atualizarDados();
-  }
-
-  Future<void> loadTipoOperacao() async {
-    await _tipoOperacaoController.getTiposOperacao();
-  }
-
   Future<void> loadHistorico() async {
-    await _gastoController.getTransacoes();
-
-    historico = _gastoController.dataSourceTransacao;
-    
-    calculaGastos();
-  }
-
-  void calculaGastos() {
-    TipoOperacao saida = _tipoOperacaoController.dataSourceTipoOperacao.firstWhere((element) => element.descricao == 'Saída');
-
-    if (historico.isNotEmpty) {
-      gastoTotal = historico.where(
-        (transacao) => 
-          (transacao.idTipoOperacao == saida.idTipoOperacao || transacao.gastoMensal == 1)
-          &&
-          transacao.mesReferencia == _mesReferenciaController.current
-      )
-      .fold(
-        0,
-        (double previousValue, transacao) {
-          if (transacao.parcelado == 1) {
-            return previousValue + (transacao.valor! / transacao.totalParcelas!);
-          } else if (transacao.reembolso == 1) {
-            return previousValue - transacao.valor!;
-          } else {
-            return previousValue + transacao.valor!;
-          }
-        },
-      );
-
-      dividaTotal = historico.where(
-        (transacao) =>
-          transacao.idTipoOperacao == saida.idTipoOperacao
-          &&
-          (transacao.gastoMensal == 1 || transacao.parcelado == 1)
-          &&
-          transacao.mesReferencia == _mesReferenciaController.current
-      )
-      .fold(
-        0,
-        (previousValue, transacao) =>
-          transacao.parcelado == 1 ? previousValue + (transacao.valor! / transacao.totalParcelas!) : previousValue + transacao.valor!,
-      );
-    } else {
-      gastoTotal = 0;
-      dividaTotal = 0;
-    }
+    //
   }
 
   Future loadAll() async {
-    await loadCartoes();
-    await loadTipoOperacao();
     await loadHistorico();
   }
 
@@ -247,46 +183,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ]
                               );
                             },
-                          ),
-                          // cards
-                          Container(
-                            margin: const EdgeInsets.only(top: 16.0),
-                            child: FutureBuilder(
-                              future: loadAll(),
-                              builder: (context, snapshot) {
-                                if (_cartaoController.dataSourceCartao.isNotEmpty) {
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _cartaoController.dataSourceCartao.length,
-                                    itemBuilder: (context, index) {
-                                      var cartao = _cartaoController.dataSourceCartao[index];
-                                          
-                                      return CartaoComponent(
-                                        cardName: cartao.nome.toString(),
-                                        cardNumVenc: cartao.diaVencimento.toString(),
-                                        cardNumFinal: cartao.finalCartao.toString(),
-                                        cardColor: Color(int.tryParse("0xFF${cartao.hexCor}")!),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => DetalhesCartao(cartao: cartao),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return Container(
-                                    margin: const EdgeInsets.only(top: 32.0),
-                                    child: Center(
-                                      child: TextComponent(text: 'Nenhum cartão cadastrado'),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
                           ),
                         ],
                       ),

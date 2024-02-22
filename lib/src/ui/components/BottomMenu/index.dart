@@ -1,5 +1,4 @@
 import 'package:finances/src/core/app_images.dart';
-import 'package:finances/src/ui/screens/Cartao/index.dart';
 import 'package:finances/src/ui/screens/Historico/index.dart';
 import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
@@ -37,18 +36,6 @@ class BottomMenu extends StatelessWidget {
                   (route) => false);
             },
             icon: Image(image: AssetImage(AppImages.gastos)),
-            iconSize: 32,
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CartaoScreen(),
-                  ),
-                  (route) => false);
-            },
-            icon: Image(image: AssetImage(AppImages.cartao)),
             iconSize: 32,
           ),
           IconButton(

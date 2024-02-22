@@ -1,6 +1,6 @@
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/data/models/transacao.dart';
+import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/CardMes/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
@@ -17,24 +17,10 @@ class HistoricoMensal
 class _HistoricoMensalState extends State<HistoricoMensal> {
   final GastoController _gastoController = GastoController();
 
-  Map<String, List<Transacao>> transacoes = {};
+  Map<String, List<Lancamento>> lancamentos = {};
 
   Future loadHistorico() async {
-    await _gastoController.getTransacoes();
-
-    ordenaPorMes();
-  }
-
-  void ordenaPorMes() {
-    _gastoController.dataSourceTransacao.sort((a, b) => a.mesReferencia!.compareTo(b.mesReferencia!));
-    
-    for(var transacao in _gastoController.dataSourceTransacao) {
-      if (transacoes.containsKey(transacao.mesReferencia.toString())) {
-        transacoes[transacao.mesReferencia.toString()]?.add(transacao);
-      } else {
-        transacoes[transacao.mesReferencia.toString()] = [transacao];
-      }
-    }
+    //
   }
   
   @override
@@ -79,7 +65,7 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                         builder: (context, snapshot) {
                           return Wrap(
                             children: [
-                              for (var mesReferencia in transacoes.keys)
+                              for (var mesReferencia in lancamentos.keys)
                                 CardMes(mesReferencia: mesReferencia),
                             ]
                           );

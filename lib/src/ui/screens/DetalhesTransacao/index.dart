@@ -1,36 +1,19 @@
-
-import 'package:finances/src/controllers/tipo_operacao_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/data/models/tipo_operacao_model.dart';
-import 'package:finances/src/data/models/transacao.dart';
+import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
 
 class DetalhesTransacao extends StatefulWidget {
-  Transacao transacao;
-  DetalhesTransacao({super.key, required this.transacao});
+  Lancamento lancamento;
+  DetalhesTransacao({super.key, required this.lancamento});
 
   @override
   State<DetalhesTransacao> createState() => _DetalhesTransacaoState();
 }
 
 class _DetalhesTransacaoState extends State<DetalhesTransacao> {
-  final TipoOperacaoController _tipoOperacaoController = TipoOperacaoController();
-
-  TipoOperacao? entrada;
-
-  Future<void> loadTipoOperacao() async {
-    await _tipoOperacaoController.getTiposOperacao().then((value) {
-      entrada = _tipoOperacaoController.dataSourceTipoOperacao.where((element) => element.descricao.toString() == "Entrada").first;
-    },);
-  }
-
-  Future loadAll() async {
-    await loadTipoOperacao();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -58,19 +41,10 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                   ),
                 ),
                 child: FutureBuilder(
-                  future: loadAll(),
                   builder: (context, snapshot) {
-                    bool parcelado = widget.transacao.parcelado == 1 ? true : false;
+                    double valor = widget.lancamento.valor;
 
-                    double valor = widget.transacao.valor!;
-
-                    if (parcelado) {
-                      valor = valor / int.tryParse(widget.transacao.totalParcelas.toString())!;
-                    }
-                    
-                    String valorFormatado = Functions.toCurrency(valor);
-
-                    String textoValorFormatado = "${parcelado ? "${widget.transacao.parcelaAtual}/${widget.transacao.totalParcelas}" : ""} ${widget.transacao.idTipoOperacao == entrada?.idTipoOperacao ? "+ ${valorFormatado.toString()}" : "- ${valorFormatado.toString()}"}";
+                    String textoValorFormatado = "${widget.lancamento.tipo == 'R' ? "+" : "-"} ${widget.lancamento.valor}";
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +57,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                           ),
                         ),
                         TextComponent(
-                          text: "Data: ${Functions.formataData(widget.transacao.dataCadastro.toString())}",
+                          text: "Data: ${Functions.formataData(widget.lancamento.created_at.toString())}",
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16.0),
@@ -96,7 +70,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                                 size: 20,
                               ),
                               TextComponent(
-                                text: widget.transacao.descricao.toString(),
+                                text: widget.lancamento.descricao.toString(),
                               ),
                             ],
                           ),
@@ -113,7 +87,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                               ),
                               TextComponent(
                                 text: textoValorFormatado,
-                                color: widget.transacao.idTipoOperacao == entrada?.idTipoOperacao ? AppColors.success : AppColors.danger,
+                                color: widget.lancamento.tipo == 'R' ? AppColors.success : AppColors.danger,
                               ),
                             ],
                           ),
@@ -129,7 +103,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                                 size: 20,
                               ),
                               TextComponent(
-                                text: widget.transacao.detalhes.toString().isEmpty ? "Nenhum detalhe adicionado" : '"${widget.transacao.detalhes.toString()}"',
+                                text: widget.lancamento.detalhes.toString().isEmpty ? "Nenhum detalhe adicionado" : '"${widget.lancamento.detalhes.toString()}"',
                               ),
                             ],
                           ),

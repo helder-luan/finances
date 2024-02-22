@@ -2,7 +2,7 @@
 
 import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
-import 'package:finances/src/data/models/transacao.dart';
+import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
@@ -18,7 +18,7 @@ class CobrancaRecorrenteScreen extends StatefulWidget {
 
 class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
   final GastoController _gastoController = GastoController();
-  List<Transacao> historico = [];
+  List<Lancamento> historico = [];
 
   Future loadTransacoesRecorrentes() async {
     historico = await _gastoController.getTransacoesRecorrentes();
@@ -72,7 +72,7 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                       ),
                       FutureBuilder(
                         future: loadAll(),
-                        builder: ((context, snapshot) {
+                        builder: (context, snapshot) {
                           if (historico.isNotEmpty) {
                             return ListView.builder(
                               shrinkWrap: true,
@@ -159,7 +159,7 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                               ),
                             );
                           }
-                        }),
+                        },
                       ),
                     ],
                   )
