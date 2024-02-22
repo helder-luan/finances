@@ -1,17 +1,14 @@
-import 'package:finances/src/controllers/mes_referencia_controller.dart';
 import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/data/repositories/lancamento_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class GastoController extends ChangeNotifier {
   
-  set dataSourceTransacao(value) => dataSourceTransacaoNotifier.value = value;
-  List<Lancamento> get dataSourceTransacao => dataSourceTransacaoNotifier.value;
+  set dataSourceLancamento(value) => dataSourceLancamentoNotifier.value = value;
+  List<Lancamento> get dataSourceLancamento => dataSourceLancamentoNotifier.value;
 
-  ValueNotifier<List<Lancamento>> dataSourceTransacaoNotifier =
+  ValueNotifier<List<Lancamento>> dataSourceLancamentoNotifier =
       ValueNotifier(<Lancamento>[]);
-
-  final MesReferenciaController _mesReferenciaController = MesReferenciaController();
 
   final LancamentoRepository _lancamentoRepository = LancamentoRepository();
   
@@ -22,12 +19,42 @@ class GastoController extends ChangeNotifier {
   final TextEditingController detalhes = TextEditingController(text: '');
 
   // out
-  final TextEditingController gastoMensal = TextEditingController(text: '');
-  final TextEditingController parcelado = TextEditingController(text: '');
+  final TextEditingController gastoMensal = TextEditingController(text: 'N');
+  final TextEditingController parcelado = TextEditingController(text: 'N');
   final TextEditingController totalParcelas = TextEditingController(text: '');
   final TextEditingController parcelaAtual = TextEditingController(text: '');
 
   Future<Map<String, Object>> validarOperacao() async {
+    if (descricao.text.trim().isEmpty) {
+      return {
+        'isValid': false,
+        'message': 'Descrição é obrigatória',
+      };
+    }
+
+    if (valor.text.trim().isEmpty) {
+      return {
+        'isValid': false,
+        'message': 'Valor é obrigatório',
+      };
+    }
+
+    if (parcelado.text == 'S') {
+      if (totalParcelas.text.trim().isEmpty) {
+        return {
+          'isValid': false,
+          'message': 'Quantidade de parcelas é obrigatória',
+        };
+      }
+
+      if (parcelaAtual.text.trim().isEmpty) {
+        return {
+          'isValid': false,
+          'message': 'Parcela atual é obrigatória',
+        };
+      }
+    }
+
     return {
       'isValid': true,
       'message': 'OK',
@@ -41,7 +68,7 @@ class GastoController extends ChangeNotifier {
   }) async {
     try {
       // valida operacao de entrada
-      Map validacao = await validarOperacao();
+      Map<String, dynamic> validacao = await validarOperacao();
 
       if (!validacao['isValid']) {
         throw validacao['message'];
@@ -50,18 +77,37 @@ class GastoController extends ChangeNotifier {
       double valorFormatado = double.tryParse(valor.text.replaceAll("R\$ ", "").replaceAll(".", "").replaceAll(",", "."))!;
 
       // insere transacao
-      await _lancamentoRepository.insert(
-        Lancamento(
-          descricao: descricao.text.trim(),
-          valor: valorFormatado,
-          detalhes: detalhes.text.trim(),
-          dataOcorrencia: DateTime.now(),
-          tipo: tipo.text,
-          recorrente: 'N',
-          situacao: 'A',
-          created_at: DateTime.now(),
-        )
-      );
+      if (parcelado.text == 'S') {
+        var valorParcelas = valorFormatado / int.tryParse(totalParcelas.text)!;
+
+        for (int i = int.tryParse(parcelaAtual.text)!; i <= int.tryParse(totalParcelas.text)!; i++) {
+          await _lancamentoRepository.insert(
+            Lancamento(
+              descricao: "$i/${totalParcelas.text}${descricao.text.trim()}",
+              valor: valorParcelas,
+              detalhes: detalhes.text.trim(),
+              dataOcorrencia: DateTime.now(),
+              tipo: tipo.text,
+              recorrente: gastoMensal.text,
+              situacao: 'A',
+              created_at: DateTime.now(),
+            )
+          );
+        }
+      } else {
+        await _lancamentoRepository.insert(
+          Lancamento(
+            descricao: descricao.text.trim(),
+            valor: valorFormatado,
+            detalhes: detalhes.text.trim(),
+            dataOcorrencia: DateTime.now(),
+            tipo: tipo.text,
+            recorrente: gastoMensal.text,
+            situacao: 'A',
+            created_at: DateTime.now(),
+          )
+        );
+      }
 
       onSuccess();
     }
@@ -73,7 +119,7 @@ class GastoController extends ChangeNotifier {
   Future<void> getTransacoesMesAtual(int mesAtual) async {    
     try {
       await _lancamentoRepository.recoverAllByMonthReference(mesAtual).then((value) {
-        dataSourceTransacao = value;
+        dataSourceLancamento = value;
       });
     } catch (e) {
       print(e);
@@ -83,7 +129,7 @@ class GastoController extends ChangeNotifier {
   Future<void> getTransacoes() async {
     try {
       await _lancamentoRepository.recoverAll().then((value) {
-        dataSourceTransacao = value;
+        dataSourceLancamento = value;
       });
     } catch (e) {
       print(e);

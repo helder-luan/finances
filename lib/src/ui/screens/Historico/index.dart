@@ -7,7 +7,7 @@ import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/DetalhesTransacao/index.dart';
+import 'package:finances/src/ui/screens/DetalhesLancamento/index.dart';
 import 'package:flutter/material.dart';
 
 class HistoricoScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
   Future<void> loadHistorico() async {
     await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
 
-    historico = _gastoController.dataSourceTransacao;
+    historico = _gastoController.dataSourceLancamento;
   }
 
   Future loadAll() async {
@@ -99,7 +99,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetalhesTransacao(lancamento: lancamento),
+                                          builder: (context) => DetalhesLancamento(lancamento: lancamento),
                                         ),
                                       );
                                     },

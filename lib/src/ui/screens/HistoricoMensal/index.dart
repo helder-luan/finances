@@ -2,7 +2,7 @@ import 'package:finances/src/controllers/gasto_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
-import 'package:finances/src/ui/components/CardMes/index.dart';
+import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +15,8 @@ class HistoricoMensal
 }
 
 class _HistoricoMensalState extends State<HistoricoMensal> {
+  final dataFiltro = '';
+
   final GastoController _gastoController = GastoController();
 
   Map<String, List<Lancamento>> lancamentos = {};
@@ -50,30 +52,14 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                       topRight: Radius.circular(16.0),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 16.0),
-                        child: TextComponent(
-                          text: "Histórico Dos Meses",
-                          style: 'title',
-                        ),
-                      ),
-                      FutureBuilder(
-                        future: loadHistorico(),
-                        builder: (context, snapshot) {
-                          return Wrap(
-                            children: [
-                              for (var mesReferencia in lancamentos.keys)
-                                CardMes(mesReferencia: mesReferencia),
-                            ]
-                          );
-                        },
-                      )
-                    ],
-                  )
-                )
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16.0),
+                    child: TextComponent(
+                      text: "Histórico Por Mês",
+                      style: 'title',
+                    ),
+                  ),
+                ),
               ],
             )
           ),

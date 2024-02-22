@@ -21,8 +21,8 @@ class _EntradaScreenState extends State<EntradaScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _gastoController.tipo.text = 'R';
   }
   
   @override

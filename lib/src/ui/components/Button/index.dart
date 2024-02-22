@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 
 class ButtonComponent extends StatefulWidget {
   final VoidCallback onPressed;
-  Widget child;
-  String style;
-  double height;
-  double width;
-  ButtonComponent({
+  final Widget child;
+  final String style;
+  final double height;
+  final double width;
+
+  const ButtonComponent({
     super.key,
     required this.onPressed,
     required this.child,

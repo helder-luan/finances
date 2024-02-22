@@ -26,7 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   double dividaTotal = 0.0;
 
   Future<void> loadHistorico() async {
-    //
+    await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
+    lancamentos = _gastoController.dataSourceLancamento;
   }
 
   Future loadAll() async {
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
               
                           Container(
-                            width: (MediaQuery.of(context).size.width-64)/2,
+                            width: (MediaQuery.of(context).size.width)/2,
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -117,7 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.all(16.0),
                       decoration: const BoxDecoration(
-                        color: Colors.white,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
                       ),
                       child: Column(
@@ -125,11 +125,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           FutureBuilder(
                             future: loadAll(),
                             builder: (context, snapshot) {
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                    width: (MediaQuery.of(context).size.width-64)/2,
+                                    margin: const EdgeInsets.only(bottom: 16.0),
+                                    width: MediaQuery.of(context).size.width,
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -145,17 +146,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                     alignment: Alignment.centerRight,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          TextComponent(text: 'Gasto total'),
+                                          TextComponent(text: 'Gasto total', style: 'subtitle'),
                                           TextComponent(text: Functions.toCurrency(gastoTotal), style: 'title'),
                                         ]
                                       ),
                                     ),
                                   ),
                                   Container(
-                                    width: (MediaQuery.of(context).size.width-64)/2,
+                                    margin: const EdgeInsets.only(bottom: 16.0),
+                                    width: MediaQuery.of(context).size.width,
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -171,10 +173,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     alignment: Alignment.centerRight,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          TextComponent(text: 'Dívida total'),
+                                          TextComponent(text: 'Dívida total', style: 'subtitle'),
                                           TextComponent(text: Functions.toCurrency(dividaTotal), style: 'title'),
                                         ]
                                       ),

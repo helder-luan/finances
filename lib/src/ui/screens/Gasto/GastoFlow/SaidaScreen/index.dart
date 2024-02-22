@@ -3,7 +3,6 @@ import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Form/Checkbox/index.dart';
-import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Gasto/index.dart';
@@ -21,17 +20,21 @@ class SaidaScreen extends StatefulWidget {
 class _SaidaScreenState extends State<SaidaScreen> {
   final GastoController _gastoController = GastoController();
 
+  Future loadAll() async {
+    //
+  }
+
   @override
   void initState() {
     super.initState();
-    _gastoController.parcelado.text = 'N';
-    _gastoController.gastoMensal.text = 'N';
+    _gastoController.tipo.text = 'D';
   }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
+        future: loadAll(),
         builder: (context, snapshot) {
           return SafeArea(
             child: SingleChildScrollView(
@@ -85,7 +88,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                   checkVariable: _gastoController.gastoMensal.text == 'true' ? true : false,
                                   onChanged: (value) {
                                     setState(() {
-                                      _gastoController.gastoMensal.text = value.toString() == 'true' ? 'S' : 'N';
+                                      _gastoController.gastoMensal.text = (value.toString() == 'true') ? 'S' : 'N';
                                     });
                                   },
                                 ),
@@ -94,12 +97,12 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                   checkVariable: _gastoController.parcelado.text == 'S' ? true : false,
                                   onChanged: (value) {
                                     setState(() {
-                                      _gastoController.parcelado.text = value.toString() == 'true' ? 'S' : 'N';
+                                      _gastoController.parcelado.text = (value.toString() == 'true') ? 'S' : 'N';
                                     });
                                   },
                                 ),
                                 Visibility(
-                                  visible: _gastoController.parcelado.text == 'true',
+                                  visible: _gastoController.parcelado.text == 'S',
                                   child: Column(
                                     children: [
                                       FormInputComponent(

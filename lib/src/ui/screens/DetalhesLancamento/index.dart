@@ -5,15 +5,15 @@ import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:flutter/material.dart';
 
-class DetalhesTransacao extends StatefulWidget {
-  Lancamento lancamento;
-  DetalhesTransacao({super.key, required this.lancamento});
+class DetalhesLancamento extends StatefulWidget {
+  final Lancamento lancamento;
+  const DetalhesLancamento({super.key, required this.lancamento});
 
   @override
-  State<DetalhesTransacao> createState() => _DetalhesTransacaoState();
+  State<DetalhesLancamento> createState() => _DetalhesLancamentoState();
 }
 
-class _DetalhesTransacaoState extends State<DetalhesTransacao> {
+class _DetalhesLancamentoState extends State<DetalhesLancamento> {
   @override
   void initState() {
     super.initState();
@@ -40,12 +40,10 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                     topRight: Radius.circular(16.0),
                   ),
                 ),
-                child: FutureBuilder(
-                  builder: (context, snapshot) {
-                    double valor = widget.lancamento.valor;
-
+                child: Builder(
+                  builder: (context) {                    
                     String textoValorFormatado = "${widget.lancamento.tipo == 'R' ? "+" : "-"} ${widget.lancamento.valor}";
-
+                
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -110,7 +108,7 @@ class _DetalhesTransacaoState extends State<DetalhesTransacao> {
                         ),
                       ],
                     );
-                  },
+                  }
                 )
               )
             ],

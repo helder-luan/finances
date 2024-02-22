@@ -5,14 +5,14 @@ import 'package:gradient_borders/gradient_borders.dart';
 import 'package:validatorless/validatorless.dart';
 
 class FormInputComponent extends StatefulWidget {
-  TextEditingController? controller;
-  String label;
-  TextInputType keyboardType;
-  List<TextInputFormatter>? formatters;
-  bool isRequired;
-  Validatorless? validator;
+  final TextEditingController? controller;
+  final String label;
+  final TextInputType keyboardType;
+  final List<TextInputFormatter>? formatters;
+  final bool isRequired;
+  final Validatorless? validator;
 
-  FormInputComponent({
+  const FormInputComponent({
     super.key,
     this.controller,
     required this.label,
