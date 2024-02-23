@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 
 class FormDropdownComponent extends StatefulWidget {
-  String label;
-  List<Map<dynamic, String>> items;
-  dynamic startValue;
-  Function(dynamic)? onChanged;
+  final String label;
+  final List<Map<dynamic, String>> items;
+  final dynamic startValue;
+  final Function(dynamic)? onChanged;
 
-  FormDropdownComponent({
+  const FormDropdownComponent({
     super.key,
     required this.label,
     required this.items,

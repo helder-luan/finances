@@ -19,6 +19,7 @@ class GastoController extends ChangeNotifier {
   final TextEditingController valor = TextEditingController(text: '');
   final TextEditingController detalhes = TextEditingController(text: '');
   final TextEditingController dataOcorrencia = TextEditingController(text: '');
+  final TextEditingController idCategoria = TextEditingController(text: '');
 
   // out
   final TextEditingController gastoMensal = TextEditingController(text: 'N');

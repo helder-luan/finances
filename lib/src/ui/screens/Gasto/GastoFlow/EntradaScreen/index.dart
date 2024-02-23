@@ -1,10 +1,11 @@
+import 'package:finances/src/controllers/categoria_controller.dart';
 import 'package:finances/src/controllers/gasto_controller.dart';
-import 'package:finances/src/controllers/mes_referencia_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Form/DatePicker/index.dart';
+import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Gasto/index.dart';
@@ -21,12 +22,33 @@ class EntradaScreen extends StatefulWidget {
 
 class _EntradaScreenState extends State<EntradaScreen> {
   final GastoController _gastoController = GastoController();
+  final CategoriaController _categoriaController = CategoriaController();
+
+  List<Map<dynamic, String>> categorias = [
+    {'value': '', 'label': 'Selecione uma categoria'}
+  ];
+
+  Future<void> montaListaCategorias() async {
+    await _categoriaController.getCategorias();
+
+    for (var categoria in _categoriaController.dataSourceCategoria) {
+      categorias.add({
+        'value': categoria.idCategoria.toString(),
+        'label': categoria.descricao
+      });
+    }
+  }
+
+  Future<void> loadAll() async {
+    _gastoController.tipo.text = 'R';
+    _gastoController.dataOcorrencia.text = Functions.dataPt("${DateTime.now().toLocal()}".split(' ')[0]);
+    await montaListaCategorias();
+  }
 
   @override
   void initState() {
     super.initState();
-    _gastoController.tipo.text = 'R';
-    _gastoController.dataOcorrencia.text = Functions.dataPt("${DateTime.now().toLocal()}".split(' ')[0]);
+    loadAll();
   }
   
   @override
@@ -85,6 +107,25 @@ class _EntradaScreenState extends State<EntradaScreen> {
                             FormDatePickerComponent(
                               label: 'Data da ocorrência',
                               controller: _gastoController.dataOcorrencia,
+                            ),
+                            FutureBuilder(
+                              future: montaListaCategorias(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return const Text('Erro ao carregar categorias');
+                                }
+
+                                return FormDropdownComponent(
+                                  label: 'Categoria',
+                                  items: categorias,
+                                  startValue: '',
+                                  onChanged: (value) {
+                                    _gastoController.idCategoria.text = value;
+                                  },
+                                );
+                              }
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 16.0),
