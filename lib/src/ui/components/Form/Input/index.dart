@@ -11,6 +11,7 @@ class FormInputComponent extends StatefulWidget {
   final List<TextInputFormatter>? formatters;
   final bool isRequired;
   final Validatorless? validator;
+  final Function()? action;
 
   const FormInputComponent({
     super.key,
@@ -20,6 +21,7 @@ class FormInputComponent extends StatefulWidget {
     this.formatters,
     this.isRequired = true,
     this.validator,
+    this.action,
   });
 
   @override
@@ -50,6 +52,7 @@ class _FormInputComponentState extends State<FormInputComponent> {
           return null;
         },
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        onTap: widget.action
       ),
     );
   }

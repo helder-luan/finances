@@ -24,7 +24,7 @@ class DB {
     await db.execute(_lancamento);
 
     await db.rawInsert('''
-      INSERT INTO tbl_categoria (descricao, situacao) VALUES
+      INSERT INTO fnc_categoria (descricao, situacao) VALUES
         ('Lazer', 'A'),
         ('Alimentação', 'A'),
         ('Transporte', 'A'),
@@ -44,7 +44,7 @@ class DB {
     CREATE TABLE fnc_categoria (
       idCategoria INTEGER PRIMARY KEY AUTOINCREMENT,
       descricao TEXT NOT NULL,
-      situacao ENUM('A', 'I') DEFAULT 'A'
+      situacao TEXT DEFAULT 'A'
     )
   ''';
 
@@ -56,9 +56,9 @@ class DB {
       idCategoria INTEGER,
       valor REAL NOT NULL,
       dataOcorrencia DATE NOT NULL,
-      tipo ENUM('R', 'D') NOT NULL,
-      recorrente ENUM('S', 'N') DEFAULT 'N',
-      situacao ENUM('A', 'I') DEFAULT 'A',
+      tipo TEXT NOT NULL,
+      recorrente TEXT DEFAULT 'N',
+      situacao TEXT DEFAULT 'A',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (idCategoria) REFERENCES tbl_categorias (idCategoria)
     )

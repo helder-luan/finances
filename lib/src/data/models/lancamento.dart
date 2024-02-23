@@ -1,7 +1,11 @@
 import 'package:finances/src/data/models/base_model.dart';
 import 'dart:convert';
 
-class Lancamento extends BaseModel{
+class Lancamento extends BaseModel {
+  // tipo lancamento
+  static const receita = 'R';
+  static const despesa = 'D';
+
   int? idLancamento;
   String descricao;
   String? detalhes;

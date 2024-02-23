@@ -1,7 +1,10 @@
 import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/mes_referencia_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
+import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
+import 'package:finances/src/ui/components/Form/DatePicker/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Gasto/index.dart';
@@ -23,6 +26,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
   void initState() {
     super.initState();
     _gastoController.tipo.text = 'R';
+    _gastoController.dataOcorrencia.text = Functions.dataPt("${DateTime.now().toLocal()}".split(' ')[0]);
   }
   
   @override
@@ -77,6 +81,10 @@ class _EntradaScreenState extends State<EntradaScreen> {
                               controller: _gastoController.valor,
                               keyboardType: TextInputType.number,
                               formatters: [Mask.money()],
+                            ),
+                            FormDatePickerComponent(
+                              label: 'Data da ocorrência',
+                              controller: _gastoController.dataOcorrencia,
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 16.0),

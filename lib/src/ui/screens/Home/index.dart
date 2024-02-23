@@ -22,16 +22,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Lancamento> lancamentos = [];
 
-  double gastoTotal = 0.0;
-  double dividaTotal = 0.0;
+  double gastoFixo = 0.0;
+  double gastoMes = 0.0;
 
   Future<void> loadHistorico() async {
-    await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
+    await _gastoController.getLancamentosMesAtual(_mesReferenciaController.current);
     lancamentos = _gastoController.dataSourceLancamento;
+  }
+
+  Future<void> calculaTotal() async {
+    gastoFixo = 0.0;
+    gastoMes = 0.0;
+
+    for (var lancamento in lancamentos) {
+      if (lancamento.tipo == Lancamento.despesa) {
+        gastoMes += lancamento.valor;
+
+        if (lancamento.recorrente == 'S') {
+          gastoFixo += lancamento.valor;
+        }
+      } else {
+        gastoMes -= lancamento.valor;
+      }
+    }
   }
 
   Future loadAll() async {
     await loadHistorico();
+
+    await calculaTotal();
   }
 
   @override
@@ -47,150 +66,196 @@ class _HomeScreenState extends State<HomeScreen> {
           future: loadAll(),
           builder: (context, snapshot) {
             return SingleChildScrollView(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: AppColors.gradient,
-                ),
-                child: Column(
-                  children: [
-                    // header
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(0),
-                              backgroundColor: Colors.transparent,
-                            ),
-                            child: const ClipOval(
-                              child: Image(image: AssetImage('assets/upload/gary-final-space.jpg'), height: 50, width: 50, fit: BoxFit.cover),
-                            ),
-                          ),
-              
-                          Container(
-                            width: (MediaQuery.of(context).size.width)/2,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            alignment: Alignment.centerRight,
-                            child: ButtonComponent(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const HistoricoMensal(),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+              child: Column(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: AppColors.gradient,
+                    ),
+                    child: Column(
+                      children: [
+                        // header
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(0),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                child: const ClipOval(
+                                  child: Image(image: AssetImage('assets/upload/gary-final-space.jpg'), height: 50, width: 50, fit: BoxFit.cover),
+                                ),
+                              ),
+                  
+                              Container(
+                                width: (MediaQuery.of(context).size.width)/2,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                alignment: Alignment.centerRight,
+                                child: ButtonComponent(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const HistoricoMensal(),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        TextComponent(
-                                          text: 'Mês'
-                                        ),
-                                        TextComponent(
-                                          text: Functions.fullMonthName(DateTime.now().month),
-                                          style: 'title',
-                                        ),
-                                      ]
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            TextComponent(
+                                              text: 'Mês'
+                                            ),
+                                            TextComponent(
+                                              text: Functions.fullMonthName(DateTime.now().month),
+                                              style: 'title',
+                                            ),
+                                          ]
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ]
+                          ),
+                        ),
+                  
+                        // body
+                        Container(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 16.0),
+                                width: MediaQuery.of(context).size.width,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 8.0,
+                                      spreadRadius: 1.0,
+                                      offset: Offset(-5, 5),
                                     )
                                   ],
                                 ),
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextComponent(text: 'Gasto Mês', style: 'subtitle'),
+                                      TextComponent(text: Functions.toCurrency(gastoMes), style: 'title'),
+                                    ]
+                                  ),
+                                ),
                               ),
-                            ),
-                          )
-                        ]
-                      ),
-                    ),
-              
-                    // body
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
-                      ),
-                      child: Column(
-                        children: [
-                          FutureBuilder(
-                            future: loadAll(),
-                            builder: (context, snapshot) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 16.0),
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 8.0,
-                                          spreadRadius: 1.0,
-                                          offset: Offset(-5, 5),
-                                        )
-                                      ],
-                                    ),
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          TextComponent(text: 'Gasto total', style: 'subtitle'),
-                                          TextComponent(text: Functions.toCurrency(gastoTotal), style: 'title'),
-                                        ]
-                                      ),
-                                    ),
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 16.0),
+                                width: MediaQuery.of(context).size.width,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 8.0,
+                                      spreadRadius: 1.0,
+                                      offset: Offset(-5, 5),
+                                    )
+                                  ],
+                                ),
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextComponent(text: 'Gasto Fíxo', style: 'subtitle'),
+                                      TextComponent(text: Functions.toCurrency(gastoFixo), style: 'title'),
+                                    ]
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 16.0),
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 8.0,
-                                          spreadRadius: 1.0,
-                                          offset: Offset(-5, 5),
-                                        )
-                                      ],
-                                    ),
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          TextComponent(text: 'Dívida total', style: 'subtitle'),
-                                          TextComponent(text: Functions.toCurrency(dividaTotal), style: 'title'),
-                                        ]
-                                      ),
-                                    ),
-                                  ),
-                                ]
-                              );
-                            },
+                                ),
+                              ),
+                            ]
                           ),
-                        ],
-                      ),
+                        ),
+                      ]
                     ),
-                  ]
-                ),
+                  ),
+                  // list
+                  Container(
+                    margin: const EdgeInsets.all(16.0),
+                    child: Builder(
+                      builder: (context) {
+                        if (lancamentos.isEmpty) {
+                          return Center(
+                            child: TextComponent(text: 'Nenhum lançamento registrado', style: 'subtitle'),
+                          );
+                        }
+
+                        return Column(
+                          children: [
+                            for (var lancamento in lancamentos)
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 16.0),
+                                width: MediaQuery.of(context).size.width,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 8.0,
+                                      spreadRadius: 1.0,
+                                      offset: Offset(-5, 5),
+                                    )
+                                  ],
+                                ),
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          TextComponent(text: lancamento.descricao.toUpperCase(), style: 'subtitle'),
+                                        ]
+                                      ),
+                                      TextComponent(
+                                        text: "${lancamento.tipo == Lancamento.receita ? "+" : "-"} ${Functions.toCurrency(lancamento.valor)}",
+                                        color: lancamento.tipo == Lancamento.despesa ? AppColors.danger : AppColors.success,
+                                      ),
+                                    ]
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      }
+                    ),
+                  ),
+                ],
               ),
             );
           },

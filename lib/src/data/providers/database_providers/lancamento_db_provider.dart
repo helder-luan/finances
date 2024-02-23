@@ -46,21 +46,23 @@ class LancamentoDbProvider extends LancamentoProvider {
 
   @override
   Future<List<Map<String, dynamic>>> recoverAllByDate(DateTime date) async {
-    var result = await _database.query(table, where: 'dataOcorrencia = ?', whereArgs: [date]);
+    var result = await _database.query(table, where: 'dataOcorrencia = ?', whereArgs: [date.toIso8601String()]);
 
     return result.isNotEmpty ? result : [];
   }
 
   @override
   Future<List<Map<String, dynamic>>> recoverAllByDateRange(DateTime startDate, DateTime endDate) async {
-    var result = await _database.query(table, where: 'dataOcorrencia BETWEEN ? AND ?', whereArgs: [startDate, endDate]);
+    var result = await _database.query(table, where: 'dataOcorrencia BETWEEN ? AND ?', whereArgs: [startDate.toIso8601String(), endDate.toIso8601String()]);
 
     return result.isNotEmpty ? result : [];
   }
 
   @override
   Future<List<Map<String, dynamic>>> recoverAllByMonthReference(int monthReference) async {
-    var result = await _database.query(table, where: 'strftime("%m", dataOcorrencia) = ?', whereArgs: [monthReference]);
+    DateTime now = DateTime.now();
+
+    var result = await _database.query(table, where: "dataOcorrencia BETWEEN ? AND ?", whereArgs: [DateTime(now.year, monthReference, 1).toIso8601String(), DateTime(now.year, monthReference + 1, 0).toIso8601String()]);
 
     return result.isNotEmpty ? result : [];
   }

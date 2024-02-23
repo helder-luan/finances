@@ -21,7 +21,7 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
   List<Lancamento> historico = [];
 
   Future loadTransacoesRecorrentes() async {
-    historico = await _gastoController.getTransacoesRecorrentes();
+    historico = await _gastoController.getLancamentosRecorrentes();
   }
 
   Future loadAll() async {

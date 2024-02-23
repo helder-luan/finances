@@ -1,8 +1,11 @@
 import 'package:finances/src/controllers/gasto_controller.dart';
+import 'package:finances/src/controllers/mes_referencia_controller.dart';
 import 'package:finances/src/core/app_colors.dart';
+import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/Form/Checkbox/index.dart';
+import 'package:finances/src/ui/components/Form/DatePicker/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Gasto/index.dart';
@@ -28,6 +31,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
   void initState() {
     super.initState();
     _gastoController.tipo.text = 'D';
+    _gastoController.dataOcorrencia.text = Functions.dataPt("${DateTime.now().toLocal()}".split(' ')[0]);
   }
   
   @override
@@ -83,23 +87,33 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                   formatters: [Mask.money()],
                                   controller: _gastoController.valor,
                                 ),
-                                FormCheckboxComponent(
-                                  label: 'Cobrança recorrente',
-                                  checkVariable: _gastoController.gastoMensal.text == 'true' ? true : false,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _gastoController.gastoMensal.text = (value.toString() == 'true') ? 'S' : 'N';
-                                    });
-                                  },
+                                FormDatePickerComponent(
+                                  label: 'Data da ocorrência',
+                                  controller: _gastoController.dataOcorrencia,
                                 ),
-                                FormCheckboxComponent(
-                                  label: 'Parcelado',
-                                  checkVariable: _gastoController.parcelado.text == 'S' ? true : false,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _gastoController.parcelado.text = (value.toString() == 'true') ? 'S' : 'N';
-                                    });
-                                  },
+                                Visibility(
+                                  visible: _gastoController.parcelado.text == 'N',
+                                  child: FormCheckboxComponent(
+                                    label: 'Gasto Fixo',
+                                    checkVariable: _gastoController.gastoMensal.text == 'S' ? true : false,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _gastoController.gastoMensal.text = (value.toString() == 'true') ? 'S' : 'N';
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: _gastoController.gastoMensal.text == 'N',
+                                  child: FormCheckboxComponent(
+                                    label: 'Parcelado',
+                                    checkVariable: _gastoController.parcelado.text == 'S' ? true : false,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _gastoController.parcelado.text = (value.toString() == 'true') ? 'S' : 'N';
+                                      });
+                                    },
+                                  ),
                                 ),
                                 Visibility(
                                   visible: _gastoController.parcelado.text == 'S',

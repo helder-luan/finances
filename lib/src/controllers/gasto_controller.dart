@@ -1,5 +1,6 @@
 import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/data/repositories/lancamento_repository.dart';
+import 'package:finances/src/helpers/functions.dart';
 import 'package:flutter/cupertino.dart';
 
 class GastoController extends ChangeNotifier {
@@ -17,12 +18,17 @@ class GastoController extends ChangeNotifier {
   final TextEditingController descricao = TextEditingController(text: '');
   final TextEditingController valor = TextEditingController(text: '');
   final TextEditingController detalhes = TextEditingController(text: '');
+  final TextEditingController dataOcorrencia = TextEditingController(text: '');
 
   // out
   final TextEditingController gastoMensal = TextEditingController(text: 'N');
   final TextEditingController parcelado = TextEditingController(text: 'N');
   final TextEditingController totalParcelas = TextEditingController(text: '');
   final TextEditingController parcelaAtual = TextEditingController(text: '');
+
+  // filtro
+  final TextEditingController dataInicial = TextEditingController(text: '');
+  final TextEditingController dataFinal = TextEditingController(text: '');
 
   Future<Map<String, Object>> validarOperacao() async {
     if (descricao.text.trim().isEmpty) {
@@ -78,15 +84,17 @@ class GastoController extends ChangeNotifier {
 
       // insere transacao
       if (parcelado.text == 'S') {
-        var valorParcelas = valorFormatado / int.tryParse(totalParcelas.text)!;
+        var valorParcelas = (valorFormatado / int.tryParse(totalParcelas.text)!);
 
         for (int i = int.tryParse(parcelaAtual.text)!; i <= int.tryParse(totalParcelas.text)!; i++) {
+          DateTime dataOcorrenciaParcela = DateTime.parse(Functions.dataEn(dataOcorrencia.text)).add(Duration(days: 30 * (i - 1)));
+
           await _lancamentoRepository.insert(
             Lancamento(
-              descricao: "$i/${totalParcelas.text}${descricao.text.trim()}",
+              descricao: "$i/${totalParcelas.text} - ${descricao.text.trim()}",
               valor: valorParcelas,
               detalhes: detalhes.text.trim(),
-              dataOcorrencia: DateTime.now(),
+              dataOcorrencia: dataOcorrenciaParcela,
               tipo: tipo.text,
               recorrente: gastoMensal.text,
               situacao: 'A',
@@ -100,7 +108,7 @@ class GastoController extends ChangeNotifier {
             descricao: descricao.text.trim(),
             valor: valorFormatado,
             detalhes: detalhes.text.trim(),
-            dataOcorrencia: DateTime.now(),
+            dataOcorrencia: dataOcorrencia.text.trim().isEmpty ? DateTime.now() : DateTime.parse(Functions.dataEn(dataOcorrencia.text)),
             tipo: tipo.text,
             recorrente: gastoMensal.text,
             situacao: 'A',
@@ -116,7 +124,7 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<void> getTransacoesMesAtual(int mesAtual) async {    
+  Future<void> getLancamentosMesAtual(int mesAtual) async {    
     try {
       await _lancamentoRepository.recoverAllByMonthReference(mesAtual).then((value) {
         dataSourceLancamento = value;
@@ -126,7 +134,20 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<void> getTransacoes() async {
+  Future<void> getLancamentosDatas() async {
+    try {
+      DateTime dataInicialFormatada = DateTime.parse(Functions.dataEn(dataInicial.text));
+      DateTime dataFinalFormatada = DateTime.parse(Functions.dataEn(dataFinal.text));
+
+      await _lancamentoRepository.recoverAllByDateRange(dataInicialFormatada, dataFinalFormatada).then((value) {
+        dataSourceLancamento = value;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getLancamentos() async {
     try {
       await _lancamentoRepository.recoverAll().then((value) {
         dataSourceLancamento = value;
@@ -136,7 +157,7 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<List<Lancamento>> getTransacoesRecorrentes() async {
+  Future<List<Lancamento>> getLancamentosRecorrentes() async {
     try {
       return await _lancamentoRepository.recoverAllGastoMensal();
     } catch (e) {

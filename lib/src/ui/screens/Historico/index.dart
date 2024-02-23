@@ -19,11 +19,10 @@ class HistoricoScreen extends StatefulWidget {
 
 class _HistoricoScreenState extends State<HistoricoScreen> {
   final GastoController _gastoController = GastoController();
-  final MesReferenciaController _mesReferenciaController = MesReferenciaController();
 
   List<Lancamento> historico = [];
   Future<void> loadHistorico() async {
-    await _gastoController.getTransacoesMesAtual(_mesReferenciaController.current);
+    await _gastoController.getLancamentos();
 
     historico = _gastoController.dataSourceLancamento;
   }
@@ -69,10 +68,6 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                           style: 'title',
                         ),
                       ),
-                      TextComponent(
-                        text: Functions.fullMonthName(DateTime.now().month),
-                        style: 'subtitle',
-                      ),
                       FutureBuilder(
                         future: loadAll(),
                         builder: (context, snapshot) {
@@ -93,35 +88,31 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
       
                                 double valor = lancamento.valor;
                             
-                                if (historico.isNotEmpty) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => DetalhesLancamento(lancamento: lancamento),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          TextComponent(
-                                            text: lancamento.descricao.toString().length > 20 ? '${lancamento.descricao.toString().substring(0, 20).toUpperCase()}...' : lancamento.descricao.toString().toUpperCase(),
-                                          ),
-                                          TextComponent(
-                                            text: "${lancamento.tipo == 'R' ? "+" : "-"} ${valor.toString()}",
-                                            color: lancamento.tipo == 'R' ? AppColors.success : AppColors.danger,
-                                          ),
-                                        ],
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetalhesLancamento(lancamento: lancamento),
                                       ),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TextComponent(
+                                          text: lancamento.descricao.toString().length > 20 ? '${lancamento.descricao.toString().substring(0, 20).toUpperCase()}...' : lancamento.descricao.toString().toUpperCase(),
+                                        ),
+                                        TextComponent(
+                                          text: "${lancamento.tipo == 'R' ? "+" : "-"} ${Functions.toCurrency(valor)}",
+                                          color: lancamento.tipo == 'R' ? AppColors.success : AppColors.danger,
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                } else {
-                                  return Container();
-                                }
+                                  ),
+                                );
                               },
                             );
                           }

@@ -42,7 +42,7 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                 ),
                 child: Builder(
                   builder: (context) {                    
-                    String textoValorFormatado = "${widget.lancamento.tipo == 'R' ? "+" : "-"} ${widget.lancamento.valor}";
+                    String textoValorFormatado = "${widget.lancamento.tipo == 'R' ? "+" : "-"} ${Functions.toCurrency(widget.lancamento.valor)}";
                 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,12 +50,12 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                         Container(
                           margin: const EdgeInsets.only(bottom: 8.0),
                           child: TextComponent(
-                            text: 'Detalhes da Transação',
+                            text: 'Detalhes do lançamento',
                             style: 'title',
                           ),
                         ),
                         TextComponent(
-                          text: "Data: ${Functions.formataData(widget.lancamento.created_at.toString())}",
+                          text: "Data: ${Functions.dataPt(widget.lancamento.created_at.toString())}",
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16.0),
@@ -67,8 +67,11 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                                 weight: FontWeight.w600,
                                 size: 20,
                               ),
-                              TextComponent(
-                                text: widget.lancamento.descricao.toString(),
+                              Container(
+                                margin: const EdgeInsets.only(top: 8.0),
+                                child: TextComponent(
+                                  text: widget.lancamento.descricao.toString(),
+                                ),
                               ),
                             ],
                           ),
@@ -83,9 +86,12 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                                 weight: FontWeight.w600,
                                 size: 20,
                               ),
-                              TextComponent(
-                                text: textoValorFormatado,
-                                color: widget.lancamento.tipo == 'R' ? AppColors.success : AppColors.danger,
+                              Container(
+                                margin: const EdgeInsets.only(top: 8.0),
+                                child: TextComponent(
+                                  text: textoValorFormatado,
+                                  color: widget.lancamento.tipo == 'R' ? AppColors.success : AppColors.danger,
+                                ),
                               ),
                             ],
                           ),
@@ -100,8 +106,11 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                                 weight: FontWeight.w600,
                                 size: 20,
                               ),
-                              TextComponent(
-                                text: widget.lancamento.detalhes.toString().isEmpty ? "Nenhum detalhe adicionado" : '"${widget.lancamento.detalhes.toString()}"',
+                              Container(
+                                margin: const EdgeInsets.only(top: 8.0),
+                                child: TextComponent(
+                                  text: widget.lancamento.detalhes.toString().isEmpty ? "Nenhum detalhe adicionado" : '"${widget.lancamento.detalhes.toString()}"',
+                                ),
                               ),
                             ],
                           ),
