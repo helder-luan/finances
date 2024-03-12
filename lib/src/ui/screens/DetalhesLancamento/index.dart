@@ -49,7 +49,7 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                       children: [
                         Container(
                           margin: const EdgeInsets.only(bottom: 8.0),
-                          child: TextComponent(
+                          child: const TextComponent(
                             text: 'Detalhes do lançamento',
                             style: 'title',
                           ),
@@ -62,7 +62,7 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextComponent(
+                              const TextComponent(
                                 text: 'Descrição',
                                 weight: FontWeight.w600,
                                 size: 20,
@@ -81,7 +81,7 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextComponent(
+                              const TextComponent(
                                 text: 'Valor',
                                 weight: FontWeight.w600,
                                 size: 20,
@@ -101,7 +101,7 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextComponent(
+                              const TextComponent(
                                 text: 'Detalhes',
                                 weight: FontWeight.w600,
                                 size: 20,

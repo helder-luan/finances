@@ -83,7 +83,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(bottom: 24.0),
-                        child: TextComponent(
+                        child: const TextComponent(
                           text: 'Entrada',
                           color: AppColors.success,
                           style: 'title',
@@ -161,7 +161,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
                                   );
                                 },
                                 style: 'success',
-                                child: TextComponent(
+                                child: const TextComponent(
                                   text: 'Adicionar',
                                   weight: FontWeight.bold
                                 ),

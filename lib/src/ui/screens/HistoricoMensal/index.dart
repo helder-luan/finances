@@ -58,7 +58,7 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
-                        child: TextComponent(
+                        child: const TextComponent(
                           text: "Histórico Por Mês",
                           style: 'title',
                         ),
@@ -136,7 +136,7 @@ class _HistoricoMensalState extends State<HistoricoMensal> {
                           } else {
                             return Container(
                               margin: const EdgeInsets.only(top: 16.0),
-                              child: TextComponent(
+                              child: const TextComponent(
                                 text: "Nenhum lançamento encontrado",
                               ),
                             );

@@ -100,7 +100,12 @@ class _GastoScreenState extends State<GastoScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const SaidaScreen()),
+                                  );
+                                },
                                 icon: Image(image: AssetImage(AppImages.saida)),
                                 iconSize: 32,
                               ),

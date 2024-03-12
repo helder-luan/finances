@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      TextComponent(text: 'Gasto Mês', style: 'subtitle'),
+                                      const TextComponent(text: 'Gasto Mês', style: 'subtitle'),
                                       TextComponent(text: Functions.toCurrency(gastoMes), style: 'title'),
                                     ]
                                   ),
@@ -176,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      TextComponent(text: 'Gasto Fíxo', style: 'subtitle'),
+                                      const TextComponent(text: 'Gasto Fíxo', style: 'subtitle'),
                                       TextComponent(text: Functions.toCurrency(gastoFixo), style: 'title'),
                                     ]
                                   ),
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Builder(
                       builder: (context) {
                         if (lancamentos.isEmpty) {
-                          return Center(
+                          return const Center(
                             child: TextComponent(text: 'Nenhum lançamento registrado', style: 'subtitle'),
                           );
                         }

@@ -62,7 +62,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
-                        child: TextComponent(
+                        child: const TextComponent(
                           text: 'Histórico',
                           style: 'title',
                         ),
@@ -74,7 +74,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                             return Container(
                               margin: const EdgeInsets.symmetric(vertical: 32.0),
                               alignment: Alignment.center,
-                              child: TextComponent(
+                              child: const TextComponent(
                                 text: 'Ainda não há transações',
                               ),
                             );

@@ -61,12 +61,12 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
-                        child: TextComponent(
+                        child: const TextComponent(
                           text: 'Gerenciar',
                           style: 'title',
                         ),
                       ),
-                      TextComponent(
+                      const TextComponent(
                         text: 'Cobranças Recorrentes',
                         style: 'subtitle',
                       ),
@@ -106,7 +106,7 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
-                                                    child: TextComponent(
+                                                    child: const TextComponent(
                                                       text: 'Não',
                                                       style: 'primary',
                                                       weight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                                                         loadAll();
                                                       });
                                                     },
-                                                    child: TextComponent(
+                                                    child: const TextComponent(
                                                       text: 'Sim',
                                                       style: 'warning',
                                                       weight: FontWeight.bold,
