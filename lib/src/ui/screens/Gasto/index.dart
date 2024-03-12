@@ -43,11 +43,11 @@ class _GastoScreenState extends State<GastoScreen> {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(bottom: 24.0),
-                        child: TextComponent(text: 'Gerenciar Gastos', style: 'title'),
+                        child: const TextComponent(text: 'Gerenciar Gastos', style: 'title'),
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
-                        child: TextComponent(text: 'Cadastrar', style: 'subtitle'),
+                        child: const TextComponent(text: 'Cadastrar', style: 'subtitle'),
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
@@ -74,7 +74,7 @@ class _GastoScreenState extends State<GastoScreen> {
                                 icon: Image(image: AssetImage(AppImages.entrada)),
                                 iconSize: 32,
                               ),
-                              TextComponent(
+                              const TextComponent(
                                 text: 'Entrada',
                                 color: Colors.white,
                                 weight: FontWeight.bold,
@@ -104,7 +104,7 @@ class _GastoScreenState extends State<GastoScreen> {
                                 icon: Image(image: AssetImage(AppImages.saida)),
                                 iconSize: 32,
                               ),
-                              TextComponent(
+                              const TextComponent(
                                 text: 'Saída',
                                 color: Colors.white,
                                 weight: FontWeight.bold,
@@ -117,8 +117,14 @@ class _GastoScreenState extends State<GastoScreen> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
                         height: 60,
-                        width: MediaQuery.of(context).size.width-32,
+                        width: MediaQuery.of(context).size.width - 32,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            backgroundColor: AppColors.primary
+                          ),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -135,10 +141,10 @@ class _GastoScreenState extends State<GastoScreen> {
                                     MaterialPageRoute(builder: (context) => const CobrancaRecorrenteScreen()),
                                   );
                                 },
-                                icon: const Icon(Icons.repeat),
+                                icon: const Icon(Icons.repeat, color: Colors.white),
                                 iconSize: 32,
                               ),
-                              TextComponent(
+                              const TextComponent(
                                 text: 'Recorrente',
                                 color: Colors.white,
                                 weight: FontWeight.bold,

@@ -31,6 +31,9 @@ class _EntradaScreenState extends State<EntradaScreen> {
   Future<void> montaListaCategorias() async {
     await _categoriaController.getCategorias();
 
+    categorias.clear();
+    categorias.add({'value': '', 'label': 'Selecione uma categoria'});
+
     for (var categoria in _categoriaController.dataSourceCategoria) {
       categorias.add({
         'value': categoria.idCategoria.toString(),

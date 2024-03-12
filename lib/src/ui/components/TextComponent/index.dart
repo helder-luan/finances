@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class TextComponent extends StatefulWidget {
-  String text;
-  String style;
-  String align;
-  Color color;
-  FontWeight weight;
-  double size;
+  final String text;
+  final String style;
+  final String align;
+  final Color color;
+  final FontWeight weight;
+  final double size;
   
-  TextComponent({
+  const TextComponent({
     super.key,
     required this.text,
     this.style = 'primary',

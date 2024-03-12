@@ -94,13 +94,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                   
                               Container(
-                                width: (MediaQuery.of(context).size.width)/2,
                                 decoration: const BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                 ),
                                 alignment: Alignment.centerRight,
                                 child: ButtonComponent(
+                                  style: 'primary',
                                   onPressed: () {
                                     Navigator.push(
                                       context,
@@ -111,22 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            TextComponent(
-                                              text: 'Mês'
-                                            ),
-                                            TextComponent(
-                                              text: Functions.fullMonthName(DateTime.now().month),
-                                              style: 'title',
-                                            ),
-                                          ]
-                                        )
-                                      ],
+                                    child: TextComponent(
+                                      text: Functions.fullMonthName(DateTime.now().month),
+                                      style: 'subtitle',
                                     ),
                                   ),
                                 ),

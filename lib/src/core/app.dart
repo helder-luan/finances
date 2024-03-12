@@ -1,14 +1,12 @@
 import 'package:finances/src/data/database/database.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppStart extends StatefulWidget {
   const AppStart({super.key});
 
   @override
-  _AppStartState createState() => _AppStartState();
+  State<AppStart> createState() => _AppStartState();
 }
 
 class _AppStartState extends State<AppStart> {
@@ -17,7 +15,6 @@ class _AppStartState extends State<AppStart> {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
     DB.instance.initDB().then((_) async {
-      FlutterNativeSplash.remove();
       runApp(const MyApp());
     });
   }

@@ -2,11 +2,11 @@ import 'package:finances/src/core/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class FormCheckboxComponent extends StatefulWidget {
-  String label;
-  bool? checkVariable;
-  Function(bool?)? onChanged;
+  final String label;
+  final bool? checkVariable;
+  final Function(bool?)? onChanged;
 
-  FormCheckboxComponent({
+  const FormCheckboxComponent({
     super.key,
     required this.label,
     this.checkVariable,

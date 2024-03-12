@@ -32,6 +32,9 @@ class _SaidaScreenState extends State<SaidaScreen> {
   Future<void> montaListaCategorias() async {
     await _categoriaController.getCategorias();
 
+    categorias.clear();
+    categorias.add({'value': '', 'label': 'Selecione uma categoria'});
+
     for (var categoria in _categoriaController.dataSourceCategoria) {
       categorias.add({
         'value': categoria.idCategoria.toString(),
@@ -81,7 +84,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
                         children: [
                           Container(
                             margin: const EdgeInsets.only(bottom: 24.0),
-                            child: TextComponent(
+                            child: const TextComponent(
                               text: 'Saída',
                               color: AppColors.danger,
                               style: 'title',
@@ -102,7 +105,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                   label: 'Valor',
                                   keyboardType: TextInputType.number,
                                   formatters: [Mask.money()],
-                                  controller: _gastoController.valor,
+                                  controller: _gastoController.valor,  
                                 ),
                                 FormDatePickerComponent(
                                   label: 'Data da ocorrência',
@@ -110,26 +113,32 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                 ),
                                 Visibility(
                                   visible: _gastoController.parcelado.text == 'N',
-                                  child: FormCheckboxComponent(
-                                    label: 'Gasto Fixo',
-                                    checkVariable: _gastoController.gastoMensal.text == 'S' ? true : false,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _gastoController.gastoMensal.text = (value.toString() == 'true') ? 'S' : 'N';
-                                      });
-                                    },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+                                    child: FormCheckboxComponent(
+                                      label: 'Gasto Fixo',
+                                      checkVariable: _gastoController.gastoMensal.text == 'S' ? true : false,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _gastoController.gastoMensal.text = (value.toString() == 'true') ? 'S' : 'N';
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                                 Visibility(
                                   visible: _gastoController.gastoMensal.text == 'N',
-                                  child: FormCheckboxComponent(
-                                    label: 'Parcelado',
-                                    checkVariable: _gastoController.parcelado.text == 'S' ? true : false,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _gastoController.parcelado.text = (value.toString() == 'true') ? 'S' : 'N';
-                                      });
-                                    },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 8.0, top: 4.0),
+                                    child: FormCheckboxComponent(
+                                      label: 'Parcelado',
+                                      checkVariable: _gastoController.parcelado.text == 'S' ? true : false,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _gastoController.parcelado.text = (value.toString() == 'true') ? 'S' : 'N';
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                                 Visibility(
