@@ -31,41 +31,24 @@ class GastoController extends ChangeNotifier {
   final TextEditingController dataInicial = TextEditingController(text: '');
   final TextEditingController dataFinal = TextEditingController(text: '');
 
-  Future<Map<String, Object>> validarOperacao() async {
+  Future<void> validarOperacao() async {
     if (descricao.text.trim().isEmpty) {
-      return {
-        'isValid': false,
-        'message': 'Descrição é obrigatória',
-      };
+      throw 'Descrição é obrigatória';
     }
 
     if (valor.text.trim().isEmpty) {
-      return {
-        'isValid': false,
-        'message': 'Valor é obrigatório',
-      };
+      throw 'Valor é obrigatório';
     }
 
     if (parcelado.text == 'S') {
       if (totalParcelas.text.trim().isEmpty) {
-        return {
-          'isValid': false,
-          'message': 'Quantidade de parcelas é obrigatória',
-        };
+        throw 'Total de parcelas é obrigatório';
       }
 
       if (parcelaAtual.text.trim().isEmpty) {
-        return {
-          'isValid': false,
-          'message': 'Parcela atual é obrigatória',
-        };
+        throw 'Parcela atual é obrigatória';
       }
     }
-
-    return {
-      'isValid': true,
-      'message': 'OK',
-    };
   }
 
 
@@ -74,12 +57,7 @@ class GastoController extends ChangeNotifier {
     required VoidCallback? Function(String motivo) onFailure
   }) async {
     try {
-      // valida operacao de entrada
-      Map<String, dynamic> validacao = await validarOperacao();
-
-      if (!validacao['isValid']) {
-        throw validacao['message'];
-      }
+      await validarOperacao();
 
       double valorFormatado = double.tryParse(valor.text.replaceAll("R\$ ", "").replaceAll(".", "").replaceAll(",", "."))!;
 
