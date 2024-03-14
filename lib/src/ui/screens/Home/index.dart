@@ -5,7 +5,11 @@ import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
+import 'package:finances/src/ui/components/QuickActionsMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/EntradaScreen/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/Recorrente/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/SaidaScreen/index.dart';
 import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
 import 'package:flutter/material.dart';
 
@@ -96,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Container(
                                 decoration: const BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                  borderRadius: BorderRadius.all(Radius.circular(100.0)),
                                 ),
                                 alignment: Alignment.centerRight,
                                 child: ButtonComponent(
@@ -124,63 +128,70 @@ class _HomeScreenState extends State<HomeScreen> {
                   
                         // body
                         Container(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 16.0),
-                                width: MediaQuery.of(context).size.width,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 8.0,
-                                      spreadRadius: 1.0,
-                                      offset: Offset(-5, 5),
-                                    )
-                                  ],
-                                ),
-                                alignment: Alignment.centerRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const TextComponent(text: 'Gasto Mês', style: 'subtitle'),
-                                      TextComponent(text: Functions.toCurrency(gastoMes), style: 'title'),
-                                    ]
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const TextComponent(
+                                    text: 'Gasto Mês',
+                                    style: 'subtitle',
+                                    color: Colors.white,
                                   ),
-                                ),
+                                  Container(
+                                    width: (MediaQuery.of(context).size.width / 2) - 24,
+                                    margin: const EdgeInsets.only(bottom: 16.0),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 8.0,
+                                          spreadRadius: 1.0,
+                                          offset: Offset(-5, 5),
+                                        )
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextComponent(text: Functions.toCurrency(gastoMes), style: 'title'),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 16.0),
-                                width: MediaQuery.of(context).size.width,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 8.0,
-                                      spreadRadius: 1.0,
-                                      offset: Offset(-5, 5),
-                                    )
-                                  ],
-                                ),
-                                alignment: Alignment.centerRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const TextComponent(text: 'Gasto Fíxo', style: 'subtitle'),
-                                      TextComponent(text: Functions.toCurrency(gastoFixo), style: 'title'),
-                                    ]
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const TextComponent(
+                                    text: 'Gasto Fíxo',
+                                    style: 'subtitle',
+                                    color: Colors.white,
+                                    align:'right',
                                   ),
-                                ),
+                                  Container(
+                                    width: (MediaQuery.of(context).size.width / 2) - 24,
+                                    margin: const EdgeInsets.only(bottom: 16.0),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 8.0,
+                                          spreadRadius: 1.0,
+                                          offset: Offset(-5, 5),
+                                        )
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextComponent(text: Functions.toCurrency(gastoFixo), style: 'title'),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ]
                           ),
@@ -249,6 +260,62 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: const BottomMenu(),
+      floatingActionButton: QuickActionMenu(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Ajuda'),
+                content: const Text('Mantenha pressionado para ver as opções de lançamento'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Fechar'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        icon: Icons.menu,
+        backgroundColor: AppColors.primary,
+        actions: [
+          QuickAction(
+            icon: Icons.add,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EntradaScreen()),
+              );
+            },
+            backgroundColor: AppColors.success,
+          ),
+          QuickAction(
+            icon: Icons.output,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SaidaScreen()),
+              );
+            },
+            backgroundColor: AppColors.danger,
+          ),
+          QuickAction(
+            icon: Icons.repeat,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CobrancaRecorrenteScreen()),
+              );
+            },
+            backgroundColor: AppColors.purple,
+          ),
+        ],
+        child: const Icon(Icons.menu, color: Colors.white),
+      ),
     );
   }
 }

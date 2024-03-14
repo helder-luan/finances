@@ -2,7 +2,6 @@ import 'package:finances/src/core/app_images.dart';
 import 'package:finances/src/ui/screens/Historico/index.dart';
 import 'package:finances/src/ui/screens/HistoricoMensal/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
-import 'package:finances/src/ui/screens/Gasto/index.dart';
 import 'package:flutter/material.dart';
 
 class BottomMenu extends StatelessWidget {
@@ -31,11 +30,11 @@ class BottomMenu extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const GastoScreen(),
+                    builder: (context) => const HistoricoScreen(),
                   ),
                   (route) => false);
             },
-            icon: Image(image: AssetImage(AppImages.gastos)),
+            icon: Image(image: AssetImage(AppImages.historico)),
             iconSize: 32,
           ),
           IconButton(
@@ -48,18 +47,6 @@ class BottomMenu extends StatelessWidget {
                   (route) => false);
             },
             icon: Image(image: AssetImage(AppImages.home)),
-            iconSize: 32,
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HistoricoScreen(),
-                  ),
-                  (route) => false);
-            },
-            icon: Image(image: AssetImage(AppImages.historico)),
             iconSize: 32,
           ),
           IconButton(

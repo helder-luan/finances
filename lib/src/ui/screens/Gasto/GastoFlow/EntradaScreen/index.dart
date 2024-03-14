@@ -8,7 +8,7 @@ import 'package:finances/src/ui/components/Form/DatePicker/index.dart';
 import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Gasto/index.dart';
+import 'package:finances/src/ui/screens/Home/index.dart';
 import 'package:flutter/material.dart';
 import 'package:mask/mask/mask.dart';
 import 'package:motion_toast/motion_toast.dart';
@@ -140,7 +140,7 @@ class _EntradaScreenState extends State<EntradaScreen> {
                                       Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const GastoScreen(),
+                                          builder: (context) => const HomeScreen(),
                                         ),
                                         (route) => false
                                       );

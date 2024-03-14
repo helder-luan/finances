@@ -85,15 +85,13 @@ class GastoController extends ChangeNotifier {
 
       // insere transacao
       if (parcelado.text == 'S') {
-        var valorParcelas = (valorFormatado / int.tryParse(totalParcelas.text)!);
-
         for (int i = int.tryParse(parcelaAtual.text)!; i <= int.tryParse(totalParcelas.text)!; i++) {
           DateTime dataOcorrenciaParcela = DateTime.parse(Functions.dataEn(dataOcorrencia.text)).add(Duration(days: 30 * (i - 1)));
 
           await _lancamentoRepository.insert(
             Lancamento(
               descricao: "$i/${totalParcelas.text} - ${descricao.text.trim()}",
-              valor: valorParcelas,
+              valor: valorFormatado,
               detalhes: detalhes.text.trim(),
               dataOcorrencia: dataOcorrenciaParcela,
               tipo: tipo.text,

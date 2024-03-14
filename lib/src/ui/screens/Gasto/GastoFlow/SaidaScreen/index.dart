@@ -9,7 +9,7 @@ import 'package:finances/src/ui/components/Form/DatePicker/index.dart';
 import 'package:finances/src/ui/components/Form/Dropdown/index.dart';
 import 'package:finances/src/ui/components/Form/Input/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
-import 'package:finances/src/ui/screens/Gasto/index.dart';
+import 'package:finances/src/ui/screens/Home/index.dart';
 import 'package:flutter/material.dart';
 import 'package:mask/mask/mask.dart';
 import 'package:motion_toast/motion_toast.dart';
@@ -111,35 +111,67 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                   label: 'Data da ocorrência',
                                   controller: _gastoController.dataOcorrencia,
                                 ),
-                                Visibility(
-                                  visible: _gastoController.parcelado.text == 'N',
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 8.0, bottom: 4.0),
-                                    child: FormCheckboxComponent(
-                                      label: 'Gasto Fixo',
-                                      checkVariable: _gastoController.gastoMensal.text == 'S' ? true : false,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _gastoController.gastoMensal.text = (value.toString() == 'true') ? 'S' : 'N';
-                                        });
-                                      },
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Visibility(
+                                      visible: _gastoController.parcelado.text == 'N',
+                                      child: Container(
+                                        margin: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+                                        child: FormCheckboxComponent(
+                                          label: 'Gasto Fixo',
+                                          checkVariable: _gastoController.gastoMensal.text == 'S' ? true : false,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _gastoController.gastoMensal.text = (value.toString() == 'true') ? 'S' : 'N';
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: _gastoController.gastoMensal.text == 'N',
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 8.0, top: 4.0),
-                                    child: FormCheckboxComponent(
-                                      label: 'Parcelado',
-                                      checkVariable: _gastoController.parcelado.text == 'S' ? true : false,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _gastoController.parcelado.text = (value.toString() == 'true') ? 'S' : 'N';
-                                        });
-                                      },
+                                    Visibility(
+                                      visible: _gastoController.gastoMensal.text == 'N',
+                                      child: Container(
+                                        margin: const EdgeInsets.only(bottom: 8.0, top: 4.0),
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            FormCheckboxComponent(
+                                              label: 'Parcelado',
+                                              checkVariable: _gastoController.parcelado.text == 'S' ? true : false,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _gastoController.parcelado.text = (value.toString() == 'true') ? 'S' : 'N';
+                                                });
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.info_outline),
+                                              onPressed: () async {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const Text('Parcelado'),
+                                                      content: const Text('Se marcado, o campo valor deverá ser preenchido com o valor das parcelas e não o valor total do gasto.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: const Text('Fechar'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                                 Visibility(
                                   visible: _gastoController.parcelado.text == 'S',
@@ -187,7 +219,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                           Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => const GastoScreen(),
+                                              builder: (context) => const HomeScreen(),
                                             ),
                                             (route) => false
                                           );
