@@ -166,9 +166,28 @@ class GastoController extends ChangeNotifier {
     }
   }
 
-  Future<void> excluirCobrancaRecorrente(Lancamento transacao) async {
+  Future<void> cadastrarRecorrente() async {
     try {
-      //
+      await _lancamentoRepository.insert(
+        Lancamento(
+          descricao: descricao.text.trim(),
+          valor: double.tryParse(valor.text.replaceAll("R\$ ", "").replaceAll(".", "").replaceAll(",", "."))!,
+          detalhes: detalhes.text.trim(),
+          dataOcorrencia: DateTime.parse(Functions.dataEn(dataOcorrencia.text)),
+          tipo: tipo.text,
+          recorrente: gastoMensal.text,
+          situacao: 'A',
+          created_at: DateTime.now(),
+        )
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> excluirCobrancaRecorrente(String idTransacao) async {
+    try {
+      await _lancamentoRepository.delete(idTransacao);
     } catch (e) {
       print(e);
     }

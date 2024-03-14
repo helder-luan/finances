@@ -114,9 +114,9 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                                                   ),
                                                   TextButton(
                                                     onPressed: () async {
-                                                      var transacao = historico[index];
+                                                      Lancamento lancamento = historico[index];
 
-                                                      await _gastoController.excluirCobrancaRecorrente(transacao)
+                                                      await _gastoController.excluirCobrancaRecorrente(lancamento.idLancamento.toString())
                                                       .then((value) => {
                                                         Navigator.pop(context),
                                                         MotionToast.success(
