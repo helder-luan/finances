@@ -6,6 +6,7 @@ import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/QuickActionsMenu/index.dart';
+import 'package:finances/src/ui/components/QuickActionsMenu/quick_action.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Gasto/GastoFlow/EntradaScreen/index.dart';
 import 'package:finances/src/ui/screens/Gasto/GastoFlow/Recorrente/index.dart';
@@ -135,10 +136,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const TextComponent(
-                                    text: 'Gasto Mês',
-                                    style: 'subtitle',
-                                    color: Colors.white,
+                                  Container(
+                                    margin: const EdgeInsets.only(bottom: 8.0),
+                                    child: const TextComponent(
+                                      text: 'Gasto Mês',
+                                      style: 'subtitle',
+                                      color: Colors.white,
+                                    ),
                                   ),
                                   Container(
                                     width: (MediaQuery.of(context).size.width / 2) - 24,
@@ -165,11 +169,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const TextComponent(
-                                    text: 'Gasto Fíxo',
-                                    style: 'subtitle',
-                                    color: Colors.white,
-                                    align:'right',
+                                  Container(
+                                    margin: const EdgeInsets.only(bottom: 8.0),
+                                    child: const TextComponent(
+                                      text: 'Gasto Fíxo',
+                                      style: 'subtitle',
+                                      color: Colors.white,
+                                      align:'right',
+                                    ),
                                   ),
                                   Container(
                                     width: (MediaQuery.of(context).size.width / 2) - 24,
@@ -285,6 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           QuickAction(
             icon: Icons.add,
+            iconColor: Colors.white,
             onTap: () {
               Navigator.push(
                 context,
@@ -294,7 +302,8 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: AppColors.success,
           ),
           QuickAction(
-            icon: Icons.output,
+            icon: Icons.remove_outlined,
+            iconColor: Colors.white,
             onTap: () {
               Navigator.push(
                 context,
@@ -305,6 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           QuickAction(
             icon: Icons.repeat,
+            iconColor: Colors.white,
             onTap: () {
               Navigator.push(
                 context,

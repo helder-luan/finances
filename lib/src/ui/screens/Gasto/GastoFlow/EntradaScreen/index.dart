@@ -163,7 +163,8 @@ class _EntradaScreenState extends State<EntradaScreen> {
                                 style: 'success',
                                 child: const TextComponent(
                                   text: 'Adicionar',
-                                  weight: FontWeight.bold
+                                  weight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
                             )

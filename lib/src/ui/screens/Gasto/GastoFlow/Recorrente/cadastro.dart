@@ -141,7 +141,7 @@ class _CadastroRecorrenteState extends State<CadastroRecorrente> {
                                       );
                                     });
                                 },
-                                child: TextComponent(
+                                child: const TextComponent(
                                   text: 'Adicionar',
                                   weight: FontWeight.bold,
                                   color: Colors.white,
