@@ -55,7 +55,7 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                           ),
                         ),
                         TextComponent(
-                          text: "Data: ${Functions.dataPt(widget.lancamento.created_at.toString())}",
+                          text: "Data lançamento: ${Functions.dataPt(widget.lancamento.dataOcorrencia.toString())}",
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16.0),
@@ -114,6 +114,10 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                               ),
                             ],
                           ),
+                        ),
+                        TextComponent(
+                          text: "Data lançamento: ${Functions.dataPt(widget.lancamento.dataOcorrencia.toString())}",
+                          size: 9,
                         ),
                       ],
                     );

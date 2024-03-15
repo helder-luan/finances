@@ -22,7 +22,6 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
   List<Lancamento> historico = [];
   Future<void> loadHistorico() async {
     await _gastoController.getLancamentos();
-
     historico = _gastoController.dataSourceLancamento;
   }
 

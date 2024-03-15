@@ -51,6 +51,9 @@ class GastoController extends ChangeNotifier {
     }
   }
 
+  DateTime _obterDataParcela(String dataOcorrencia, int i, String parcelaAtual) {
+    return DateTime.parse(Functions.dataEn(dataOcorrencia)).add(Duration(days: 30 * (i - int.tryParse(parcelaAtual)!)));
+  }
 
   void handleSubmit({
     required VoidCallback? Function() onSuccess,
@@ -64,7 +67,7 @@ class GastoController extends ChangeNotifier {
       // insere transacao
       if (parcelado.text == 'S') {
         for (int i = int.tryParse(parcelaAtual.text)!; i <= int.tryParse(totalParcelas.text)!; i++) {
-          DateTime dataOcorrenciaParcela = DateTime.parse(Functions.dataEn(dataOcorrencia.text)).add(Duration(days: 30 * (i - 1)));
+          DateTime dataOcorrenciaParcela = _obterDataParcela(dataOcorrencia.text, i, parcelaAtual.text);
 
           await _lancamentoRepository.insert(
             Lancamento(

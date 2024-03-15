@@ -52,12 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future loadAll() async {
-    await loadHistorico();
-
-    await calculaTotal();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -68,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder(
-          future: loadAll(),
+          future: loadHistorico(),
           builder: (context, snapshot) {
             return SingleChildScrollView(
               child: Column(
@@ -128,80 +122,85 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                   
                         // body
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        FutureBuilder(
+                          future: calculaTotal(),
+                          builder: (context, snapshot) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 8.0),
-                                    child: const TextComponent(
-                                      text: 'Gasto Mês',
-                                      style: 'subtitle',
-                                      color: Colors.white,
-                                    ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(bottom: 8.0),
+                                        child: const TextComponent(
+                                          text: 'Gasto Mês',
+                                          style: 'subtitle',
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: (MediaQuery.of(context).size.width / 2) - 24,
+                                        margin: const EdgeInsets.only(bottom: 16.0),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 8.0,
+                                              spreadRadius: 1.0,
+                                              offset: Offset(-5, 5),
+                                            )
+                                          ],
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextComponent(text: Functions.toCurrency(gastoMes), style: 'title'),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Container(
-                                    width: (MediaQuery.of(context).size.width / 2) - 24,
-                                    margin: const EdgeInsets.only(bottom: 16.0),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 8.0,
-                                          spreadRadius: 1.0,
-                                          offset: Offset(-5, 5),
-                                        )
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextComponent(text: Functions.toCurrency(gastoMes), style: 'title'),
-                                    ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(bottom: 8.0),
+                                        child: const TextComponent(
+                                          text: 'Gasto Fíxo',
+                                          style: 'subtitle',
+                                          color: Colors.white,
+                                          align:'right',
+                                        ),
+                                      ),
+                                      Container(
+                                        width: (MediaQuery.of(context).size.width / 2) - 24,
+                                        margin: const EdgeInsets.only(bottom: 16.0),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 8.0,
+                                              spreadRadius: 1.0,
+                                              offset: Offset(-5, 5),
+                                            )
+                                          ],
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextComponent(text: Functions.toCurrency(gastoFixo), style: 'title'),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ]
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 8.0),
-                                    child: const TextComponent(
-                                      text: 'Gasto Fíxo',
-                                      style: 'subtitle',
-                                      color: Colors.white,
-                                      align:'right',
-                                    ),
-                                  ),
-                                  Container(
-                                    width: (MediaQuery.of(context).size.width / 2) - 24,
-                                    margin: const EdgeInsets.only(bottom: 16.0),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 8.0,
-                                          spreadRadius: 1.0,
-                                          offset: Offset(-5, 5),
-                                        )
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextComponent(text: Functions.toCurrency(gastoFixo), style: 'title'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ]
-                          ),
+                            );
+                          },
                         ),
                       ]
                     ),
