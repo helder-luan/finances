@@ -12,7 +12,7 @@ import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
 import 'package:flutter/material.dart';
 import 'package:mask/mask/mask.dart';
-import 'package:motion_toast/motion_toast.dart';
+import 'package:toast/toast.dart';
 
 class SaidaScreen extends StatefulWidget {
   const SaidaScreen({super.key});
@@ -44,7 +44,7 @@ class _SaidaScreenState extends State<SaidaScreen> {
   }
 
   Future loadAll() async {
-    //
+    await montaListaCategorias();
   }
 
   @override
@@ -190,24 +190,13 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                     ]
                                   ),
                                 ),
-                                FutureBuilder(
-                                  future: montaListaCategorias(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      return const Text('Erro ao carregar categorias');
-                                    }
-
-                                    return FormDropdownComponent(
-                                      label: 'Categoria',
-                                      items: categorias,
-                                      startValue: '',
-                                      onChanged: (value) {
-                                        _gastoController.idCategoria.text = value;
-                                      },
-                                    );
-                                  }
+                                FormDropdownComponent(
+                                  label: 'Categoria',
+                                  items: categorias,
+                                  startValue: '',
+                                  onChanged: (value) {
+                                    _gastoController.idCategoria.text = value;
+                                  },
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(top: 16.0),
@@ -224,17 +213,24 @@ class _SaidaScreenState extends State<SaidaScreen> {
                                             (route) => false
                                           );
 
-                                          MotionToast.success(description: const Text('Gasto adicionado com sucesso!')).show(context);
+                                          ToastContext().context = context;
+                                          Toast.show(
+                                            'Gasto adicionado com sucesso!',
+                                            duration: 3,
+                                            gravity: Toast.bottom,
+                                          );
 
                                           return null;
                                         },
                                         onFailure: (onFailure) {
-                                          MotionToast
-                                            .error(
-                                              title: const Text("Atenção"),
-                                              description: Text(onFailure)
-                                            )
-                                            .show(context);
+                                          ToastContext().context = context;
+
+                                          Toast.show(
+                                            onFailure,
+                                            duration: 3,
+                                            gravity: Toast.bottom,
+                                            backgroundColor: AppColors.danger,
+                                          );
                                           return null;
                                         }
                                       );

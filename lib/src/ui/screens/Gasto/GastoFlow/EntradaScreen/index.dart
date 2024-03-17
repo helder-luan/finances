@@ -11,7 +11,7 @@ import 'package:finances/src/ui/components/TextComponent/index.dart';
 import 'package:finances/src/ui/screens/Home/index.dart';
 import 'package:flutter/material.dart';
 import 'package:mask/mask/mask.dart';
-import 'package:motion_toast/motion_toast.dart';
+import 'package:toast/toast.dart';
 
 class EntradaScreen extends StatefulWidget {
   const EntradaScreen({super.key});
@@ -145,17 +145,27 @@ class _EntradaScreenState extends State<EntradaScreen> {
                                         (route) => false
                                       );
 
-                                      MotionToast.success(description: const Text('Entrada adicionada com sucesso!')).show(context);
+                                      ToastContext().context = context;
+                                      
+                                      Toast.show(
+                                        'Entrada adicionada com sucesso!',
+                                        duration: 3,
+                                        gravity: Toast.bottom,
+                                        backgroundColor: AppColors.success,
+                                      );
 
                                       return null;
                                     },
                                     onFailure: (onFailure) {
-                                      MotionToast
-                                        .error(
-                                          title: const Text("Atenção"),
-                                          description: Text(onFailure)
-                                        )
-                                        .show(context);
+                                      ToastContext().context = context;
+
+                                      Toast.show(
+                                        onFailure,
+                                        duration: 3,
+                                        gravity: Toast.bottom,
+                                        backgroundColor: AppColors.danger,
+                                      );
+
                                       return null;
                                     }
                                   );

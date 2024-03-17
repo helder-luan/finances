@@ -77,6 +77,7 @@ class GastoController extends ChangeNotifier {
               dataOcorrencia: dataOcorrenciaParcela,
               tipo: tipo.text,
               recorrente: gastoMensal.text,
+              parcelado: parcelado.text,
               situacao: 'A',
               created_at: DateTime.now(),
             )
@@ -91,6 +92,7 @@ class GastoController extends ChangeNotifier {
             dataOcorrencia: dataOcorrencia.text.trim().isEmpty ? DateTime.now() : DateTime.parse(Functions.dataEn(dataOcorrencia.text)),
             tipo: tipo.text,
             recorrente: gastoMensal.text,
+            parcelado: parcelado.text,
             situacao: 'A',
             created_at: DateTime.now(),
           )
@@ -155,6 +157,7 @@ class GastoController extends ChangeNotifier {
           dataOcorrencia: DateTime.parse(Functions.dataEn(dataOcorrencia.text)),
           tipo: tipo.text,
           recorrente: gastoMensal.text,
+          parcelado: parcelado.text,
           situacao: 'A',
           created_at: DateTime.now(),
         )
@@ -165,6 +168,17 @@ class GastoController extends ChangeNotifier {
   }
 
   Future<void> excluirCobrancaRecorrente(String idTransacao) async {
+    try {
+      await _lancamentoRepository.recover(idTransacao).then((value) {
+        value.situacao = 'I';
+        _lancamentoRepository.update(value);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> excluirCobranca(String idTransacao) async {
     try {
       await _lancamentoRepository.delete(idTransacao);
     } catch (e) {

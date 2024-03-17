@@ -125,12 +125,7 @@ class _CadastroRecorrenteState extends State<CadastroRecorrente> {
                                 onPressed: () async {
                                   await _gastoController.cadastrarRecorrente()
                                     .then((value) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const CobrancaRecorrenteScreen(),
-                                        ),
-                                      );
+                                      Navigator.pop(context);
 
                                       ToastContext().context = context;
                                       

@@ -37,8 +37,8 @@ class LancamentoDbProvider extends LancamentoProvider {
 
   @override
   Future<bool> update(Map<String, dynamic> registro) async {
-    var id = registro['idTransacao'];
-    registro.remove('idTransacao');
+    var id = registro['idLancamento'];
+    registro.remove('idLancamento');
     await _database.update(table, registro, where: 'idLancamento = ?', whereArgs: [id]);
 
     return true;
@@ -69,7 +69,7 @@ class LancamentoDbProvider extends LancamentoProvider {
 
   @override
   Future<List<Map<String, dynamic>>> recoverAllGastoMensal() async {
-    var result = await _database.query(table, where: 'recorrente = ?', whereArgs: ['S']);
+    var result = await _database.query(table, where: 'recorrente = ? AND situacao = ?', whereArgs: ['S', 'A']);
 
     return result.isNotEmpty ? result : [];
   }

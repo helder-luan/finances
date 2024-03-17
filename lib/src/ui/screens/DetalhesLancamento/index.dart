@@ -2,7 +2,9 @@ import 'package:finances/src/core/app_colors.dart';
 import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
+import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/SaidaScreen/index.dart';
 import 'package:flutter/material.dart';
 
 class DetalhesLancamento extends StatefulWidget {
@@ -55,7 +57,7 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                           ),
                         ),
                         TextComponent(
-                          text: "Data lançamento: ${Functions.dataPt(widget.lancamento.dataOcorrencia.toString())}",
+                          text: "Data: ${Functions.dataPt(widget.lancamento.dataOcorrencia.toString())}",
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16.0),
@@ -115,15 +117,11 @@ class _DetalhesLancamentoState extends State<DetalhesLancamento> {
                             ],
                           ),
                         ),
-                        TextComponent(
-                          text: "Data lançamento: ${Functions.dataPt(widget.lancamento.dataOcorrencia.toString())}",
-                          size: 9,
-                        ),
                       ],
                     );
                   }
                 )
-              )
+              ),
             ],
           ),
         ),

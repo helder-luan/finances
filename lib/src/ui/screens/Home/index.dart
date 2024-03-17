@@ -8,6 +8,7 @@ import 'package:finances/src/ui/components/Button/index.dart';
 import 'package:finances/src/ui/components/QuickActionsMenu/index.dart';
 import 'package:finances/src/ui/components/QuickActionsMenu/quick_action.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
+import 'package:finances/src/ui/screens/DetalhesLancamento/index.dart';
 import 'package:finances/src/ui/screens/Gasto/GastoFlow/EntradaScreen/index.dart';
 import 'package:finances/src/ui/screens/Gasto/GastoFlow/Recorrente/index.dart';
 import 'package:finances/src/ui/screens/Gasto/GastoFlow/SaidaScreen/index.dart';
@@ -40,14 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
     gastoMes = 0.0;
 
     for (var lancamento in lancamentos) {
+      if (lancamento.situacao != 'A') continue;
+
       if (lancamento.tipo == Lancamento.despesa) {
         gastoMes += lancamento.valor;
 
-        if (lancamento.recorrente == 'S') {
+        if (lancamento.recorrente == 'S' || lancamento.parcelado == 'S') {
           gastoFixo += lancamento.valor;
         }
-      } else {
-        gastoMes -= lancamento.valor;
       }
     }
   }
@@ -207,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   // list
                   Container(
-                    margin: const EdgeInsets.all(16.0),
+                    margin: const EdgeInsets.only(top: 16.0, bottom: 76.0, left: 16.0, right: 16.0),
                     child: Builder(
                       builder: (context) {
                         if (lancamentos.isEmpty) {
@@ -219,38 +220,93 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Column(
                           children: [
                             for (var lancamento in lancamentos)
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 16.0),
-                                width: MediaQuery.of(context).size.width,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 8.0,
-                                      spreadRadius: 1.0,
-                                      offset: Offset(-5, 5),
-                                    )
-                                  ],
-                                ),
-                                alignment: Alignment.centerRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          TextComponent(text: lancamento.descricao.toUpperCase(), style: 'subtitle'),
-                                        ]
-                                      ),
-                                      TextComponent(
-                                        text: "${lancamento.tipo == Lancamento.receita ? "+" : "-"} ${Functions.toCurrency(lancamento.valor)}",
-                                        color: lancamento.tipo == Lancamento.despesa ? AppColors.danger : AppColors.success,
-                                      ),
-                                    ]
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetalhesLancamento(lancamento: lancamento),
+                                    ),
+                                  );
+                                },
+                                onLongPress: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('Opções'),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ButtonComponent(
+                                              style: 'primary',
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => DetalhesLancamento(lancamento: lancamento),
+                                                  ),
+                                                );
+                                              },
+                                              child: const TextComponent(
+                                                text: 'Detalhes',
+                                                style: 'subtitle',
+                                              ),
+                                            ),
+                                            ButtonComponent(
+                                              style: 'danger',
+                                              onPressed: () {
+                                                _gastoController.excluirCobranca(lancamento.idLancamento.toString());
+                                                Navigator.pop(context);
+                                                setState(() {});
+                                              },
+                                              child: const TextComponent(
+                                                text: 'Excluir',
+                                                style: 'subtitle',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 16.0),
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 8.0,
+                                        spreadRadius: 1.0,
+                                        offset: Offset(-5, 5),
+                                      )
+                                    ],
+                                  ),
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            TextComponent(
+                                              text: lancamento.descricao.length > 15 ? '${lancamento.descricao.substring(0, 15).toUpperCase()}...' : lancamento.descricao.toUpperCase(),
+                                              style: 'subtitle'
+                                            ),
+                                          ]
+                                        ),
+                                        TextComponent(
+                                          text: "${lancamento.tipo == Lancamento.receita ? "+" : "-"} ${Functions.toCurrency(lancamento.valor)}",
+                                          color: lancamento.tipo == Lancamento.despesa ? AppColors.danger : AppColors.success,
+                                        ),
+                                      ]
+                                    ),
                                   ),
                                 ),
                               ),

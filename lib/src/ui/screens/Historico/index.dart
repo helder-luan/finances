@@ -77,16 +77,12 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                                 text: 'Ainda não há transações',
                               ),
                             );
-                          } else {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: historico.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                Lancamento lancamento = historico[index];
-      
-                                double valor = lancamento.valor;
-                            
-                                return GestureDetector(
+                          }
+
+                          return Column(
+                            children: [
+                              for (var lancamento in historico)
+                                GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
@@ -104,16 +100,15 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                                           text: lancamento.descricao.toString().length > 20 ? '${lancamento.descricao.toString().substring(0, 20).toUpperCase()}...' : lancamento.descricao.toString().toUpperCase(),
                                         ),
                                         TextComponent(
-                                          text: "${lancamento.tipo == 'R' ? "+" : "-"} ${Functions.toCurrency(valor)}",
+                                          text: "${lancamento.tipo == 'R' ? "+" : "-"} ${Functions.toCurrency(lancamento.valor)}",
                                           color: lancamento.tipo == 'R' ? AppColors.success : AppColors.danger,
                                         ),
                                       ],
                                     ),
                                   ),
-                                );
-                              },
-                            );
-                          }
+                                ),
+                            ],
+                          );
                         }
                       ),
                     ],

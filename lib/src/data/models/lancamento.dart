@@ -14,8 +14,9 @@ class Lancamento extends BaseModel {
   DateTime dataOcorrencia;
   String tipo;
   String recorrente;
+  String parcelado;
   String situacao;
-  DateTime created_at;
+  DateTime? created_at;
 
   Lancamento({
     this.idLancamento,
@@ -26,8 +27,9 @@ class Lancamento extends BaseModel {
     required this.dataOcorrencia,
     required this.tipo,
     required this.recorrente,
+    required this.parcelado,
     required this.situacao,
-    required this.created_at,
+    this.created_at,
   });
 
   factory Lancamento.fromMap(Map<String, dynamic> map) {
@@ -40,8 +42,9 @@ class Lancamento extends BaseModel {
       dataOcorrencia: DateTime.parse(map['dataOcorrencia']),
       tipo: map['tipo'],
       recorrente: map['recorrente'],
+      parcelado: map['parcelado'],
       situacao: map['situacao'],
-      created_at: DateTime.parse(map['created_at']),
+      created_at: map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
     );
   }
 
@@ -56,8 +59,9 @@ class Lancamento extends BaseModel {
       'dataOcorrencia': dataOcorrencia.toIso8601String(),
       'tipo': tipo,
       'recorrente': recorrente,
+      'parcelado': parcelado,
       'situacao': situacao,
-      'created_at': created_at.toIso8601String(),
+      'created_at': created_at?.toIso8601String(),
     };
   }
 

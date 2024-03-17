@@ -6,8 +6,9 @@ import 'package:finances/src/data/models/lancamento.dart';
 import 'package:finances/src/helpers/functions.dart';
 import 'package:finances/src/ui/components/BottomMenu/index.dart';
 import 'package:finances/src/ui/components/TextComponent/index.dart';
+import 'package:finances/src/ui/screens/Gasto/GastoFlow/Recorrente/cadastro.dart';
 import 'package:flutter/material.dart';
-import 'package:motion_toast/motion_toast.dart';
+import 'package:toast/toast.dart';
 
 class CobrancaRecorrenteScreen extends StatefulWidget {
   const CobrancaRecorrenteScreen({super.key});
@@ -119,15 +120,15 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
                                                       await _gastoController.excluirCobrancaRecorrente(lancamento.idLancamento.toString())
                                                       .then((value) => {
                                                         Navigator.pop(context),
-                                                        MotionToast.success(
-                                                          description: const Text("Cobrança recorrente excluída com sucesso"),
-                                                        ).show(context)
+                                                        ToastContext().context = context,
+                                                        Toast.show(
+                                                          'Cobrança recorrente excluída com sucesso',
+                                                          duration: 3,
+                                                          gravity: Toast.bottom,
+                                                        )
                                                       });
 
-
-                                                      setState(() {
-                                                        loadAll();
-                                                      });
+                                                      setState(() {});
                                                     },
                                                     child: const TextComponent(
                                                       text: 'Sim',
@@ -170,6 +171,18 @@ class _CobrancaRecorrenteScreenState extends State<CobrancaRecorrenteScreen> {
         ),
       ),
       bottomNavigationBar: const BottomMenu(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CadastroRecorrente(),
+            )
+          );
+        },
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add),
+      )
     );
   }
 }
