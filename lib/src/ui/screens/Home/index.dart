@@ -323,25 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: const BottomMenu(),
       floatingActionButton: QuickActionMenu(
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text('Ajuda'),
-                content: const Text('Mantenha pressionado para ver as opções de lançamento'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Fechar'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
+        onTap: () {},
         icon: Icons.menu,
         backgroundColor: AppColors.primary,
         actions: [
