@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "884678812554",
+    "project_id": "finances-9999d",
+    "storage_bucket": "finances-9999d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884678812554:android:73c8c685d1b4c34ac1de73",
+        "android_client_info": {
+          "package_name": "com.fingen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATVlaxhgsNXnpKmOiGghl6J1W5CY5YyRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
