@@ -1,4 +1,3 @@
-import 'package:fingen/src/core/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class FormCheckboxComponent extends StatefulWidget {
@@ -29,7 +28,7 @@ class _FormCheckboxComponentState extends State<FormCheckboxComponent> {
             width: 24,
             margin: const EdgeInsets.only(right: 8.0),
             decoration: BoxDecoration(
-              color: widget.checkVariable ? AppColors.primary : Colors.white,
+              color: widget.checkVariable ? Theme.of(context).inputDecorationTheme.fillColor : Colors.white,
               borderRadius: const BorderRadius.all(Radius.circular(4.0)),
             ),
             child: Transform.scale(

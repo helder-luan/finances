@@ -1,4 +1,4 @@
-import 'package:fingen/src/core/app_colors.dart';
+import 'package:fingen/src/theme/color_scheme.dart';
 import 'package:fingen/src/ui/components/QuickActionsMenu/index.dart';
 import 'package:fingen/src/ui/components/QuickActionsMenu/quick_action.dart';
 import 'package:fingen/src/ui/screens/Home/components/card_gasto.dart';
@@ -29,47 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
         child: FutureBuilder(
           future: Future.delayed(const Duration(seconds: 2)),
           builder: (context, snapshot) {
-            return SingleChildScrollView(
+            return const SingleChildScrollView(
               child: Column(
                 children: [
-                  // Container(
-                  //   decoration: const BoxDecoration(
-                  //     image: DecorationImage(
-                  //       image: AssetImage('assets/images/background_cartao.jpg'),
-                  //       fit: BoxFit.cover,
-                  //       alignment: Alignment.bottomLeft,
-                  //       opacity: 0.7
-                  //     )
-                  //   ),
-                  //   child: Column(
-                  //     children: [
-                  //       // header
-                  //       Padding(
-                  //         padding: const EdgeInsets.all(8),
-                  //         child: Row(
-                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //           children: [
-                  //             ElevatedButton(
-                  //               onPressed: () {
-                  //               },
-                  //               style: ElevatedButton.styleFrom(
-                  //                 shape: const CircleBorder(),
-                  //                 padding: const EdgeInsets.all(0),
-                  //                 backgroundColor: Colors.transparent,
-                  //               ),
-                  //               child: const ClipOval(
-                  //                 child: Image(image: AssetImage('assets/upload/gary-final-space.jpg'), height: 32, width: 32, fit: BoxFit.cover),
-                  //               ),
-                  //             ),
-                  //           ]
-                  //         ),
-                  //       ),
-                  //     ]
-                  //   ),
-                  // ),
-                  const CardGasto(),
-                  const ListaCartao(cartoes: []),
-                  const ListaLancamento(lancamentos: [])
+                  CardGasto(),
+                  ListaCartao(cartoes: []),
+                  ListaLancamento(lancamentos: [])
                 ],
               ),
             );
@@ -80,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: QuickActionMenu(
         onTap: () {},
         icon: Icons.menu,
-        backgroundColor: AppColors.primary,
+        backgroundColor: ColorSchemeCustom.primary,
         actions: [
           QuickAction(
             // receita
@@ -94,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            backgroundColor: AppColors.success,
+            backgroundColor: ColorSchemeCustom.success,
           ),
           QuickAction(
             icon: Icons.trending_down_outlined,
@@ -107,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            backgroundColor: AppColors.danger,
+            backgroundColor: ColorSchemeCustom.danger,
           ),
           QuickAction(
             icon: Icons.repeat,
@@ -120,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            backgroundColor: AppColors.purple,
+            backgroundColor: ColorSchemeCustom.info,
           ),
         ],
         child: const Icon(

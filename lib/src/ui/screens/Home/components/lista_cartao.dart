@@ -18,7 +18,7 @@ class _ListaCartaoState extends State<ListaCartao> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(right: 16, left: 16),
+      margin: const EdgeInsets.only(left: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(

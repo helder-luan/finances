@@ -1,4 +1,3 @@
-import 'package:fingen/src/core/app_colors.dart';
 import 'package:fingen/src/ui/components/Button/index.dart';
 import 'package:fingen/src/ui/components/Form/DatePicker/index.dart';
 import 'package:fingen/src/ui/components/Form/Dropdown/index.dart';
@@ -19,7 +18,6 @@ class _CadastroReceitaState extends State<CadastroReceita> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Nova receita'),
-        backgroundColor: AppColors.success,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -75,11 +73,7 @@ class _CadastroReceitaState extends State<CadastroReceita> {
                 height: 50,
                 margin: const EdgeInsets.only(top: 32),
                 child: ButtonComponent(
-                  style: 'success',
-                  child: const Text('Salvar'),
-                  onPressed: () {
-                    // Implementar ação de cadastro de receita
-                  },
+                  label: 'Salvar',
                 ),
               )
             ],

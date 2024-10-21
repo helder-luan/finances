@@ -1,4 +1,3 @@
-import 'package:fingen/src/core/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ListaRecorrencia extends StatefulWidget {
@@ -32,7 +31,6 @@ class _ListaRecorrenciaState extends State<ListaRecorrencia> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Recorrências'),
-        backgroundColor: AppColors.purple,
       ),
       body: SingleChildScrollView(
         child: Container(

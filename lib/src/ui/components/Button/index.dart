@@ -1,81 +1,57 @@
-import 'package:fingen/src/core/app_colors.dart';
+import 'package:fingen/src/theme/color_scheme.dart';
+import 'package:fingen/src/ui/components/Button/components/button_content.dart';
 import 'package:flutter/material.dart';
 
 class ButtonComponent extends StatefulWidget {
-  final VoidCallback onPressed;
-  final Widget child;
-  final String style;
+  final String label;
+  final VoidCallback? onPressed;
+  final ButtonType type;
   final double height;
   final double width;
+  final Widget? prefix;
+  final Widget? suffix;
+  final ButtonContent child;
 
-  const ButtonComponent({
+  ButtonComponent({
     super.key,
-    required this.onPressed,
-    required this.child,
-    this.style = 'primary',
-    this.height = 35.0,
+    required this.label,
+    this.onPressed,
+    this.type = ButtonType.primary,
+    this.height = 40.0,
     this.width = 100.0,
-  });
+    this.prefix,
+    this.suffix,
+  }) : child = ButtonContent(prefix: prefix, suffix: suffix, child: Text(label));
 
   @override
   State<ButtonComponent> createState() => _ButtonComponentState();
 }
 
 class _ButtonComponentState extends State<ButtonComponent> {
-  Map<String, ButtonStyle> buttonStyles = {
-    'primary': ButtonStyle(
-      backgroundColor: WidgetStateProperty.all<Color>(AppColors.blue),
-      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-      ),
-      textStyle: WidgetStateProperty.all<TextStyle>(
-        const TextStyle(
-          fontSize: 16.0,
-          fontWeight: FontWeight.w600,
-          color: Colors.white
-        ),
-      ),
-    ),
-    'success': ButtonStyle(
-      backgroundColor: WidgetStateProperty.all<Color>(AppColors.success),
-      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-      ),
-      textStyle: WidgetStateProperty.all<TextStyle>(
-        const TextStyle(
-          fontSize: 16.0,
-          fontWeight: FontWeight.w600,
-          color: Colors.black
-        ),
-      ),
-    ),
-    'danger': ButtonStyle(
-      backgroundColor: WidgetStateProperty.all<Color>(AppColors.danger),
-      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-      ),
-      textStyle: WidgetStateProperty.all<TextStyle>(
-        const TextStyle(
-          fontSize: 16.0,
-          fontWeight: FontWeight.w600,
-          color: Colors.black
-        ),
-      ),
-    ),
-  };
 
   @override
   Widget build(BuildContext context) {
+    final Size buttonSize = Size(widget.width, widget.height);
+
+    final ButtonStyle buttonStyle = switch (widget.type) {
+      ButtonType.primary => ButtonStyle(
+        backgroundColor: const WidgetStatePropertyAll(ColorSchemeCustom.textHighlight),
+        foregroundColor: const WidgetStatePropertyAll(ColorSchemeCustom.primary),
+        minimumSize: WidgetStatePropertyAll(buttonSize)
+      ),
+      ButtonType.secondary => ButtonStyle(
+        foregroundColor: const WidgetStatePropertyAll(ColorSchemeCustom.textHighlight),
+        backgroundColor: const WidgetStatePropertyAll(ColorSchemeCustom.primary),
+        minimumSize: WidgetStatePropertyAll(buttonSize)
+      ),
+    };
+
     return ElevatedButton(
       onPressed: widget.onPressed,
-      style: buttonStyles[widget.style],
-      child: widget.child,
+      style: buttonStyle, 
+      child: widget.child
     );
   }
 }
+
+enum ButtonType { primary, secondary }

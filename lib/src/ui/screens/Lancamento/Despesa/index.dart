@@ -1,4 +1,4 @@
-import 'package:fingen/src/core/app_colors.dart';
+import 'package:fingen/src/theme/color_scheme.dart';
 import 'package:fingen/src/ui/components/Button/index.dart';
 import 'package:fingen/src/ui/components/Form/DatePicker/index.dart';
 import 'package:fingen/src/ui/components/Form/Dropdown/index.dart';
@@ -23,7 +23,6 @@ class _CadastroDespesaState extends State<CadastroDespesa> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Nova despesa'),
-        backgroundColor: AppColors.danger,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -107,7 +106,7 @@ class _CadastroDespesaState extends State<CadastroDespesa> {
                     FormSwitchComponent(
                       label: 'Parcelado',
                       value: parcelado,
-                      activeColor: AppColors.danger,
+                      activeColor: ColorSchemeCustom.danger,
                       onChanged: (value) {
                         setState(() {
                           parcelado = value;
@@ -118,7 +117,7 @@ class _CadastroDespesaState extends State<CadastroDespesa> {
                     FormSwitchComponent(
                       label: 'Recorrente',
                       value: recorrente,
-                      activeColor: AppColors.danger,
+                      activeColor: ColorSchemeCustom.danger,
                       onChanged: (value) {
                         setState(() {
                           recorrente = value;
@@ -191,11 +190,7 @@ class _CadastroDespesaState extends State<CadastroDespesa> {
                 height: 50,
                 margin: const EdgeInsets.only(top: 32),
                 child: ButtonComponent(
-                  style: 'danger',
-                  child: const Text('Salvar'),
-                  onPressed: () {
-                    // Implementar ação de cadastro de receita
-                  },
+                  label: 'Salvar'
                 ),
               )
             ],

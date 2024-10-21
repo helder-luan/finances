@@ -1,5 +1,6 @@
 import 'package:fingen/firebase_options.dart';
-import 'package:fingen/src/ui/screens/Autenticacao/index.dart';
+import 'package:fingen/src/theme/themes.dart';
+import 'package:fingen/src/ui/screens/Auth/SignIn/index.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -10,25 +11,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Finances',
-      theme: ThemeData(
-        primarySwatch: const MaterialColor(0xFF1400FF,
-          {
-            50 : Color(0xFF1400FF),
-            100 : Color(0xFF1400FF),
-            200 : Color(0xFF1400FF),
-            300 : Color(0xFF1400FF),
-            400 : Color(0xFF1400FF),
-            500 : Color(0xFF1400FF),
-            600 : Color(0xFF1400FF),
-            700 : Color(0xFF1400FF),
-            800 : Color(0xFF1400FF),
-            900 : Color(0xFF1400FF)
-          },
-        ),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const Autenticacao(),
+      title: 'FinGen',
+      theme: FinancesTheme.lightTheme,
+      home: const SignIn(),
     );
   }
 }
